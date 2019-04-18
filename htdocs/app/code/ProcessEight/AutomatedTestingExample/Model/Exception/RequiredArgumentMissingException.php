@@ -15,7 +15,9 @@
  *
  */
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'ProcessEight_AutomatedTestingExample', __DIR__
-);
+namespace ProcessEight\AutomatedTestingExample\Model\Exception;
+
+class RequiredArgumentMissingException extends \RuntimeException
+{
+
+}

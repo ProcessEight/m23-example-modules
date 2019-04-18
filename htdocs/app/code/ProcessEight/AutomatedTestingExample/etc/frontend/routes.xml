@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * ProcessEight
  *
@@ -14,8 +15,12 @@
  * @author      ProcessEight
  *
  */
-
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'ProcessEight_AutomatedTestingExample', __DIR__
-);
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="processeight_automatedtestingexample" frontName="processeight">
+            <module name="ProcessEight_AutomatedTestingExample"/>
+        </route>
+    </router>
+</config>
