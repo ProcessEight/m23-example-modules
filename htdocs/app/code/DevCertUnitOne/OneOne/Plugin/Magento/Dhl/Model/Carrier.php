@@ -18,6 +18,32 @@ namespace DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model;
 
 class Carrier
 {
+    const LOG_PATH = 'var';
+
+    /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    private $moduleDir;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Directory\WriteFactory
+     */
+    private $writeFactory;
+
+    /**
+     * Carrier constructor.
+     *
+     * @param \Magento\Framework\Module\Dir                        $moduleDir
+     * @param \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory
+     */
+    public function __construct(
+        \Magento\Framework\Module\Dir $moduleDir,
+        \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory
+    ) {
+        $this->moduleDir    = $moduleDir;
+        $this->writeFactory = $writeFactory;
+    }
+
     /**
      * Log the parameters
      *
@@ -25,12 +51,17 @@ class Carrier
      * @param \Magento\Framework\DataObject $request Parameter(s) of the targeted method
      *
      * @return null
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\ValidatorException
      */
     public function beforeSetRequest(
         \Magento\Dhl\Model\Carrier $subject,    // The target class
         \Magento\Framework\DataObject $request  // Parameter(s) of the targeted method
     )
     {
+        $this->createLogFolder();
+
+
         // If the method does not change the argument for the observed method, it should return null.
         return null;
     }
@@ -43,6 +74,8 @@ class Carrier
      * @param \Magento\Framework\DataObject $request Parameter(s) of the targeted method
      *
      * @return mixed
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\ValidatorException
      */
     public function afterSetRequest(
         \Magento\Dhl\Model\Carrier $subject,    // The target class
@@ -50,6 +83,25 @@ class Carrier
         \Magento\Framework\DataObject $request  // Parameter(s) of the targeted method
     )
     {
+        $this->createLogFolder();
+
         return $result;
+    }
+
+    /**
+     * Create log folder if it does not already exist
+     *
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     */
+    private function createLogFolder()
+    {
+        // Get path to module
+        $modulePath = $this->moduleDir->getDir('DevCertUnitOne_OneOne');
+
+        $writer = $this->writeFactory->create($modulePath);
+        if (!$writer->isDirectory($modulePath . DIRECTORY_SEPARATOR . self::LOG_PATH)) {
+            $writer->create(self::LOG_PATH);
+        }
     }
 }
