@@ -31,17 +31,25 @@ class Carrier
     private $writeFactory;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Carrier constructor.
      *
      * @param \Magento\Framework\Module\Dir                        $moduleDir
      * @param \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory
+     * @param \Psr\Log\LoggerInterface                             $logger
      */
     public function __construct(
         \Magento\Framework\Module\Dir $moduleDir,
-        \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory
+        \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->moduleDir    = $moduleDir;
         $this->writeFactory = $writeFactory;
+        $this->logger       = $logger;
     }
 
     /**
@@ -61,6 +69,7 @@ class Carrier
     {
         $this->createLogFolder();
 
+        $this->logger->debug(__METHOD__ . 'abc123');
 
         // If the method does not change the argument for the observed method, it should return null.
         return null;
@@ -84,6 +93,8 @@ class Carrier
     )
     {
         $this->createLogFolder();
+
+        $this->logger->debug(__METHOD__ . 'abc123');
 
         return $result;
     }

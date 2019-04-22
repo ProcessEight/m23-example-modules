@@ -23,4 +23,23 @@
         <plugin name="devcertunitone_oneone_magento_dhl_model_carrier"
                 type="DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model\Carrier"/>
     </type>
+
+    <!-- Configure virtual type for the logger -->
+    <virtualType name="DevCertUnitOne\OneOne\Model\Carrier\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/app/code/DevCertUnitOne/OneOne/var/shipping.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="DevCertUnitOne\OneOne\Model\Method\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">DevCertUnitOne\OneOne\Model\Carrier\VirtualDebug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model\Carrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">DevCertUnitOne\OneOne\Model\Method\VirtualLogger</argument>
+        </arguments>
+    </type>
 </config>
