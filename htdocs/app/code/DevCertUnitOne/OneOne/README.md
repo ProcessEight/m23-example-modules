@@ -13,10 +13,10 @@ Log file should be located in your modules' `var` folder.
 ### Hints
 * Use virtual types and DI.xml to create the log
 
-- Add a preference for the interface
-- Add an `after` plugin for `Magento\Dhl\Model\Carrier::setRequest`
-- Create the `var` folder
-- Use virtual types and DI.xml to create the logger for the plugin
+- [x] Add a preference for the interface
+- [x] Add an `after` plugin for `Magento\Dhl\Model\Carrier::setRequest`
+- [ ] Create the `var` folder
+- [ ] Use virtual types and DI.xml to create the logger for the plugin
     - Find an example from core, or a third party module
 
 ### Addressing dependencies from native (core?) modules in client code

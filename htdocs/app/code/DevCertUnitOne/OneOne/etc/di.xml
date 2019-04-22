@@ -15,10 +15,12 @@
  *
  */
 -->
-
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\Vault\Api\PaymentTokenManagementInterface"
-                type="DevCertUnitOne\OneOne\Model\PaymentTokenManagement"
-    />
+                type="DevCertUnitOne\OneOne\Model\PaymentTokenManagement"/>
+    <type name="Magento\Dhl\Model\Carrier">
+        <plugin name="devcertunitone_oneone_magento_dhl_model_carrier"
+                type="DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model\Carrier"/>
+    </type>
 </config>
