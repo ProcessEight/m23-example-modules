@@ -27,7 +27,7 @@
     <!-- Configure virtual type for the logger -->
     <virtualType name="DevCertUnitOne\OneOne\Model\Carrier\VirtualDebug" type="Magento\Framework\Logger\Handler\Base">
         <arguments>
-            <argument name="fileName" xsi:type="string">/app/code/DevCertUnitOne/OneOne/var/shipping.log</argument>
+            <argument name="fileName" xsi:type="string">/app/code/DevCertUnitOne/OneOne/var/shipping_request.log</argument>
         </arguments>
     </virtualType>
     <virtualType name="DevCertUnitOne\OneOne\Model\Method\VirtualLogger" type="Magento\Framework\Logger\Monolog">

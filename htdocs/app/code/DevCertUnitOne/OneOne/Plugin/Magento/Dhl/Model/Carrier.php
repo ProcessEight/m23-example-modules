@@ -69,7 +69,7 @@ class Carrier
     {
         $this->createLogFolder();
 
-        $this->logger->debug(__METHOD__ . 'abc123');
+        $this->logger->debug(__METHOD__ . '::abc123');
 
         // If the method does not change the argument for the observed method, it should return null.
         return null;
@@ -94,7 +94,7 @@ class Carrier
     {
         $this->createLogFolder();
 
-        $this->logger->debug(__METHOD__ . 'abc123');
+        $this->logger->debug(__METHOD__ . '::def456');
 
         return $result;
     }
