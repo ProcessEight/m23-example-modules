@@ -1,6 +1,6 @@
 {
-    "name": "process-eight/create-directory-example",
-    "description": "Demonstrates how to programmatically create folders in Magento 2",
+    "name": "process-eight/create-modify-delete-directory-example",
+    "description": "Demonstrates how to programmatically create, modify and delete folders in Magento 2",
     "version": "1.0.0",
     "require": {
         "php": "~7.1.3||~7.2.0",
@@ -15,7 +15,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "ProcessEight\\CreateDirectoryExample\\": ""
+            "ProcessEight\\CreateModifyDeleteDirectoryExample\\": ""
         }
     }
 }

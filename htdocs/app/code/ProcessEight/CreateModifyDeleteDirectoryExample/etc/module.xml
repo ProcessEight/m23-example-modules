@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * Process Eight
  *
@@ -13,9 +14,8 @@
  * @author      Process Eight
  *
  */
-
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'ProcessEight_CreateDirectoryExample',
-    __DIR__
-);
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="ProcessEight_CreateModifyDeleteDirectoryExample" setup_version="1.0.0"/>
+</config>

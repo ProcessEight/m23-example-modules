@@ -14,23 +14,26 @@
  *
  */
 
-namespace ProcessEight\CreateDirectoryExample\Command;
+declare(strict_types=1);
+
+namespace ProcessEight\CreateModifyDeleteDirectoryExample\Command;
 
 use Magento\Framework\Exception\FileSystemException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateDirectoryExample extends Command
+class CreateModifyDeleteDirectoryExample extends Command
 {
-    const MODULE_NAME = 'ProcessEight_CreateDirectoryExample';
+    const MODULE_NAME = 'ProcessEight_CreateModifyDeleteDirectoryExample';
 
-    const DIRECTORY_NAME = 'example_directory';
+    const EXAMPLE_DIRECTORY_NAME = 'example_directory';
+    const EXAMPLE_DIRECTORY_RENAME = 'example_directory_renamed';
 
     /**
      * Used to manage files and folders
      *
-     * @var \Magento\Framework\Filesystem\Driver\File
+     * @var \Magento\Framework\Filesystem\DriverInterface
      */
     private $filesystemDriver;
 
@@ -42,14 +45,14 @@ class CreateDirectoryExample extends Command
     private $componentRegistrar;
 
     /**
-     * CreateDirectoryExample constructor.
+     * CreateModifyDeleteDirectoryExample constructor.
      *
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
      * @param \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
+     * @param \Magento\Framework\Filesystem\DriverInterface   $filesystemDriver
      */
     public function __construct(
-        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
+        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
+        \Magento\Framework\Filesystem\DriverInterface $filesystemDriver
     ) {
         parent::__construct();
 
@@ -62,8 +65,8 @@ class CreateDirectoryExample extends Command
      */
     protected function configure()
     {
-        $this->setName("process-eight:create-directory-example");
-        $this->setDescription("Demonstrates how to programmatically create folders in Magento 2");
+        $this->setName("process-eight:create-modify-delete-directory-example");
+        $this->setDescription("Demonstrates how to programmatically create, modify and delete folders in Magento 2");
         parent::configure();
     }
 
@@ -88,7 +91,7 @@ class CreateDirectoryExample extends Command
         $newFolderPath = $this->componentRegistrar->getPath(
                 \Magento\Framework\Component\ComponentRegistrar::MODULE,
                 self::MODULE_NAME
-            ) . DIRECTORY_SEPARATOR . self::DIRECTORY_NAME;
+            ) . DIRECTORY_SEPARATOR . self::EXAMPLE_DIRECTORY_NAME;
 
         // Check if folder exists
         try {
@@ -141,6 +144,30 @@ class CreateDirectoryExample extends Command
             $message    = "Check if folder <info>{$newFolderPath}</info> is writable: " . ($isWritable ? 'true' : 'false');
         } catch (FileSystemException $e) {
             $message = "Check if folder <info>{$newFolderPath}</info> is writable: " . $e->getMessage();
+        }
+        $output->writeln($message);
+
+        // Get renamed folder path
+        $renamedFolderPath = $this->componentRegistrar->getPath(
+                \Magento\Framework\Component\ComponentRegistrar::MODULE,
+                self::MODULE_NAME
+            ) . DIRECTORY_SEPARATOR . self::EXAMPLE_DIRECTORY_RENAME;
+
+        // Rename folder
+        try {
+            $rename  = $this->filesystemDriver->rename($newFolderPath, $renamedFolderPath);
+            $message = "Check if folder <info>{$newFolderPath}</info> was renamed: " . ($rename ? 'true' : 'false');
+        } catch (FileSystemException $e) {
+            $message = "Check if folder <info>{$newFolderPath}</info> was renamed: " . $e->getMessage();
+        }
+        $output->writeln($message);
+
+        // Delete folder
+        try {
+            $delete  = $this->filesystemDriver->deleteDirectory($renamedFolderPath);
+            $message = "Check if folder <info>{$renamedFolderPath}</info> was deleted: " . ($delete ? 'true' : 'false');
+        } catch (FileSystemException $e) {
+            $message = "Check if folder <info>{$renamedFolderPath}</info> was deleted: " . $e->getMessage();
         }
         $output->writeln($message);
     }
