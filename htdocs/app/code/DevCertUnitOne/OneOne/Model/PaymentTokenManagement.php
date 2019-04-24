@@ -14,6 +14,8 @@
  *
  */
 
+declare(strict_types=1);
+
 namespace DevCertUnitOne\OneOne\Model;
 
 use Magento\Framework\Api\FilterBuilder;

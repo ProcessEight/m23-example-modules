@@ -14,6 +14,8 @@
  *
  */
 
+declare(strict_types=1);
+
 namespace DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model;
 
 class Carrier
