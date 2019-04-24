@@ -15,6 +15,8 @@
  *
  */
 
+declare(strict_types=1);
+
 namespace ProcessEight\AutomatedTestingExample\Model\Exception;
 
 class RequiredArgumentMissingException extends \RuntimeException

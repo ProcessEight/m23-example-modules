@@ -15,6 +15,8 @@
  *
  */
 
+declare(strict_types=1);
+
 namespace ProcessEight\AutomatedTestingExample\Controller\Index;
 
 class Index extends \Magento\Framework\App\Action\Action
