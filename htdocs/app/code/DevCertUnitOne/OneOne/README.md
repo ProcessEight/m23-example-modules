@@ -20,6 +20,15 @@ Log file should be located in your modules' `var` folder.
     - Find an example from core, or a third party module
 - [ ] Log the request params
 
-### Addressing dependencies from native (core?) modules in client code
+### Addressing dependencies from native modules in client code
+- Dependencies are explicitly stated in `composer.json` and `module.xml`
+- Dependencies are injected into the classes using Dependency Injection
+- Virtual types are used to create and configure a new logger class which extends from the native logger class without explicitly declaring and extending it in PHP code
 
-### Different ways to obtain the path to a module folder
+### Describe different ways to obtain the path to a module folder
+
+The method I chose was to use `\Magento\Framework\Module\Dir::getDir`, which returns the absolute path to the module folder.
+
+By passing a secondary argument to `\Magento\Framework\Module\Dir::getDir`, a specific type of module subdirectory (`etc`, `i18n`, `controllers`, `view`) can be returned.
+
+An alternative is to use `\Magento\Framework\App\Filesystem\DirectoryList`.
