@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Process Eight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 Process Eight
+ * @author      Process Eight
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- A command to demonstrate the logger -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="processeight_customloggerexample_command_customloggerexample"
+                      xsi:type="object">ProcessEight\CustomLoggerExample\Command\CustomLoggerExample</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Configure virtual type for the logger -->
+    <virtualType name="ProcessEight_CustomLoggerExample_Debug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <!-- By default, log files will be created in the Magento base folder -->
+            <!-- Or, you can provide a path relative to the Magento base folder -->
+            <argument name="fileName" xsi:type="string">/var/log/custom_logger_example_1350.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ProcessEight_CustomLoggerExample_Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">ProcessEight_CustomLoggerExample_Debug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Inject our logger virtualType into the class we want to use it in -->
+    <type name="DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model\Carrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">ProcessEight_CustomLoggerExample_Logger</argument>
+        </arguments>
+    </type>
+</config>
