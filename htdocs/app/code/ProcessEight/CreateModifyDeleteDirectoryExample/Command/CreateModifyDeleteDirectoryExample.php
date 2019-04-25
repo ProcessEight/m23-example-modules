@@ -56,8 +56,8 @@ class CreateModifyDeleteDirectoryExample extends Command
     ) {
         parent::__construct();
 
-        $this->filesystemDriver   = $filesystemDriver;
         $this->componentRegistrar = $componentRegistrar;
+        $this->filesystemDriver   = $filesystemDriver;
     }
 
     /**
