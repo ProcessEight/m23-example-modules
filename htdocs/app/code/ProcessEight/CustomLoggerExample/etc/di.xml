@@ -25,25 +25,64 @@
             </argument>
         </arguments>
     </type>
-    <!-- Configure virtual type for the logger -->
-    <virtualType name="ProcessEight_CustomLoggerExample_Debug" type="Magento\Framework\Logger\Handler\Base">
+    <!--
+    /**
+     * Example not using virtual types.
+     * Useful when the logic of the logging classes needs to be modified
+     */
+     -->
+    <!-- Handler: Defines where and what is logged -->
+    <type name="ProcessEight\CustomLoggerExample\Logger\Handler">
         <arguments>
             <!-- By default, log files will be created in the Magento base folder -->
             <!-- Or, you can provide a path relative to the Magento base folder -->
-            <argument name="fileName" xsi:type="string">/var/log/custom_logger_example_1350.log</argument>
+            <argument name="fileName" xsi:type="string">/var/log/custom_logger_example.log</argument>
+        </arguments>
+    </type>
+    <!-- Logger: Does the actual logging -->
+    <type name="ProcessEight\CustomLoggerExample\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">customLoggerExample</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">ProcessEight\CustomLoggerExample\Logger\Handler</item>
+                <item name="debug" xsi:type="object">ProcessEight\CustomLoggerExample\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    <!--
+    /**
+     * Example using virtual types.
+     * Useful when the logic of the logging classes is not modified
+     */
+     -->
+    <!-- Configure Handler virtual type -->
+    <virtualType name="ProcessEight_CustomLoggerExample_VirtualType_Debug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <!-- By default, log files will be created in the Magento base folder -->
+            <!-- Or, you can provide a path relative to the Magento base folder -->
+            <argument name="fileName" xsi:type="string">/var/log/custom_logger_example_virtual_type.log</argument>
         </arguments>
     </virtualType>
-    <virtualType name="ProcessEight_CustomLoggerExample_Logger" type="Magento\Framework\Logger\Monolog">
+    <!-- Configure Logger virtual type -->
+    <virtualType name="ProcessEight_CustomLoggerExample_VirtualType_Logger" type="Magento\Framework\Logger\Monolog">
         <arguments>
+            <argument name="name" xsi:type="string">customLoggerExampleVirtualType</argument>
             <argument name="handlers" xsi:type="array">
-                <item name="debug" xsi:type="object">ProcessEight_CustomLoggerExample_Debug</item>
+                <item name="debug" xsi:type="object">ProcessEight_CustomLoggerExample_VirtualType_Debug</item>
             </argument>
         </arguments>
     </virtualType>
-    <!-- Inject our logger virtualType into the class we want to use it in -->
-    <type name="DevCertUnitOne\OneOne\Plugin\Magento\Dhl\Model\Carrier">
+    <!--
+    /**
+     * Inject our custom loggers where we want to use them
+     */
+     -->
+    <type name="ProcessEight\CustomLoggerExample\Command\CustomLoggerExample">
         <arguments>
-            <argument name="logger" xsi:type="object">ProcessEight_CustomLoggerExample_Logger</argument>
+            <!-- Inject our logger type into the class we want to use it in -->
+            <argument name="customLogger" xsi:type="object">ProcessEight\CustomLoggerExample\Logger\Logger</argument>
+            <!-- Inject our logger virtualType into the class we want to use it in -->
+            <argument name="virtualTypeLogger" xsi:type="object">ProcessEight_CustomLoggerExample_VirtualType_Logger</argument>
         </arguments>
     </type>
 </config>
