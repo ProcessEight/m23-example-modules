@@ -1,4 +1,4 @@
-# ProcessEight AutomatedTestingExample
+# ProcessEight_AutomatedTestingExample
 
 A library of common integration and unit tests.
 
