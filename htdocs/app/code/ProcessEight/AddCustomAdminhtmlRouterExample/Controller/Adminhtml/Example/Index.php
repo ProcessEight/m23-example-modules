@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace ProcessEight\AddCustomAdminhtmlRouterExample\Controller\Adminhtml\Example;
 
-class Index extends \Magento\Backend\App\Action
+class Index extends \Magento\Backend\App\Action implements \Magento\Framework\App\Action\HttpGetActionInterface
 {
     /**
      * @see app/code/ProcessEight/AddCustomAdminhtmlRouterExample/etc/acl.xml
