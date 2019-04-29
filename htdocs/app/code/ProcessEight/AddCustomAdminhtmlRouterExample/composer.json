@@ -1,7 +1,8 @@
 {
-    "name": "processeight/module-add-custom-adminhtml-router-example",
+    "name": "processeight/add-custom-adminhtml-router-example",
     "description": "An example module demonstrating how to create a custom admin router in Magento 2",
     "type": "magento2-module",
+    "version": "1.0.0",
     "license": [
         "proprietary"
     ],
