@@ -4,6 +4,8 @@
 
 To demonstrate how to create a custom config XML schema in Magento 2.
 
+Tested on Magento 2.3.1.
+
 ## Installation
 
 Install with composer.
@@ -45,7 +47,7 @@ the filename.xml file.
 The purpose of this file is to tell Magento where to find the XSD 
 to validate the custom config XML file.
 
-### Config/WarehouseData.php
+### Config/WarehousesData.php
 
 The purpose of this file is to extend `\Magento\Framework\Config\Data` 
 and in so doing, give us a dependency which can be injected wherever 
