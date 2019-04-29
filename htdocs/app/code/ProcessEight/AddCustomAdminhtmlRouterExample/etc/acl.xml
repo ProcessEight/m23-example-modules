@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <!-- ACL defines resources which are used to manage permissions in the admin and APIs -->
+    <acl>
+        <resources>
+            <!-- id: Required. Value must match /([A-Z]+[a-zA-Z0-9]{1,}){1,}_[A-Z]+[A-Z0-9a-z]{1,}::[A-Za-z_0-9]{1,}/ Minimal length 3 symbol. Case insensitive. Must be unique. -->
+            <resource id="Magento_Backend::admin">
+                <resource id="ProcessEight_AddCustomAdminhtmlRouterExample::root" title="ProcessEight Add Custom Adminhtml Router Example">
+                    <resource id="ProcessEight_AddCustomAdminhtmlRouterExample::example" title="Example">
+                        <resource id="ProcessEight_AddCustomAdminhtmlRouterExample::index" title="Index"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>
