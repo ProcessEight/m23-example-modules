@@ -1,6 +1,6 @@
 # DevCertUnitOne_OneOne
 
-## Abstract
+## Purpose
 Task for Certified Developer Study Group, Unit One, Task One.
 
 ## Task
