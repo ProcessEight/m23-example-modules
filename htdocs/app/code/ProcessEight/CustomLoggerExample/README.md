@@ -1,11 +1,12 @@
 # ProcessEight_CustomLoggerExample
 
-## Abstract
+## Purpose
 Demonstration of how to create a custom logger in Magento 2.
 
-## Run it
+Tested on Magento Open Source 2.3.1.
 
-Run the following command. It should produce log files in ???:
+## Run it
+Run the following command.
 ```bash
 $ /usr/bin/php7.2 -f bin/magento process-eight:custom-logger-example
 Hopefully, something should've been written to /var/log/custom_logger_example.log
