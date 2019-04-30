@@ -15,7 +15,7 @@
 ## Purpose
 A module to demonstrate how to add a new menu item to the navigation bar in 'My Account'.
 
-Tested on Magento Open Source 2.2.5.
+Tested on Magento Open Source 2.3.1.
 
 ## Customising the 'My Account' section
 
