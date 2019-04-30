@@ -1,7 +1,9 @@
 # ProcessEight_CreateModifyDeleteDirectoryExample
 
-## Abstract
+## Purpose
 Demonstrates how to programmatically create, modify and delete folders in Magento 2
+
+Tested on Magento Open Source 2.3.1.
 
 ## In detail
 
