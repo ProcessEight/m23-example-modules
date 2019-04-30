@@ -1,7 +1,9 @@
 # ProcessEight_GetDirectoryPathsExample
 
-## Abstract
+## Purpose
 Demonstrates how to programmatically retrieve paths to several types of Magento-specific directory (e.g. `base`, `media`, `var`, etc).
+
+Tested on Magento Open Source 2.3.1.
 
 ## In detail
 
