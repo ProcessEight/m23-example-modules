@@ -53,29 +53,36 @@ class Create extends Command
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder
      */
     private $createEtcFolder;
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile
+     */
+    private $createModuleXmlFile;
 
     /**
      * Create constructor.
      *
-     * @param \League\Pipeline\Pipeline                                  $pipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder    $createEtcFolder
+     * @param \League\Pipeline\Pipeline                                   $pipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName  $validateVendorName
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName  $validateModuleName
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder  $createModuleFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder     $createEtcFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
         \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder $createEtcFolder
+        \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder $createEtcFolder,
+        \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile
     ) {
         parent::__construct();
-        $this->pipeline           = $pipeline;
-        $this->validateVendorName = $validateVendorName;
-        $this->validateModuleName = $validateModuleName;
-        $this->createModuleFolder = $createModuleFolder;
-        $this->createEtcFolder    = $createEtcFolder;
+        $this->pipeline            = $pipeline;
+        $this->validateVendorName  = $validateVendorName;
+        $this->validateModuleName  = $validateModuleName;
+        $this->createModuleFolder  = $createModuleFolder;
+        $this->createEtcFolder     = $createEtcFolder;
+        $this->createModuleXmlFile = $createModuleXmlFile;
     }
 
     /**
@@ -121,30 +128,28 @@ class Create extends Command
         }
 
         // Validate inputs
-        $result = $this->validateInputs(
+        $validationResult = $this->validateInputs(
             $input->getOption(self::VENDOR_NAME),
             $input->getOption(self::MODULE_NAME)
         );
 
-        if (!$result['is_valid']) {
-            $output->writeln($result['validation_message']);
+        if (!$validationResult['is_valid']) {
+            $output->writeln($validationResult['validation_message']);
 
             return 1;
         }
 
         // Generate assets
-        $result = $this->generateModule(
+        $creationResult = $this->generateModule(
             $input->getOption(self::VENDOR_NAME),
             $input->getOption(self::MODULE_NAME)
         );
 
-        if (!$result['is_valid']) {
-            $output->writeln($result['creation_message']);
-
-            return 1;
+        foreach ($creationResult['creation_message'] as $message) {
+            $output->writeln($message);
         }
 
-        return null;
+        return !$creationResult['is_valid'] ?? null;
     }
 
     /**
@@ -198,7 +203,7 @@ class Create extends Command
         // Create etc folder
         $creationPipeline = $creationPipeline->pipe($this->createEtcFolder);
         // Create module.xml
-//        $creationPipeline = $creationPipeline->pipe($this->createModuleXmlFile);
+        $creationPipeline = $creationPipeline->pipe($this->createModuleXmlFile);
 //        // Create registration.php
 //        // Create composer.json
 
