@@ -45,9 +45,14 @@ class Create extends Command
     private $validateModuleName;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateFolder
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder
      */
-    private $createFolder;
+    private $createModuleFolder;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder
+     */
+    private $createEtcFolder;
 
     /**
      * Create constructor.
@@ -55,21 +60,27 @@ class Create extends Command
      * @param \League\Pipeline\Pipeline                                  $pipeline
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateFolder       $createFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder    $createEtcFolder
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
-        \ProcessEight\ModuleManager\Model\Stage\CreateFolder $createFolder
+        \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder,
+        \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder $createEtcFolder
     ) {
         parent::__construct();
         $this->pipeline           = $pipeline;
         $this->validateVendorName = $validateVendorName;
-        $this->createFolder       = $createFolder;
         $this->validateModuleName = $validateModuleName;
+        $this->createModuleFolder = $createModuleFolder;
+        $this->createEtcFolder    = $createEtcFolder;
     }
 
+    /**
+     * Configure
+     */
     protected function configure()
     {
         $this->setName("process-eight:module:create");
@@ -79,6 +90,12 @@ class Create extends Command
         parent::configure();
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // Gather inputs
@@ -116,13 +133,18 @@ class Create extends Command
         }
 
         // Generate assets
-        $this->generateModule(
+        $result = $this->generateModule(
             $input->getOption(self::VENDOR_NAME),
             $input->getOption(self::MODULE_NAME)
         );
 
-        // Debugging
-        return $output->writeln($input->getOption(self::VENDOR_NAME) . '_' . $input->getOption(self::MODULE_NAME));
+        if (!$result['is_valid']) {
+            $output->writeln($result['creation_message']);
+
+            return 1;
+        }
+
+        return null;
     }
 
     /**
@@ -132,6 +154,8 @@ class Create extends Command
      * @param string|null $moduleName
      *
      * @return mixed[]
+     * @todo Move validation pipeline logic into a 'validate module name pipeline' class and inject it, then run it here
+     *
      */
     private function validateInputs(?string $vendorName, ?string $moduleName) : array
     {
@@ -146,9 +170,7 @@ class Create extends Command
         $validationPipeline = $validationPipeline->pipe($this->validateVendorName);
         $validationPipeline = $validationPipeline->pipe($this->validateModuleName);
 
-        $config = $validationPipeline->process($config);
-
-        return $config;
+        return $validationPipeline->process($config);
     }
 
     /**
@@ -158,32 +180,28 @@ class Create extends Command
      * @param string|null $moduleName
      *
      * @return int|mixed
+     * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
      */
     private function generateModule(?string $vendorName, ?string $moduleName)
     {
-        $config[self::VENDOR_NAME] = $vendorName;
-        $config[self::MODULE_NAME] = $moduleName;
+        $config = [
+            'data'     => [
+                self::VENDOR_NAME => $vendorName,
+                self::MODULE_NAME => $moduleName,
+            ],
+            'is_valid' => true,
+        ];
 
         $creationPipeline = $this->pipeline;
-        $creationPipeline->pipe(
-            // Create module folder
-            $this->createFolder
-        )->pipe(
-            // Create etc folder
-            $this->createFolder
-        )->pipe(
-            // Create module.xml
-            $this->createFolder
-        )->pipe(
-            // Create registration.php
-            $this->createFolder
-        )->pipe(
-            // Create composer.json
-            $this->createFolder
-        );
+        // Create module folder
+        $creationPipeline = $creationPipeline->pipe($this->createModuleFolder);
+        // Create etc folder
+        $creationPipeline = $creationPipeline->pipe($this->createEtcFolder);
+        // Create module.xml
+//        $creationPipeline = $creationPipeline->pipe($this->createModuleXmlFile);
+//        // Create registration.php
+//        // Create composer.json
 
-        $config = $creationPipeline->process($config);
-
-        return $config;
+        return $creationPipeline->process($config);
     }
 }
