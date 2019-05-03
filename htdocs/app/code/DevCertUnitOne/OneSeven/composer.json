@@ -1,0 +1,21 @@
+{
+    "name": "devcertunitone/oneseven",
+    "description": "Magento 2 Certified Developer Study Group, Unit One, Exercise Seven",
+    "version": "1.0.0",
+    "require": {
+        "php": "~7.1.3||~7.2.0",
+        "magento/framework": "102.0.1"
+    },
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "DevCertUnitOne\\OneSeven\\": ""
+        }
+    }
+}
