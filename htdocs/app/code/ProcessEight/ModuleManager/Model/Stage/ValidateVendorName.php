@@ -1,6 +1,6 @@
 <?php
 /**
- * Process Eight
+ * ProcessEight
  *
  * DISCLAIMER
  *
@@ -9,8 +9,8 @@
  * needs please contact ProcessEight for more information.
  *
  * @package     m23-example-modules
- * @copyright   Copyright (c) 2019 Process Eight
- * @author      Process Eight
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
  *
  */
 

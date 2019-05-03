@@ -1,6 +1,6 @@
 <?php
 /**
- * Process Eight
+ * ProcessEight
  *
  * DISCLAIMER
  *
@@ -9,8 +9,8 @@
  * needs please contact ProcessEight for more information.
  *
  * @package     m23-example-modules
- * @copyright   Copyright (c) 2019 Process Eight
- * @author      Process Eight
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
  *
  */
 
@@ -53,20 +53,33 @@ class Create extends Command
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder
      */
     private $createEtcFolder;
+
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile
      */
     private $createModuleXmlFile;
 
     /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile
+     */
+    private $createRegistrationPhpFile;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile
+     */
+    private $createComposerJsonFile;
+
+    /**
      * Create constructor.
      *
-     * @param \League\Pipeline\Pipeline                                   $pipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName  $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName  $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder  $createModuleFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder     $createEtcFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile
+     * @param \League\Pipeline\Pipeline                                         $pipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName        $validateVendorName
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName        $validateModuleName
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder        $createModuleFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder           $createEtcFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile       $createModuleXmlFile
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile $createRegistrationPhpFile
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile    $createComposerJsonFile
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
@@ -74,15 +87,19 @@ class Create extends Command
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
         \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder,
         \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder $createEtcFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile
+        \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile,
+        \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile $createRegistrationPhpFile,
+        \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile $createComposerJsonFile
     ) {
         parent::__construct();
-        $this->pipeline            = $pipeline;
-        $this->validateVendorName  = $validateVendorName;
-        $this->validateModuleName  = $validateModuleName;
-        $this->createModuleFolder  = $createModuleFolder;
-        $this->createEtcFolder     = $createEtcFolder;
-        $this->createModuleXmlFile = $createModuleXmlFile;
+        $this->pipeline                  = $pipeline;
+        $this->validateVendorName        = $validateVendorName;
+        $this->validateModuleName        = $validateModuleName;
+        $this->createModuleFolder        = $createModuleFolder;
+        $this->createEtcFolder           = $createEtcFolder;
+        $this->createModuleXmlFile       = $createModuleXmlFile;
+        $this->createRegistrationPhpFile = $createRegistrationPhpFile;
+        $this->createComposerJsonFile    = $createComposerJsonFile;
     }
 
     /**
@@ -149,7 +166,7 @@ class Create extends Command
             $output->writeln($message);
         }
 
-        return !$creationResult['is_valid'] ?? null;
+        return $creationResult['is_valid'] ? 0 : 1;
     }
 
     /**
@@ -204,8 +221,10 @@ class Create extends Command
         $creationPipeline = $creationPipeline->pipe($this->createEtcFolder);
         // Create module.xml
         $creationPipeline = $creationPipeline->pipe($this->createModuleXmlFile);
-//        // Create registration.php
-//        // Create composer.json
+        // Create registration.php
+        $creationPipeline = $creationPipeline->pipe($this->createRegistrationPhpFile);
+        // Create composer.json
+        $creationPipeline = $creationPipeline->pipe($this->createComposerJsonFile);
 
         return $creationPipeline->process($config);
     }

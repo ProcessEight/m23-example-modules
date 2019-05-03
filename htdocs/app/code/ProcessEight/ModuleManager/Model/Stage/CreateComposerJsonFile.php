@@ -21,12 +21,12 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
- * Creates a vendor-name/module-name/etc/module.xml file
- * Assumes that the vendor-name/module-name/etc/ folder already exists
+ * Creates a vendor-name/module-name/composer.json file
+ * Assumes that the vendor-name/module-name/ folder already exists
  */
-class CreateModuleXmlFile
+class CreateComposerJsonFile
 {
-    const ARTEFACT_FILE_NAME = 'module.xml';
+    const ARTEFACT_FILE_NAME = 'composer.json';
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -67,34 +67,33 @@ class CreateModuleXmlFile
      */
     public function __invoke(array $config)
     {
-        // Get absolute path to module etc folder
+        // Get absolute path to module folder
         try {
-            $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
+            $modulePath = implode(DIRECTORY_SEPARATOR, [
                 $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
                 'code',
                 $config['data']['vendor-name'],
                 $config['data']['module-name'],
-                \Magento\Framework\Module\Dir::MODULE_ETC_DIR,
             ]);
         } catch (FileSystemException $e) {
-            $config['is_valid']         = false;
-            $config['creation_message'][] = "Failed getting absolute path to etc folder: " . ($e->getMessage());
+            $config['is_valid']           = false;
+            $config['creation_message'][] = "Failed getting absolute path to module folder: " . ($e->getMessage());
 
             return $config;
         }
 
-        // Check if folder exists
-        $artefactFilePath = $moduleEtcPath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
+        // Check if file exists
+        $artefactFilePath = $modulePath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
-            if($isExists) {
+            if ($isExists) {
                 $config['creation_message'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
-            $config['is_valid']         = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
+            $config['is_valid']           = false;
+            $config['creation_message'][] = "Failed checking folder exists at <info>{$modulePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -105,6 +104,8 @@ class CreateModuleXmlFile
             $artefactFileTemplate = $this->filesystemDriver->fileGetContents(
                 $this->moduleDir->getDir('ProcessEight_ModuleManager') . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME . '.template'
             );
+            $artefactFileTemplate = str_replace('{{COMPOSER_VENDOR_NAME}}', strtolower($config['data']['vendor-name']),$artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{COMPOSER_MODULE_NAME}}', strtolower($config['data']['module-name']),$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data']['vendor-name'],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data']['module-name'],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
