@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Creates a vendor-name/module-name/registration.php file
@@ -72,8 +73,8 @@ class CreateRegistrationPhpFile
             $modulePath = implode(DIRECTORY_SEPARATOR, [
                 $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
                 'code',
-                $config['data']['vendor-name'],
-                $config['data']['module-name'],
+                $config['data'][ConfigKey::VENDOR_NAME],
+                $config['data'][ConfigKey::MODULE_NAME],
             ]);
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
@@ -104,10 +105,8 @@ class CreateRegistrationPhpFile
             $artefactFileTemplate = $this->filesystemDriver->fileGetContents(
                 $this->moduleDir->getDir('ProcessEight_ModuleManager') . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME . '.template'
             );
-            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data']['vendor-name'],
-                $artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data']['module-name'],
-                $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME], $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME], $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file

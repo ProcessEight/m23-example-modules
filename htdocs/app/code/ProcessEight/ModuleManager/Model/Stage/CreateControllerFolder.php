@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateControllerFolder
@@ -29,11 +30,6 @@ use Magento\Framework\Exception\FileSystemException;
  */
 class CreateControllerFolder
 {
-    const VENDOR_NAME = 'vendor-name';
-    const MODULE_NAME = 'module-name';
-    const FRONT_NAME = 'front-name';
-    const CONTROLLER_DIRECTORY_NAME = 'controller-directory-name';
-
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
      */
@@ -71,11 +67,11 @@ class CreateControllerFolder
         $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
             $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
             'code',
-            $config['data'][self::VENDOR_NAME],
-            $config['data'][self::MODULE_NAME],
+            $config['data'][ConfigKey::VENDOR_NAME],
+            $config['data'][ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR,
             $adminhtmlDirectoryName,
-            $config['data'][self::CONTROLLER_DIRECTORY_NAME],
+            $config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME],
         ]);
 
         // Check if folder exists

@@ -17,10 +17,10 @@
 declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Model\Stage;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class ValidateModuleName
 {
-    const MODULE_NAME = 'module-name';
     const MODULE_NAME_REGEX_PATTERN = '/[A-Z]+[A-Z0-9a-z]{1,}/';
 
     /**
@@ -31,9 +31,9 @@ class ValidateModuleName
     public function __invoke(array $config) : array
     {
         if ($config['is_valid'] === false
-            || !isset($config['data'][self::MODULE_NAME])
-            || empty($config['data'][self::MODULE_NAME])
-            || preg_match(self::MODULE_NAME_REGEX_PATTERN, $config['data'][self::MODULE_NAME]) !== 1
+            || !isset($config['data'][ConfigKey::MODULE_NAME])
+            || empty($config['data'][ConfigKey::MODULE_NAME])
+            || preg_match(self::MODULE_NAME_REGEX_PATTERN, $config['data'][ConfigKey::MODULE_NAME]) !== 1
         ) {
             $config['is_valid'] = false;
             $config['validation_message'] = 'Invalid module name';

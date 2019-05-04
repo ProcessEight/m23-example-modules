@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateRoutesXmlFile
@@ -76,13 +77,13 @@ class CreateRoutesXmlFile
             $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
                 $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
                 'code',
-                $config['data']['vendor-name'],
-                $config['data']['module-name'],
+                $config['data'][ConfigKey::VENDOR_NAME],
+                $config['data'][ConfigKey::MODULE_NAME],
                 \Magento\Framework\Module\Dir::MODULE_ETC_DIR,
                 $config['data']['area-code'],
             ]);
         } catch (FileSystemException $e) {
-            $config['is_valid']         = false;
+            $config['is_valid']           = false;
             $config['creation_message'][] = "Failed getting absolute path to etc folder: " . ($e->getMessage());
 
             return $config;
@@ -92,13 +93,13 @@ class CreateRoutesXmlFile
         $artefactFilePath = $moduleEtcPath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
-            if($isExists) {
+            if ($isExists) {
                 $config['creation_message'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
-            $config['is_valid']         = false;
+            $config['is_valid']           = false;
             $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
 
             return $config;
@@ -107,18 +108,23 @@ class CreateRoutesXmlFile
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(
-                $this->moduleDir->getDir('ProcessEight_ModuleManager') . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME . '.template'
-            );
-            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data']['vendor-name'],$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{VENDOR_NAME_LOWERCASE}}', strtolower($config['data']['vendor-name']),$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data']['module-name'],$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{MODULE_NAME_LOWERCASE}}', strtolower($config['data']['module-name']),$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data']['front-name'],$artefactFileTemplate);
+            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(implode(DIRECTORY_SEPARATOR, [
+                    $this->moduleDir->getDir('ProcessEight_ModuleManager'),
+                    'Template',
+                    'etc',
+                    $config['data']['area-code'],
+                    self::ARTEFACT_FILE_NAME . '.template',
+                ]
+            ));
+            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME],$artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{VENDOR_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::VENDOR_NAME]), $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{MODULE_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::MODULE_NAME]), $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data']['front-name'], $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file
-            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath,'wb+');
+            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath, 'wb+');
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
 
         } catch (FileSystemException $e) {

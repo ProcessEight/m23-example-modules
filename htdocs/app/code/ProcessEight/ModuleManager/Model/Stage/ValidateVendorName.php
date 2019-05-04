@@ -17,10 +17,10 @@
 declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Model\Stage;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class ValidateVendorName
 {
-    const VENDOR_NAME = 'vendor-name';
     const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
 
     /**
@@ -31,9 +31,9 @@ class ValidateVendorName
     public function __invoke(array $config) : array
     {
         if ($config['is_valid'] === false
-            || !isset($config['data'][self::VENDOR_NAME])
-            || empty($config['data'][self::VENDOR_NAME])
-            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $config['data'][self::VENDOR_NAME]) !== 1
+            || !isset($config['data'][ConfigKey::VENDOR_NAME])
+            || empty($config['data'][ConfigKey::VENDOR_NAME])
+            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $config['data'][ConfigKey::VENDOR_NAME]) !== 1
         ) {
             $config['is_valid'] = false;
             $config['validation_message'] = 'Invalid vendor name';

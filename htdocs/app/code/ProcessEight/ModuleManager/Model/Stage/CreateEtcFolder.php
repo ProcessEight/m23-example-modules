@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class CreateEtcFolder
 {
@@ -58,8 +59,8 @@ class CreateEtcFolder
         $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
             $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
             'code',
-            $config['data']['vendor-name'],
-            $config['data']['module-name'],
+            $config['data'][ConfigKey::VENDOR_NAME],
+            $config['data'][ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_ETC_DIR,
         ]);
 

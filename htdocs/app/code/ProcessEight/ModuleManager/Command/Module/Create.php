@@ -23,12 +23,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class Create extends Command
 {
-    const VENDOR_NAME = 'vendor-name';
-    const MODULE_NAME = 'module-name';
-
     /**
      * @var \League\Pipeline\Pipeline
      */
@@ -109,8 +107,8 @@ class Create extends Command
     {
         $this->setName("process-eight:module:create");
         $this->setDescription("Creates a new module with etc/module.xml, registration.php and composer.json files.");
-        $this->addOption(self::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(self::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
+        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
+        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         parent::configure();
     }
 
@@ -126,28 +124,28 @@ class Create extends Command
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        if (!$input->getOption(self::VENDOR_NAME)) {
+        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
             $question = new Question('<question>Vendor name [ProcessEight]:</question> ', 'ProcessEight');
 
             $input->setOption(
-                self::VENDOR_NAME,
+                ConfigKey::VENDOR_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
-        if (!$input->getOption(self::MODULE_NAME)) {
+        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
             $question = new Question('<question>Module name:</question> ');
 
             $input->setOption(
-                self::MODULE_NAME,
+                ConfigKey::MODULE_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
         // Validate inputs
         $validationResult = $this->validateInputs(
-            $input->getOption(self::VENDOR_NAME),
-            $input->getOption(self::MODULE_NAME)
+            $input->getOption(ConfigKey::VENDOR_NAME),
+            $input->getOption(ConfigKey::MODULE_NAME)
         );
 
         if (!$validationResult['is_valid']) {
@@ -158,8 +156,8 @@ class Create extends Command
 
         // Generate assets
         $creationResult = $this->generateModule(
-            $input->getOption(self::VENDOR_NAME),
-            $input->getOption(self::MODULE_NAME)
+            $input->getOption(ConfigKey::VENDOR_NAME),
+            $input->getOption(ConfigKey::MODULE_NAME)
         );
 
         foreach ($creationResult['creation_message'] as $message) {
@@ -183,8 +181,8 @@ class Create extends Command
     {
         $config             = [
             'data'     => [
-                self::VENDOR_NAME => $vendorName,
-                self::MODULE_NAME => $moduleName,
+                ConfigKey::VENDOR_NAME => $vendorName,
+                ConfigKey::MODULE_NAME => $moduleName,
             ],
             'is_valid' => true,
         ];
@@ -208,8 +206,8 @@ class Create extends Command
     {
         $config = [
             'data'     => [
-                self::VENDOR_NAME => $vendorName,
-                self::MODULE_NAME => $moduleName,
+                ConfigKey::VENDOR_NAME => $vendorName,
+                ConfigKey::MODULE_NAME => $moduleName,
             ],
             'is_valid' => true,
         ];

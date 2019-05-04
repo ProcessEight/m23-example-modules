@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
+use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,12 +27,6 @@ use Symfony\Component\Console\Question\Question;
 
 class Controller extends Command
 {
-    const VENDOR_NAME = 'vendor-name';
-    const MODULE_NAME = 'module-name';
-    const FRONT_NAME = 'front-name';
-    const CONTROLLER_DIRECTORY_NAME = 'controller-directory-name';
-    const CONTROLLER_ACTION_NAME = 'controller-action-name';
-
     /**
      * @var \League\Pipeline\Pipeline
      */
@@ -58,27 +53,51 @@ class Controller extends Command
     private $createControllerFolder;
 
     /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    private $moduleDir;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
+     */
+    private $createAreaCodeFolder;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass
+     */
+    private $createControllerClass;
+
+    /**
      * Create constructor.
      *
      * @param \League\Pipeline\Pipeline                                      $pipeline
+     * @param \Magento\Framework\Module\Dir                                  $moduleDir
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName     $validateVendorName
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName     $validateModuleName
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder   $createAreaCodeFolder
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile    $createRoutesXmlFile
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder $createControllerFolder
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass  $createControllerClass
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
+        \Magento\Framework\Module\Dir $moduleDir,
         \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
+        \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder,
         \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile $createRoutesXmlFile,
-        \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder $createControllerFolder
+        \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder $createControllerFolder,
+        \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass $createControllerClass
     ) {
         parent::__construct();
         $this->pipeline               = $pipeline;
+        $this->moduleDir              = $moduleDir;
         $this->validateVendorName     = $validateVendorName;
         $this->validateModuleName     = $validateModuleName;
+        $this->createAreaCodeFolder   = $createAreaCodeFolder;
         $this->createRoutesXmlFile    = $createRoutesXmlFile;
         $this->createControllerFolder = $createControllerFolder;
+        $this->createControllerClass  = $createControllerClass;
     }
 
     /**
@@ -88,17 +107,17 @@ class Controller extends Command
     {
         $this->setName("process-eight:module:add:frontend:controller");
         $this->setDescription("Adds a new controller PHP class and routes.xml file.");
-        $this->addOption(self::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(self::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
-        $this->addOption(self::FRONT_NAME, null, InputOption::VALUE_OPTIONAL, 'Front name');
+        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
+        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
+        $this->addOption(ConfigKey::FRONT_NAME, null, InputOption::VALUE_OPTIONAL, 'Front name');
         $this->addOption(
-            self::CONTROLLER_DIRECTORY_NAME,
+            ConfigKey::CONTROLLER_DIRECTORY_NAME,
             null,
             InputOption::VALUE_OPTIONAL,
             'Controller directory name'
         );
         $this->addOption(
-            self::CONTROLLER_ACTION_NAME,
+            ConfigKey::CONTROLLER_ACTION_NAME,
             null,
             InputOption::VALUE_OPTIONAL,
             'Controller action name'
@@ -118,60 +137,60 @@ class Controller extends Command
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        if (!$input->getOption(self::VENDOR_NAME)) {
+        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
             $question = new Question('<question>Vendor name [ProcessEight]:</question> ', 'ProcessEight');
 
             $input->setOption(
-                self::VENDOR_NAME,
+                ConfigKey::VENDOR_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
-        if (!$input->getOption(self::MODULE_NAME)) {
+        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
             $question = new Question('<question>Module name:</question> ');
 
             $input->setOption(
-                self::MODULE_NAME,
+                ConfigKey::MODULE_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
-        if (!$input->getOption(self::FRONT_NAME)) {
+        if (!$input->getOption(ConfigKey::FRONT_NAME)) {
             $question = new Question('<question>Front name (the \'catalog\' in \'/catalog/product/view\'):</question> ');
 
             $input->setOption(
-                self::FRONT_NAME,
+                ConfigKey::FRONT_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
-        if (!$input->getOption(self::CONTROLLER_DIRECTORY_NAME)) {
-            $question = new Question('<question>Controller directory name (the \'product\' in \'/catalog/product/view\') [Index]:</question> ',
-                'Index');
+        if (!$input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME)) {
+            $question = new Question('<question>Controller directory name (the \'product\' in \'/catalog/product/view\') [index]:</question> ',
+                'index');
 
             $input->setOption(
-                self::CONTROLLER_DIRECTORY_NAME,
+                ConfigKey::CONTROLLER_DIRECTORY_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
-        if (!$input->getOption(self::CONTROLLER_ACTION_NAME)) {
-            $question = new Question('<question>Controller action name (the \'view\' in \'/catalog/product/view\') [View]:</question> ',
-                'View');
+        if (!$input->getOption(ConfigKey::CONTROLLER_ACTION_NAME)) {
+            $question = new Question('<question>Controller action name (the \'view\' in \'/catalog/product/view\') [view]:</question> ',
+                'view');
 
             $input->setOption(
-                self::CONTROLLER_ACTION_NAME,
+                ConfigKey::CONTROLLER_ACTION_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
 
         // Validate inputs
         $validationResult = $this->validateInputs([
-            self::VENDOR_NAME               => $input->getOption(self::VENDOR_NAME),
-            self::MODULE_NAME               => $input->getOption(self::MODULE_NAME),
-            self::FRONT_NAME                => $input->getOption(self::FRONT_NAME),
-            self::CONTROLLER_DIRECTORY_NAME => $input->getOption(self::CONTROLLER_DIRECTORY_NAME),
-            self::CONTROLLER_ACTION_NAME    => $input->getOption(self::CONTROLLER_ACTION_NAME),
+            ConfigKey::VENDOR_NAME               => $input->getOption(ConfigKey::VENDOR_NAME),
+            ConfigKey::MODULE_NAME               => $input->getOption(ConfigKey::MODULE_NAME),
+            ConfigKey::FRONT_NAME                => $input->getOption(ConfigKey::FRONT_NAME),
+            ConfigKey::CONTROLLER_DIRECTORY_NAME => $input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME),
+            ConfigKey::CONTROLLER_ACTION_NAME    => $input->getOption(ConfigKey::CONTROLLER_ACTION_NAME),
         ]);
 
         if (!$validationResult['is_valid']) {
@@ -182,11 +201,11 @@ class Controller extends Command
 
         // Generate assets
         $creationResult = $this->generateModule([
-            self::VENDOR_NAME               => $input->getOption(self::VENDOR_NAME),
-            self::MODULE_NAME               => $input->getOption(self::MODULE_NAME),
-            self::FRONT_NAME                => $input->getOption(self::FRONT_NAME),
-            self::CONTROLLER_DIRECTORY_NAME => $input->getOption(self::CONTROLLER_DIRECTORY_NAME),
-            self::CONTROLLER_ACTION_NAME    => $input->getOption(self::CONTROLLER_ACTION_NAME),
+            ConfigKey::VENDOR_NAME               => $input->getOption(ConfigKey::VENDOR_NAME),
+            ConfigKey::MODULE_NAME               => $input->getOption(ConfigKey::MODULE_NAME),
+            ConfigKey::FRONT_NAME                => $input->getOption(ConfigKey::FRONT_NAME),
+            ConfigKey::CONTROLLER_DIRECTORY_NAME => $input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME),
+            ConfigKey::CONTROLLER_ACTION_NAME    => $input->getOption(ConfigKey::CONTROLLER_ACTION_NAME),
         ]);
 
         foreach ($creationResult['creation_message'] as $message) {
@@ -227,23 +246,26 @@ class Controller extends Command
      */
     private function generateModule(array $inputs) : array
     {
-        $inputs['area-code'] = 'frontend';
-        $config              = [
+        $inputs['area-code']                = 'frontend';
+        $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
+            $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
+            \Magento\Framework\Module\Dir::MODULE_ETC_DIR
+        );
+
+        $config = [
             'data'     => $inputs,
             'is_valid' => true,
         ];
 
         $creationPipeline = $this->pipeline;
-        // Create controller folder
-        $creationPipeline = $creationPipeline->pipe($this->createControllerFolder);
-        // Create controller directory folder
-//        $creationPipeline = $creationPipeline->pipe($this->createEtcFolder);
-        // Create controller class
-//        $creationPipeline = $creationPipeline->pipe($this->createModuleXmlFile);
         // Create etc/frontend folder
-//        $creationPipeline = $creationPipeline->pipe($this->createRegistrationPhpFile);
+        $creationPipeline = $creationPipeline->pipe($this->createAreaCodeFolder);
         // Create routes.xml file
         $creationPipeline = $creationPipeline->pipe($this->createRoutesXmlFile);
+        // Create controller folder
+        $creationPipeline = $creationPipeline->pipe($this->createControllerFolder);
+        // Create controller class
+        $creationPipeline = $creationPipeline->pipe($this->createControllerClass);
 
         return $creationPipeline->process($config);
     }

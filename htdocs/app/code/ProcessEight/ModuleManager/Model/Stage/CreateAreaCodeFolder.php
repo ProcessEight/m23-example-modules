@@ -19,9 +19,16 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 
-class CreateModuleFolder
+/**
+ * Class CreateAreaCodeFolder
+ *
+ * Creates a folder with the name <path-to-area-code-folder>/<area-code>
+ * Assumes that <path-to-area-code-folder> already exists
+ *
+ * @package ProcessEight\ModuleManager\Model\Stage
+ */
+class CreateAreaCodeFolder
 {
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -51,32 +58,29 @@ class CreateModuleFolder
      * @param mixed[] $config
      *
      * @return mixed[]
-     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function __invoke(array $config)
     {
-        // Get absolute path to module folder
-        $appCodePath = implode(DIRECTORY_SEPARATOR, [
-            $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
-            'code',
-            $config['data'][ConfigKey::VENDOR_NAME],
-            $config['data'][ConfigKey::MODULE_NAME],
+        // Get absolute path to module <path-to-area-code-folder>/<area-code> folder
+        $areaCodeFolderPath = implode(DIRECTORY_SEPARATOR, [
+            $config['data']['path-to-area-code-folder'],
+            $config['data']['area-code'],
         ]);
 
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($appCodePath);
+            $this->filesystemDriver->isExists($areaCodeFolderPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'] = "Check if folder exists at <info>{$appCodePath}</info>: " . ($e->getMessage());
+            $config['creation_message'] = "Failed checking folder exists at <info>{$areaCodeFolderPath}</info>: " . ($e->getMessage());
 
             return $config;
         }
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($appCodePath);
+            $this->filesystemDriver->createDirectory($areaCodeFolderPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'] = "Failed to create folder at <info>'{$appCodePath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['creation_message'] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }
