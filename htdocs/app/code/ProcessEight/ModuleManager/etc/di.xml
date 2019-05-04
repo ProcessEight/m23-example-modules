@@ -21,6 +21,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="processeight_modulemanager_command_create" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create</item>
+                <item name="processeight_modulemanager_command_add_frontend_controller" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\Controller</item>
             </argument>
         </arguments>
     </type>
