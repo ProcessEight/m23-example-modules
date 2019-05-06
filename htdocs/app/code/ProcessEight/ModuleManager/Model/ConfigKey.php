@@ -29,18 +29,22 @@ interface ConfigKey
     const MODULE_NAME = 'module-name';
 
     /**
-     * Front name of controller
+     * Front name of controller, used to generate routes.xml
      */
     const FRONT_NAME = 'front-name';
 
     /**
-     * Controller directory name
+     * Controller directory name, used to create controller sub-directory
      */
     const CONTROLLER_DIRECTORY_NAME = 'controller-directory-name';
 
     /**
-     * Controller action class name
+     * Controller action class name, used to generate Controller Action Class name
      */
     const CONTROLLER_ACTION_NAME = 'controller-action-name';
 
+    /**
+     * Layout XML handle, used to generate Layout XML filename
+     */
+    const LAYOUT_XML_HANDLE = 'layout-xml-handle';
 }
