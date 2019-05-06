@@ -25,6 +25,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * Class Controller
+ *
+ * Creates an etc/frontend/routes.xml file and Controller/<controller-directory-name>/<controller-action-name>.php file
+ *
+ * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
+ */
 class Controller extends Command
 {
     /**
@@ -250,7 +257,7 @@ class Controller extends Command
         $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
             $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_ETC_DIR
-        );
+        ) . DIRECTORY_SEPARATOR . '{{AREA_CODE}}';
 
         $config = [
             'data'     => $inputs,

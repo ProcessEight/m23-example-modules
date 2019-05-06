@@ -274,7 +274,7 @@ class Controller extends Command
         $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
             $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_ETC_DIR
-        );
+        ) . DIRECTORY_SEPARATOR . '{{AREA_CODE}}';
 
         $config = [
             'data'     => $inputs,

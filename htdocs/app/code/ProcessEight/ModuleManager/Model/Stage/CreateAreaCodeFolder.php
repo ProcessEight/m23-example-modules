@@ -58,20 +58,17 @@ class CreateAreaCodeFolder
      * @param mixed[] $config
      *
      * @return mixed[]
+     * @throws FileSystemException
      */
     public function __invoke(array $config)
     {
         // Get absolute path to module <path-to-area-code-folder>/<area-code> folder
-        $areaCodeFolderPath = implode(DIRECTORY_SEPARATOR, [
-            $config['data']['path-to-area-code-folder'],
-            $config['data']['area-code'],
-        ]);
+        $areaCodeFolderPath = str_replace('{{AREA_CODE}}', $config['data']['area-code'], $config['data']['path-to-area-code-folder']);
 
         // Check if folder exists
-        try {
-            $this->filesystemDriver->isExists($areaCodeFolderPath);
-        } catch (FileSystemException $e) {
-            $config['creation_message'] = "Failed checking folder exists at <info>{$areaCodeFolderPath}</info>: " . ($e->getMessage());
+        $isExists = $this->filesystemDriver->isExists($areaCodeFolderPath);
+        if ($isExists) {
+            $config['creation_message'][] = "Folder already exists: <info>" . $areaCodeFolderPath . "</info>.";
 
             return $config;
         }
@@ -79,8 +76,9 @@ class CreateAreaCodeFolder
         // Create folder
         try {
             $this->filesystemDriver->createDirectory($areaCodeFolderPath);
+            $config['creation_message'][] = "Created folder at <info>'{$areaCodeFolderPath}'</info>";
         } catch (FileSystemException $e) {
-            $config['creation_message'] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['creation_message'][] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }

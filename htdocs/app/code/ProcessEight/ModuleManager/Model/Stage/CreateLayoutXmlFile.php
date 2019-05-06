@@ -22,12 +22,12 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Creates a vendor-name/module-name/registration.php file
- * Assumes that the vendor-name/module-name/ folder already exists
+ * Creates a <layout-xml-handle>.xml file
+ * Assumes that the vendor-name/module-name/view/<area-code>/layout/ folder already exists
  */
-class CreateRegistrationPhpFile
+class CreateLayoutXmlFile
 {
-    const ARTEFACT_FILE_NAME = 'registration.php';
+    const ARTEFACT_FILE_NAME = '{{LAYOUT_XML_HANDLE}}.xml';
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -68,33 +68,29 @@ class CreateRegistrationPhpFile
      */
     public function __invoke(array $config)
     {
-        // Get absolute path to module folder
-        try {
-            $modulePath = implode(DIRECTORY_SEPARATOR, [
-                $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
-                'code',
-                $config['data'][ConfigKey::VENDOR_NAME],
-                $config['data'][ConfigKey::MODULE_NAME],
-            ]);
-        } catch (FileSystemException $e) {
-            $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed getting absolute path to module folder: " . ($e->getMessage());
+        // Get absolute path to folder
+        $absolutePathToFolder = str_replace('{{AREA_CODE}}', $config['data']['area-code'], $config['data']['path-to-area-code-folder']) . DIRECTORY_SEPARATOR;
 
-            return $config;
-        }
+        // Replace template variable in file name
+        $artefactFileName = str_replace(
+            '{{LAYOUT_XML_HANDLE}}',
+            // Replace backslashes with underscores
+            str_replace('/', '_', $config['data'][ConfigKey::LAYOUT_XML_HANDLE]),
+            self::ARTEFACT_FILE_NAME
+        );
 
-        // Check if file exists
-        $artefactFilePath = $modulePath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
+        // Check if folder exists
+        $artefactFilePath = $absolutePathToFolder . $artefactFileName;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
-            if ($isExists) {
-                $config['creation_message'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
+            if($isExists) {
+                $config['creation_message'][] = "File already exists: <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
-            $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$modulePath}</info>: " . ($e->getMessage());
+            $config['is_valid']         = false;
+            $config['creation_message'][] = "Failed checking folder exists at <info>{$artefactFilePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -105,10 +101,13 @@ class CreateRegistrationPhpFile
             $artefactFileTemplate = $this->filesystemDriver->fileGetContents(implode(DIRECTORY_SEPARATOR , [
                 $this->moduleDir->getDir('ProcessEight_ModuleManager'),
                 'Template',
+                \Magento\Framework\Module\Dir::MODULE_VIEW_DIR,
+                $config['data']['area-code'],
+                'layout',
                 self::ARTEFACT_FILE_NAME . '.template',
             ]));
-            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME], $artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME], $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME],$artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file
@@ -123,7 +122,7 @@ class CreateRegistrationPhpFile
             return $config;
         }
 
-        $config['creation_message'][] = "Created <info>" . self::ARTEFACT_FILE_NAME . "</info> file at <info>{$artefactFilePath}</info>";
+        $config['creation_message'][] = "Created file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }
