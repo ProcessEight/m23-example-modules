@@ -22,12 +22,12 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Creates a <layout-xml-handle>.xml file
- * Assumes that the vendor-name/module-name/view/<area-code>/layout/ folder already exists
+ * Creates a vendor-name/module-name/view/<area-code>/template/<template>.phtml file
+ * Assumes that the vendor-name/module-name/view/<area-code>/template/ folder already exists
  */
-class CreateLayoutXmlFile
+class CreateTemplatePhtmlFile
 {
-    const ARTEFACT_FILE_NAME = '{{LAYOUT_XML_HANDLE}}.xml';
+    const ARTEFACT_FILE_NAME = '{{TEMPLATE}}.phtml';
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -45,7 +45,7 @@ class CreateLayoutXmlFile
     private $moduleDir;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor
      *
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
@@ -73,13 +73,13 @@ class CreateLayoutXmlFile
 
         // Replace template variable in file name
         $artefactFileName = str_replace(
-            '{{LAYOUT_XML_HANDLE}}',
+            '{{TEMPLATE}}',
             // Replace backslashes with underscores
-            str_replace('/', '_', $config['data'][ConfigKey::LAYOUT_XML_HANDLE]),
+            $config['data'][ConfigKey::TEMPLATE_NAME],
             self::ARTEFACT_FILE_NAME
         );
 
-        // Check if folder exists
+        // Check if file exists
         $artefactFilePath = $absolutePathToFolder . $artefactFileName;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
@@ -90,7 +90,7 @@ class CreateLayoutXmlFile
             }
         } catch (FileSystemException $e) {
             $config['is_valid']         = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$artefactFilePath}</info>: " . ($e->getMessage());
+            $config['creation_message'][] = "Failed checking folder exists: <info>{$artefactFilePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -103,18 +103,18 @@ class CreateLayoutXmlFile
                 'Template',
                 \Magento\Framework\Module\Dir::MODULE_VIEW_DIR,
                 $config['data']['area-code'],
-                'layout',
+                'template',
                 self::ARTEFACT_FILE_NAME . '.template',
             ]));
             $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{VENDOR_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::VENDOR_NAME]), $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::MODULE_NAME]), $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{TEMPLATE_NAME}}', $config['data'][ConfigKey::TEMPLATE_NAME], $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file
-            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath,
-                'wb+');
+            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath, 'wb+');
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
 
         } catch (FileSystemException $e) {
@@ -124,7 +124,7 @@ class CreateLayoutXmlFile
             return $config;
         }
 
-        $config['creation_message'][] = "Created file at <info>{$artefactFilePath}</info>";
+        $config['creation_message'][] = "Created <info>{$artefactFileName}</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }

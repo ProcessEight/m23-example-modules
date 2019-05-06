@@ -47,4 +47,9 @@ interface ConfigKey
      * Layout XML handle, used to generate Layout XML filename
      */
     const LAYOUT_XML_HANDLE = 'layout-xml-handle';
+
+    /**
+     * Template name, used to generate the PHTML file name
+     */
+    const TEMPLATE_NAME = 'template-name';
 }
