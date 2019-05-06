@@ -65,7 +65,7 @@ class CreateModifyDeleteDirectoryExample extends Command
      */
     protected function configure()
     {
-        $this->setName("process-eight:create-modify-delete-directory-example");
+        $this->setName("process-eight:example:create-modify-delete-directory");
         $this->setDescription("Demonstrates how to programmatically create, modify and delete folders in Magento 2");
         parent::configure();
     }
