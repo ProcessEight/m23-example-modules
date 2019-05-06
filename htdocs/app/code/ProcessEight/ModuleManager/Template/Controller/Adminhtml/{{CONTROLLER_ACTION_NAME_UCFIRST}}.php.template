@@ -1,0 +1,61 @@
+<?php
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Controller\Adminhtml\{{CONTROLLER_DIRECTORY_NAME_UCFIRST}};
+
+/**
+ * Serves /admin/{{FRONT_NAME}}/{{CONTROLLER_DIRECTORY_NAME}}/{{CONTROLLER_ACTION_NAME}}
+ */
+class {{CONTROLLER_ACTION_NAME_UCFIRST}} extends \Magento\Backend\App\Action implements \Magento\Framework\App\Action\HttpGetActionInterface
+{
+    /**
+     * @see app/code/{{VENDOR_NAME}}/{{MODULE_NAME}}/etc/acl.xml
+     */
+    const ADMIN_RESOURCE = '{{VENDOR_NAME}}_{{MODULE_NAME}}::{{CONTROLLER_ACTION_NAME}}';
+
+    /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
+    private $resultPageFactory;
+
+    /**
+     * @param \Magento\Backend\App\Action\Context $context
+     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     */
+    public function __construct(
+        \Magento\Backend\App\Action\Context $context,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+    ) {
+        $this->resultPageFactory = $resultPageFactory;
+        parent::__construct($context);
+    }
+
+    /**
+     * @return \Magento\Backend\Model\View\Result\Page
+     */
+    public function execute()
+    {
+        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        // Highlight the 'Process Eight Extensions' menu
+        //$resultPage->setActiveMenu('ProcessEight_Shared::extensions');
+        // Set the title (on the page and in the browser title bar)
+        $resultPage->getConfig()->getTitle()->prepend(__('{{VENDOR_NAME}} {{MODULE_NAME}}'));
+        return $resultPage;
+    }
+}

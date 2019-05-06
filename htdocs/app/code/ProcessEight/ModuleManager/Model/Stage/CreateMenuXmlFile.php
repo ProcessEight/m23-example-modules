@@ -22,16 +22,16 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Class CreateControllerClass
+ * Class CreateMenuXmlFile
  *
- * Creates controller class for frontend or adminhtml
- * Assumes that the controller folder already exists
+ * Creates a vendor-name/module-name/etc/<area-code>/menu.xml file
+ * Assumes that the vendor-name/module-name/etc/<area-code> folder already exists
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateControllerClass
+class CreateMenuXmlFile
 {
-    const ARTEFACT_FILE_NAME = '{{CONTROLLER_ACTION_NAME_UCFIRST}}.php';
+    const ARTEFACT_FILE_NAME = 'menu.xml';
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -72,41 +72,35 @@ class CreateControllerClass
      */
     public function __invoke(array $config)
     {
-        // Get absolute path to controller folder
+        // Get absolute path to module etc folder
         try {
-            $artefactFolderPath = implode(DIRECTORY_SEPARATOR, [
+            $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
                 $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
                 'code',
                 $config['data'][ConfigKey::VENDOR_NAME],
                 $config['data'][ConfigKey::MODULE_NAME],
-                \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR,
-                ($config['data']['area-code'] === 'adminhtml' ? ucfirst($config['data']['area-code']) : ''),
-                ucfirst($config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME]),
+                \Magento\Framework\Module\Dir::MODULE_ETC_DIR,
+                $config['data']['area-code'],
             ]);
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed getting absolute path to folder: " . ($e->getMessage());
+            $config['creation_message'][] = "Failed getting absolute path to etc folder: " . ($e->getMessage());
 
             return $config;
         }
 
-        // Check if file exists
-        $artefactFileName = str_replace(
-            '{{CONTROLLER_ACTION_NAME_UCFIRST}}',
-            ucfirst($config['data'][ConfigKey::CONTROLLER_ACTION_NAME]),
-            self::ARTEFACT_FILE_NAME
-        );
-        $artefactFilePath = $artefactFolderPath . DIRECTORY_SEPARATOR . $artefactFileName;
+        // Check if folder exists
+        $artefactFilePath = $moduleEtcPath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if ($isExists) {
-                $config['creation_message'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>{$artefactFilePath}</info>";
+                $config['creation_message'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$artefactFolderPath}</info>: " . ($e->getMessage());
+            $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -117,22 +111,20 @@ class CreateControllerClass
             $artefactFileTemplate = $this->filesystemDriver->fileGetContents(implode(DIRECTORY_SEPARATOR, [
                     $this->moduleDir->getDir('ProcessEight_ModuleManager'),
                     'Template',
-                    'Controller',
-                    ($config['data']['area-code'] === 'adminhtml' ? ucfirst($config['data']['area-code']) : ''),
+                    'etc',
+                    $config['data']['area-code'],
                     self::ARTEFACT_FILE_NAME . '.template',
                 ]
             ));
             $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{CONTROLLER_DIRECTORY_NAME_UCFIRST}}', ucfirst($config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME]),$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{CONTROLLER_ACTION_NAME_UCFIRST}}', ucfirst($config['data'][ConfigKey::CONTROLLER_ACTION_NAME]),$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data'][ConfigKey::FRONT_NAME],$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{CONTROLLER_DIRECTORY_NAME}}', $config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME],$artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{CONTROLLER_ACTION_NAME}}', $config['data'][ConfigKey::CONTROLLER_ACTION_NAME],$artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data']['front-name'], $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{CONTROLLER_DIRECTORY_NAME}}',strtolower($config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME]), $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{CONTROLLER_ACTION_NAME}}',strtolower($config['data'][ConfigKey::CONTROLLER_ACTION_NAME]), $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file
-            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath,'wb+');
+            $artefactFileResource = $this->filesystemDriver->fileOpen($artefactFilePath, 'wb+');
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
 
         } catch (FileSystemException $e) {
@@ -142,7 +134,7 @@ class CreateControllerClass
             return $config;
         }
 
-        $config['creation_message'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
+        $config['creation_message'][] = "Created <info>" . self::ARTEFACT_FILE_NAME . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }

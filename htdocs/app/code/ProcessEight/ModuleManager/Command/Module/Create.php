@@ -68,7 +68,7 @@ class Create extends Command
     private $createComposerJsonFile;
 
     /**
-     * Create constructor.
+     * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                         $pipeline
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName        $validateVendorName
@@ -134,7 +134,7 @@ class Create extends Command
         }
 
         if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name:</question> ');
+            $question = new Question('<question>Module name: [Test]</question> ', 'Test');
 
             $input->setOption(
                 ConfigKey::MODULE_NAME,

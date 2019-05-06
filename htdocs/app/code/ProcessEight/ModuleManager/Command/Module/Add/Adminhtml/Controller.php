@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
+namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
 
 use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Command\Command;
@@ -25,12 +25,24 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * Class Controller
+ *
+ * Creates an etc/adminhtml/routes.xml file and Controller/Adminhtml/<controller-directory-name>/<controller-action-name>.php file
+ *
+ * @package ProcessEight\ModuleManager\Command\Module\Add\Adminhtml
+ */
 class Controller extends Command
 {
     /**
      * @var \League\Pipeline\Pipeline
      */
     private $pipeline;
+
+    /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    private $moduleDir;
 
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
@@ -43,6 +55,11 @@ class Controller extends Command
     private $validateModuleName;
 
     /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
+     */
+    private $createAreaCodeFolder;
+
+    /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile
      */
     private $createRoutesXmlFile;
@@ -53,19 +70,19 @@ class Controller extends Command
     private $createControllerFolder;
 
     /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
-     */
-    private $createAreaCodeFolder;
-
-    /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass
      */
     private $createControllerClass;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateMenuXmlFile
+     */
+    private $createMenuXmlFile;
+
+    /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAclXmlFile
+     */
+    private $createAclXmlFile;
 
     /**
      * Constructor.
@@ -78,6 +95,8 @@ class Controller extends Command
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile    $createRoutesXmlFile
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder $createControllerFolder
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass  $createControllerClass
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateMenuXmlFile      $createMenuXmlFile
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateAclXmlFile       $createAclXmlFile
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
@@ -87,7 +106,9 @@ class Controller extends Command
         \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder,
         \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile $createRoutesXmlFile,
         \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder $createControllerFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass $createControllerClass
+        \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass $createControllerClass,
+        \ProcessEight\ModuleManager\Model\Stage\CreateMenuXmlFile $createMenuXmlFile,
+        \ProcessEight\ModuleManager\Model\Stage\CreateAclXmlFile $createAclXmlFile
     ) {
         parent::__construct();
         $this->pipeline               = $pipeline;
@@ -98,6 +119,8 @@ class Controller extends Command
         $this->createRoutesXmlFile    = $createRoutesXmlFile;
         $this->createControllerFolder = $createControllerFolder;
         $this->createControllerClass  = $createControllerClass;
+        $this->createMenuXmlFile      = $createMenuXmlFile;
+        $this->createAclXmlFile       = $createAclXmlFile;
     }
 
     /**
@@ -105,8 +128,8 @@ class Controller extends Command
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:frontend:controller");
-        $this->setDescription("Adds a new controller PHP class and routes.xml file.");
+        $this->setName("process-eight:module:add:adminhtml:controller");
+        $this->setDescription("Creates an etc/adminhtml/routes.xml file and Controller/Adminhtml/<controller-directory-name>/<controller-action-name>.php file.");
         $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
         $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         $this->addOption(ConfigKey::FRONT_NAME, null, InputOption::VALUE_OPTIONAL, 'Front name');
@@ -165,7 +188,7 @@ class Controller extends Command
         }
 
         if (!$input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME)) {
-            $question = new Question('<question>Controller directory name (the \'product\' in \'/catalog/product/view\') [index]:</question> ',
+            $question = new Question('<question>Controller directory name (the \'product\' in \'/admin/catalog/product/edit\') [index]:</question> ',
                 'index');
 
             $input->setOption(
@@ -175,7 +198,7 @@ class Controller extends Command
         }
 
         if (!$input->getOption(ConfigKey::CONTROLLER_ACTION_NAME)) {
-            $question = new Question('<question>Controller action name (the \'view\' in \'/catalog/product/view\') [view]:</question> ',
+            $question = new Question('<question>Controller action name (the \'view\' in \'/admin/catalog/product/view\') [view]:</question> ',
                 'view');
 
             $input->setOption(
@@ -237,16 +260,17 @@ class Controller extends Command
     }
 
     /**
-     * Create and run generate module pipeline
+     * Create and run pipeline
      *
      * @param string[] $inputs
      *
-     * @return int|mixed
+     * @return array
      * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
      */
     private function generateModule(array $inputs) : array
     {
-        $inputs['area-code']                = 'frontend';
+        $inputs['area-code'] = 'adminhtml';
+        // Get path to vendor-code/module-name/etc/adminhtml/ folder
         $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
             $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_ETC_DIR
@@ -258,7 +282,7 @@ class Controller extends Command
         ];
 
         $creationPipeline = $this->pipeline;
-        // Create etc/frontend folder
+        // Create etc/adminhtml folder
         $creationPipeline = $creationPipeline->pipe($this->createAreaCodeFolder);
         // Create routes.xml file
         $creationPipeline = $creationPipeline->pipe($this->createRoutesXmlFile);
@@ -266,6 +290,10 @@ class Controller extends Command
         $creationPipeline = $creationPipeline->pipe($this->createControllerFolder);
         // Create controller class
         $creationPipeline = $creationPipeline->pipe($this->createControllerClass);
+        // Create etc/acl.xml file
+        $creationPipeline = $creationPipeline->pipe($this->createAclXmlFile);
+        // Create etc/adminhtml/menu.xml file
+        $creationPipeline = $creationPipeline->pipe($this->createMenuXmlFile);
 
         return $creationPipeline->process($config);
     }

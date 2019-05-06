@@ -41,7 +41,7 @@ class CreateControllerFolder
     private $filesystemDriver;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor.
      *
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
@@ -62,7 +62,6 @@ class CreateControllerFolder
      */
     public function __invoke(array $config)
     {
-        $adminhtmlDirectoryName = ($config['data']['area-code'] == 'adminhtml') ? ucfirst($config['data']['area-code']) : '';
         // Get absolute path to controller folder
         $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
             $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
@@ -70,8 +69,8 @@ class CreateControllerFolder
             $config['data'][ConfigKey::VENDOR_NAME],
             $config['data'][ConfigKey::MODULE_NAME],
             \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR,
-            $adminhtmlDirectoryName,
-            $config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME],
+            ($config['data']['area-code'] === 'adminhtml' ? ucfirst($config['data']['area-code']) : ''),
+            ucfirst($config['data'][ConfigKey::CONTROLLER_DIRECTORY_NAME]),
         ]);
 
         // Check if folder exists
