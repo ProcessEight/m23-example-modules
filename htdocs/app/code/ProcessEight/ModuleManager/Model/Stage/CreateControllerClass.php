@@ -90,13 +90,14 @@ class CreateControllerClass
             return $config;
         }
 
-        // Check if file exists
+        // Replace template variable in file name
         $artefactFileName = str_replace(
             '{{CONTROLLER_ACTION_NAME_UCFIRST}}',
             ucfirst($config['data'][ConfigKey::CONTROLLER_ACTION_NAME]),
             self::ARTEFACT_FILE_NAME
         );
         $artefactFilePath = $artefactFolderPath . DIRECTORY_SEPARATOR . $artefactFileName;
+        // Check if file exists
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if ($isExists) {

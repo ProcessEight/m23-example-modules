@@ -102,9 +102,11 @@ class CreateComposerJsonFile
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(
-                $this->moduleDir->getDir('ProcessEight_ModuleManager') . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME . '.template'
-            );
+            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(implode(DIRECTORY_SEPARATOR , [
+                $this->moduleDir->getDir('ProcessEight_ModuleManager'),
+                'Template',
+                self::ARTEFACT_FILE_NAME . '.template',
+            ]));
             $artefactFileTemplate = str_replace('{{COMPOSER_VENDOR_NAME}}', strtolower($config['data'][ConfigKey::VENDOR_NAME]), $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{COMPOSER_MODULE_NAME}}', strtolower($config['data'][ConfigKey::MODULE_NAME]), $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME], $artefactFileTemplate);

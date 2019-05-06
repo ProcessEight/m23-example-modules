@@ -68,9 +68,9 @@ class CreateModuleXmlFile
      */
     public function __invoke(array $config)
     {
-        // Get absolute path to module etc folder
+        // Get absolute path to folder
         try {
-            $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
+            $absolutePathToFolder = implode(DIRECTORY_SEPARATOR, [
                 $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
                 'code',
                 $config['data'][ConfigKey::VENDOR_NAME],
@@ -85,7 +85,7 @@ class CreateModuleXmlFile
         }
 
         // Check if folder exists
-        $artefactFilePath = $moduleEtcPath . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
+        $artefactFilePath = $absolutePathToFolder . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME;
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if($isExists) {
@@ -95,7 +95,7 @@ class CreateModuleXmlFile
             }
         } catch (FileSystemException $e) {
             $config['is_valid']         = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
+            $config['creation_message'][] = "Failed checking folder exists at <info>{$absolutePathToFolder}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -103,9 +103,11 @@ class CreateModuleXmlFile
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(
-                $this->moduleDir->getDir('ProcessEight_ModuleManager') . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . self::ARTEFACT_FILE_NAME . '.template'
-            );
+            $artefactFileTemplate = $this->filesystemDriver->fileGetContents(implode(DIRECTORY_SEPARATOR , [
+                $this->moduleDir->getDir('ProcessEight_ModuleManager'),
+                'Template',
+                self::ARTEFACT_FILE_NAME . '.template',
+            ]));
             $artefactFileTemplate = str_replace('{{VENDOR_NAME}}', $config['data'][ConfigKey::VENDOR_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
