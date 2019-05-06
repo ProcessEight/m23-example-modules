@@ -66,7 +66,7 @@ class GetDirectoryPathsExample extends Command
      */
     protected function configure()
     {
-        $this->setName("process-eight:get-directory-paths-example");
+        $this->setName("process-eight:example:get-directory-paths");
         $this->setDescription("Demonstrates how to programmatically retrieve paths to several types of Magento-specific directory (e.g. `base`, `media`, `var`, etc).");
         parent::configure();
     }
