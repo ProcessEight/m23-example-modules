@@ -60,7 +60,7 @@ class CustomLoggerExample extends Command
 
     protected function configure()
     {
-        $this->setName("process-eight:custom-logger-example");
+        $this->setName("process-eight:example:custom-logger");
         $this->setDescription("Demonstration of how to create a custom logger in Magento 2");
         parent::configure();
     }
