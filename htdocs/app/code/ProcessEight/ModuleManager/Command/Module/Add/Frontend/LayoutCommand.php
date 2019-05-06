@@ -26,13 +26,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
 /**
- * Class Layout
+ * Class LayoutCommand
  *
  * Creates a view/<area-code>/layout/<layout-xml-handle>.xml file
  *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class Layout extends Command
+class LayoutCommand extends Command
 {
     /**
      * @var \League\Pipeline\Pipeline
@@ -58,6 +58,7 @@ class Layout extends Command
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
      */
     private $createAreaCodeFolder;
+
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateLayoutXmlFile
      */

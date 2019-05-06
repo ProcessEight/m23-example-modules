@@ -34,7 +34,7 @@ class CreateModuleFolder
     private $filesystemDriver;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor
      *
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver

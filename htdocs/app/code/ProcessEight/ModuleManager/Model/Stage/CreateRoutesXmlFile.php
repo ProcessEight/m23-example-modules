@@ -120,7 +120,7 @@ class CreateRoutesXmlFile
             $artefactFileTemplate = str_replace('{{VENDOR_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::VENDOR_NAME]), $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME}}', $config['data'][ConfigKey::MODULE_NAME],$artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{MODULE_NAME_LOWERCASE}}',strtolower($config['data'][ConfigKey::MODULE_NAME]), $artefactFileTemplate);
-            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data']['front-name'], $artefactFileTemplate);
+            $artefactFileTemplate = str_replace('{{FRONT_NAME}}', $config['data'][ConfigKey::FRONT_NAME], $artefactFileTemplate);
             $artefactFileTemplate = str_replace('{{YEAR}}', date('Y'), $artefactFileTemplate);
 
             // Write template to file
