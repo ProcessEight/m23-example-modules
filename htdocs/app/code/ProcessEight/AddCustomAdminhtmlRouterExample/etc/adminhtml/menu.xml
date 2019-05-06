@@ -30,7 +30,7 @@
          * resource: Required. Defines a matching resource in acl.xml. Value must match /[A-Z]+[A-Za-z0-9]{1,}_[A-Z]+[A-Z0-9a-z]{1,}::[A-Za-z_0-9]{1,}/. Minimal length 3 symbol. Case insensitive.
          * sortOrder: Optional. Defines sort order in menu. Int.
          * action: Optional. URI to an admin page. Item action attribute can has only [a-zA-Z0-9/_]. Minimal length 3 symbol.
-         * parent: Optional. Item id attribute can has only [a-z0-9/_]. Minimal length 3 symbol. Case insensitive. Must be unique?
+         * parent: Optional. Defines an id attribute from another 'add' node to use as the parent.
          * toolTip: Optional. Text which appears which user hovers over menu item. Minimal length 3 symbol.
          * dependsOnModule: Optional. Value must match /[A-Za-z0-9_]{3,}/. Minimal length 3 symbol. Case insensitive.
          * dependsOnConfig: Optional. Value must match /[A-Za-z0-9_/]{3,}/. Minimal length 3 symbol. Case insensitive.
