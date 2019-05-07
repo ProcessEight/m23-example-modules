@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--
+     Plugins for \Magento\Framework\App\Action\Action::dispatch
+     -->
+    <type name="Magento\Framework\App\Action\Action">
+        <!-- I've added each plugin separately here so I can define different sort orders for each plugin type -->
+        <plugin sortOrder="11" name="devCertUnitOneOneSixActionBeforeDispatch11" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionDispatchBeforePlugin"/>
+<!--        <plugin sortOrder="12" name="devCertUnitOneOneSixActionAroundDispatch12" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionDispatchAroundPlugin"/>-->
+<!--        <plugin sortOrder="13" name="devCertUnitOneOneSixActionAfterDispatch13" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionDispatchAfterPlugin"/>-->
+        <!-- I've added each plugin separately here so I can define different sort orders for each plugin type -->
+<!--        <plugin sortOrder="7" name="devCertUnitOneOneSixActionBeforeDispatch7" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionPluginExampleTwo"/>-->
+<!--        <plugin sortOrder="9" name="devCertUnitOneOneSixActionAroundDispatch9" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionPluginExampleTwo"/>-->
+<!--        <plugin sortOrder="10" name="devCertUnitOneOneSixActionAfterDispatch10" type="DevCertUnitOne\OneSix\Plugin\App\Action\ActionPluginExampleTwo"/>-->
+    </type>
+    <!--
+     Plugins for \DevCertUnitOne\OneSix\Controller\OneSix\PluginsExample::dispatch
+     -->
+    <type name="DevCertUnitOne\OneSix\Controller\OneSix\PluginsExample">
+        <!-- I've added each plugin separately here so I can define different sort orders for each plugin type -->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleBeforeDispatch4" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleThree"/>-->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleAroundDispatch5" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleThree"/>-->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleAfterDispatch6" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleThree"/>-->
+        <!-- I've added each plugin separately here so I can define different sort orders for each plugin type -->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleBeforeDispatch1" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleFour"/>-->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleAroundDispatch2" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleFour"/>-->
+<!--        <plugin sortOrder="1" name="devCertUnitOneOneSixPluginsExampleAfterDispatch3" type="DevCertUnitOne\OneSix\Plugin\Controller\OneSix\PluginsExamplePluginExampleFour"/>-->
+    </type>
+</config>
