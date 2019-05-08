@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <!-- Run this command first -->
+                <item name="processeight_proxyclassexample_example_proxyclasses_withoutproxy" xsi:type="object">ProcessEight\ProxyClassExample\Command\WithoutProxyCommand</item>
+                <!-- Comment out the above 'item' node, then run this command second -->
+                <item name="processeight_proxyclassexample_example_proxyclasses_withproxy" xsi:type="object">ProcessEight\ProxyClassExample\Command\WithProxyCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Example of using a Proxy Class instead of the target class. Basically you just add '\Proxy' to the end of the namespaced class name -->
+    <type name="ProcessEight\ProxyClassExample\Model\FastLoadingWithProxy">
+        <arguments>
+            <argument name="slowLoading" xsi:type="object">ProcessEight\ProxyClassExample\Model\SlowLoading\Proxy</argument>
+        </arguments>
+    </type>
+</config>
