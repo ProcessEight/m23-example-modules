@@ -3,12 +3,16 @@
 ## Add a new stage
 See `\ProcessEight\ModuleManager\Model\Stage\CreateFolderStage` for a complete example.
 
+Each stage should be responsible for the data it needs to work.
+
 A Stage must have two methods:
 
 ### `__invoke``
 Which is called whenever the pipeline is processed.
 
 The `__invoke` method has one parameter, `array $payload`. The payload contains data which must be accessible in all Stages/Pipelines (e.g. The `is_valid` validation flag).
+
+Values which need to be passed from stage to stage should be added to the payload array.
 
 ### `processStage`
 This is where the business logic of the Stage is executed.
@@ -37,7 +41,7 @@ Accepts an array which should contain all the data that the Stages/other Pipelin
 ## Add a new command
 See `\ProcessEight\ModuleManager\Command\Module\BinMagentoCommandCommand` for a complete example
 
-This class is a standard Symfony Console Component class. 
+This class is a standard Symfony Console Component class. The purpose of this class is to take the input from the CLI, then pass it to the Pipeline/Stage class and execute the Pipeline.
 
 The `processPipeline` method performs the same purpose as the `processPipeline` method in the Pipeline classes.
 

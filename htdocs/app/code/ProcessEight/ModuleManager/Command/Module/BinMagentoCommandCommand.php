@@ -54,42 +54,26 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
     private $moduleDir;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateFolderPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline
      */
-    private $createFolderPipeline;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage
-     */
-    private $createPhpClassFileStage;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
-     */
-    private $createXmlFileStage;
+    private $createBinMagentoCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                       $masterPipeline
-     * @param \Magento\Framework\Module\Dir                                   $moduleDir
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateFolderPipeline $createFolderPipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage $createPhpClassFileStage
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage      $createXmlFileStage
+     * @param \League\Pipeline\Pipeline                                                  $masterPipeline
+     * @param \Magento\Framework\Module\Dir                                              $moduleDir
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $masterPipeline,
         \Magento\Framework\Module\Dir $moduleDir,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateFolderPipeline $createFolderPipeline,
-        \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage $createPhpClassFileStage,
-        \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage $createXmlFileStage
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
     ) {
         parent::__construct();
-        $this->masterPipeline          = $masterPipeline;
-        $this->moduleDir               = $moduleDir;
-        $this->createFolderPipeline    = $createFolderPipeline;
-        $this->createPhpClassFileStage = $createPhpClassFileStage;
-        $this->createXmlFileStage      = $createXmlFileStage;
+        $this->masterPipeline                  = $masterPipeline;
+        $this->moduleDir                       = $moduleDir;
+        $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
     }
 
     /**
@@ -187,7 +171,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * Define and configure the stages in the pipeline, then execute it
+     * Prepare all the data needed to run all the stages/pipelines needed for this command, then execute the pipeline
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
      *
@@ -199,74 +183,23 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         $data[ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
         $data[ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
         $data['path-to-folder']       = $this->getAbsolutePathToFolder($input, 'Command');
-        $stageConfig                  = [
+        $config                       = [
             'data' => $data,
         ];
-        $this->createFolderPipeline->setConfig($stageConfig);
 
         // Create PHP Class Stage config
-
-        // Replace template variable in file name
-        $artefactFileName  = str_replace(
-            '{{COMMAND_CLASS_NAME}}',
-            $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            self::ARTEFACT_FILE_NAME
-        );
-        $templateVariables = [
-            '{{VENDOR_NAME}}'         => $input->getOption(ConfigKey::VENDOR_NAME),
-            '{{MODULE_NAME}}'         => $input->getOption(ConfigKey::MODULE_NAME),
-            '{{COMMAND_NAME}}'        => $input->getOption(ConfigKey::COMMAND_NAME),
-            '{{COMMAND_DESCRIPTION}}' => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
-            '{{COMMAND_CLASS_NAME}}'  => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            '{{YEAR}}'                => date('Y'),
-        ];
-
-        $templateFilePath = implode(DIRECTORY_SEPARATOR, [
-            $this->moduleDir->getDir('ProcessEight_ModuleManager'),
-            'Template',
-            'Command',
-            self::ARTEFACT_FILE_NAME . '.template',
-        ]);
-
-        $this->createPhpClassFileStage->setFileName($artefactFileName);
-        $this->createPhpClassFileStage->setFilePath($this->getAbsolutePathToFolder($input,'Command'));
-        $this->createPhpClassFileStage->setTemplateFilePath($templateFilePath);
-        $this->createPhpClassFileStage->setTemplateVariables($templateVariables);
+        $config['createPhpClassFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
+        $config['createPhpClassFileStage']['file-name']          = $this->getProcessedFileName($input, '{{COMMAND_CLASS_NAME}}');
+        $config['createPhpClassFileStage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['createPhpClassFileStage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php',             'Command');
 
         // Create di.xml Stage config
+        $config['createXmlFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
+        $config['createXmlFileStage']['file-name']          = 'di.xml';
+        $config['createXmlFileStage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['createXmlFileStage']['template-file-path'] = $this->getTemplateFilePath('di.xml', 'etc');
 
-        // Replace template variable in file name
-        $artefactFileName  = 'di.xml';
-        $templateVariables = [
-            '{{VENDOR_NAME}}'                  => $input->getOption(ConfigKey::VENDOR_NAME),
-            '{{MODULE_NAME}}'                  => $input->getOption(ConfigKey::MODULE_NAME),
-            '{{VENDOR_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
-            '{{MODULE_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
-            '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            '{{COMMAND_CLASS_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
-            '{{YEAR}}'                         => date('Y'),
-        ];
-
-        $templateFilePath = implode(DIRECTORY_SEPARATOR, [
-            $this->moduleDir->getDir('ProcessEight_ModuleManager'),
-            'Template',
-            'etc',
-            'di.xml.template',
-        ]);
-
-        $this->createXmlFileStage->setFileName($artefactFileName);
-        $this->createXmlFileStage->setFilePath($this->getAbsolutePathToFolder($input,'etc'));
-        $this->createXmlFileStage->setTemplateFilePath($templateFilePath);
-        $this->createXmlFileStage->setTemplateVariables($templateVariables);
-
-        // Add the pipelines/stages we need for this command
-        $masterPipeline = $this->masterPipeline
-            // Create the folder
-            ->pipe($this->createFolderPipeline)
-            // Create the class
-            ->pipe($this->createPhpClassFileStage)
-            // Create the di.xml
-            ->pipe($this->createXmlFileStage);
+        $this->createBinMagentoCommandPipeline->setConfig($config);
 
         // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
         $masterPipelineConfig = [
@@ -274,7 +207,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         ];
 
         // Run the pipeline
-        return $masterPipeline->process($masterPipelineConfig);
+        return $this->createBinMagentoCommandPipeline->processPipeline($masterPipelineConfig);
     }
 
     /**
@@ -288,7 +221,70 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         string $trailingPath = ''
     ) : string {
         return $this->moduleDir->getDir(
-            $input->getOption(ConfigKey::VENDOR_NAME) . '_' . $input->getOption(ConfigKey::MODULE_NAME)
-        ) . DIRECTORY_SEPARATOR . $trailingPath;
+                $input->getOption(ConfigKey::VENDOR_NAME) . '_' . $input->getOption(ConfigKey::MODULE_NAME)
+            ) . DIRECTORY_SEPARATOR . $trailingPath;
+    }
+
+    /**
+     * Replace template variables in file name
+     *
+     * @param InputInterface $input
+     * @param                $replace
+     *
+     * @return string
+     */
+    private function getProcessedFileName(\Symfony\Component\Console\Input\InputInterface $input, $replace) : string
+    {
+        $artefactFileName = str_replace(
+            $replace,
+            $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
+            self::ARTEFACT_FILE_NAME
+        );
+
+        return $artefactFileName;
+    }
+
+    /**
+     * All template variables used in all pipelines used by this command
+     *
+     * @param InputInterface $input
+     *
+     * @return array
+     */
+    private function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
+    {
+        $templateVariables = [
+            '{{VENDOR_NAME}}'                  => $input->getOption(ConfigKey::VENDOR_NAME),
+            '{{MODULE_NAME}}'                  => $input->getOption(ConfigKey::MODULE_NAME),
+            '{{VENDOR_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
+            '{{MODULE_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
+            '{{COMMAND_NAME}}'                 => $input->getOption(ConfigKey::COMMAND_NAME),
+            '{{COMMAND_DESCRIPTION}}'          => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
+            '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
+            '{{COMMAND_CLASS_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+            '{{YEAR}}'                         => date('Y'),
+        ];
+
+        return $templateVariables;
+    }
+
+    /**
+     * Return path to the template file
+     *
+     * @param string $fileName     File name has '.template' appended
+     * @param string $trailingPath Sub-folder within Template folder (if any) which contains the template file
+     *
+     * @return string
+     */
+    private function getTemplateFilePath(string $fileName, string $trailingPath = '') : string
+    {
+        $templateFilePath = implode(DIRECTORY_SEPARATOR, [
+            $this->moduleDir->getDir('ProcessEight_ModuleManager'),
+            'Template',
+            $trailingPath,
+            $fileName . '.template',
+        ]);
+
+        return $templateFilePath;
     }
 }
