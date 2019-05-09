@@ -16,8 +16,9 @@
 
 declare(strict_types=1);
 
-namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Command\Module;
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Command;
 
+use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -43,8 +44,8 @@ class {{COMMAND_CLASS_NAME}} extends Command
         $this->setName("{{COMMAND_NAME}}");
         $this->setDescription("{{COMMAND_DESCRIPTION}}");
         // Example of adding optional options
-        $this->addOption('vendor-name', null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption('module-name', null, InputOption::VALUE_OPTIONAL, 'Module name');
+        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
+        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         parent::configure();
     }
 
@@ -61,11 +62,11 @@ class {{COMMAND_CLASS_NAME}} extends Command
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        if (!$input->getOption('vendor-name')) {
+        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
             $question = new Question('<question>Vendor name [ProcessEight]:</question> ', 'ProcessEight');
 
             $input->setOption(
-                'vendor-name',
+                ConfigKey::VENDOR_NAME,
                 $questionHelper->ask($input, $output, $question)
             );
         }
@@ -79,8 +80,8 @@ class {{COMMAND_CLASS_NAME}} extends Command
             );
         }
 
-        $output->writeln($input->getOption('vendor-name'));
-        $output->writeln($input->getOption('module-name'));
+        $output->writeln($input->getOption(ConfigKey::VENDOR_NAME));
+        $output->writeln($input->getOption(ConfigKey::MODULE_NAME));
 
         return null;
     }
