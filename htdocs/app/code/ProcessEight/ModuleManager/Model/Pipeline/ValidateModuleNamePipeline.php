@@ -18,16 +18,18 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Model\Pipeline;
 
+use ProcessEight\ModuleManager\Model\ConfigKey;
+
 /**
- * Class CreateFolderPipeline
+ * Class ValidateModuleNamePipeline
  *
  * This pipeline:
- * - Calls the ValidateModuleNamePipeline
- * - Creates the folder
+ * - Validates the vendor name
+ * - Validates the module name
  *
  * @package ProcessEight\ModuleManager\Model\Pipeline
  */
-class CreateFolderPipeline
+class ValidateModuleNamePipeline
 {
     /**
      * @var mixed[]
@@ -40,30 +42,30 @@ class CreateFolderPipeline
     private $pipeline;
 
     /**
-     * @var ValidateModuleNamePipeline
+     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorNameStage
      */
-    private $validateModuleNamePipeline;
+    private $validateVendorNameStage;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateFolderStage
+     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateModuleNameStage
      */
-    private $createFolderStage;
+    private $validateModuleNameStage;
 
     /**
-     * CreateFolderPipeline constructor.
+     * ValidateModuleNamePipeline constructor.
      *
-     * @param \League\Pipeline\Pipeline                                 $pipeline
-     * @param ValidateModuleNamePipeline                                $validateModuleNamePipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateFolderStage $createFolderStage
+     * @param \League\Pipeline\Pipeline                                       $pipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorNameStage $validateVendorNameStage
+     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleNameStage $validateModuleNameStage
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline,
-        \ProcessEight\ModuleManager\Model\Stage\CreateFolderStage $createFolderStage
+        \ProcessEight\ModuleManager\Model\Stage\ValidateVendorNameStage $validateVendorNameStage,
+        \ProcessEight\ModuleManager\Model\Stage\ValidateModuleNameStage $validateModuleNameStage
     ) {
-        $this->pipeline                   = $pipeline;
-        $this->validateModuleNamePipeline = $validateModuleNamePipeline;
-        $this->createFolderStage          = $createFolderStage;
+        $this->pipeline                = $pipeline;
+        $this->validateVendorNameStage = $validateVendorNameStage;
+        $this->validateModuleNameStage = $validateModuleNameStage;
     }
 
     /**
@@ -94,12 +96,12 @@ class CreateFolderPipeline
         // Each stage should be responsible for the data it needs to work
         // Values which need to be passed from stage to stage should be added to the payload array
         $config = $this->getConfig();
-        $this->validateModuleNamePipeline->setConfig($config);
-        $this->createFolderStage->setFolderPath($config['data']['path-to-folder']);
+        $this->validateVendorNameStage->setVendorName($config['data'][ConfigKey::VENDOR_NAME]);
+        $this->validateModuleNameStage->setModuleName($config['data'][ConfigKey::MODULE_NAME]);
 
         $pipeline = $this->pipeline
-            ->pipe($this->validateModuleNamePipeline)
-            ->pipe($this->createFolderStage);
+            ->pipe($this->validateVendorNameStage)
+            ->pipe($this->validateModuleNameStage);
 
         // Pass payload onto next stage/pipeline
         return $pipeline->process($payload);

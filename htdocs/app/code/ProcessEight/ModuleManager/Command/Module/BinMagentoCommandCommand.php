@@ -18,14 +18,13 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
-class BinMagentoCommandCommand extends Command
+class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Command
 {
     /**
      * @var \League\Pipeline\Pipeline
@@ -78,13 +77,24 @@ class BinMagentoCommandCommand extends Command
     }
 
     /**
+     * Executes the current command.
+     *
+     * This method is not abstract because you can use this class
+     * as a concrete class. In this case, instead of defining the
+     * execute() method, you set the code to execute by passing
+     * a Closure to the setCode() method.
+     *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int|null null or 0 if everything went fine, or an error code
+     *
+     * @see setCode()
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(
+        \Symfony\Component\Console\Input\InputInterface $input,
+        \Symfony\Component\Console\Output\OutputInterface $output
+    ) {
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
@@ -134,6 +144,18 @@ class BinMagentoCommandCommand extends Command
             );
         }
 
+        $this->processPipeline($input);
+
+        return null;
+    }
+
+    /**
+     * Define and configure the stages in the pipeline, then execute it
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     */
+    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input)
+    {
         // Area code this command is working with
 //        $inputs['area-code'] = 'frontend';
 
@@ -159,11 +181,11 @@ class BinMagentoCommandCommand extends Command
     }
 
     /**
-     * @param $input
+     * @param \Symfony\Component\Console\Input\InputInterface $input
      *
      * @return string
      */
-    private function getAbsolutePathToFolder($input) : string
+    private function getAbsolutePathToFolder(\Symfony\Component\Console\Input\InputInterface $input) : string
     {
         return $this->moduleDir->getDir(
                 $input->getOption(ConfigKey::VENDOR_NAME) . '_' . $input->getOption(ConfigKey::MODULE_NAME)

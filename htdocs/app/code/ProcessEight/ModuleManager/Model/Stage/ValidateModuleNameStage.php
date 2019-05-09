@@ -19,20 +19,20 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 /**
- * Class ValidateVendorNameStage
+ * Class ValidateModuleNameStage
  *
- * Verifies that the Vendor Name meets the pre-defined criteria
+ * Verifies that the Module Name meets the pre-defined criteria
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class ValidateVendorNameStage
+class ValidateModuleNameStage
 {
-    const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
+    const MODULE_NAME_REGEX_PATTERN = '/[A-Z]+[A-Z0-9a-z]{1,}/';
 
     /**
      * @var string
      */
-    private $vendorName;
+    private $moduleName;
 
     /**
      * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
@@ -57,14 +57,14 @@ class ValidateVendorNameStage
      */
     public function processStage(array $payload) : array
     {
-        $vendorName = $this->getVendorName();
+        $moduleName = $this->getModuleName();
         if ($payload['is_valid'] === false
-            || !isset($vendorName)
-            || empty($vendorName)
-            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $vendorName) !== 1
+            || !isset($moduleName)
+            || empty($moduleName)
+            || preg_match(self::MODULE_NAME_REGEX_PATTERN, $moduleName) !== 1
         ) {
             $payload['is_valid']           = false;
-            $payload['validation_message'] = 'Invalid vendor name';
+            $payload['validation_message'] = 'Invalid module name';
         }
 
         // Pass payload onto next stage/pipeline
@@ -74,18 +74,18 @@ class ValidateVendorNameStage
     /**
      * @return string
      */
-    public function getVendorName() : string
+    public function getModuleName() : string
     {
-        return $this->vendorName;
+        return $this->moduleName;
     }
 
     /**
-     * @param string $vendorName
+     * @param string $moduleName
      *
      * @return void
      */
-    public function setVendorName(string $vendorName) : void
+    public function setModuleName(string $moduleName) : void
     {
-        $this->vendorName = $vendorName;
+        $this->moduleName = $moduleName;
     }
 }
