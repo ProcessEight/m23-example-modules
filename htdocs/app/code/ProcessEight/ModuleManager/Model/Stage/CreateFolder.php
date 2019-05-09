@@ -19,9 +19,8 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 
-class CreateEtcFolder
+class CreateFolder
 {
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -34,7 +33,7 @@ class CreateEtcFolder
     private $filesystemDriver;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor
      *
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
@@ -51,37 +50,28 @@ class CreateEtcFolder
      * @param mixed[] $config
      *
      * @return mixed[]
-     * @throws FileSystemException
      */
-    public function __invoke(array $config)
+    public function __invoke(array $config) : array
     {
-        // Get absolute path to module etc folder
-        $moduleEtcPath = implode(DIRECTORY_SEPARATOR, [
-            $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP),
-            'code',
-            $config['data'][ConfigKey::VENDOR_NAME],
-            $config['data'][ConfigKey::MODULE_NAME],
-            \Magento\Framework\Module\Dir::MODULE_ETC_DIR,
-        ]);
-
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($moduleEtcPath);
+            $this->filesystemDriver->isExists($config['data']['path-to-folder']);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
+            $config['creation_message'][] = "Check if folder exists at <info>{$config['data']['path-to-folder']}</info>: " . ($e->getMessage());
 
             return $config;
         }
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($moduleEtcPath);
+            $this->filesystemDriver->createDirectory($config['data']['path-to-folder']);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Failed to create folder at <info>'{$moduleEtcPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['creation_message'][] = "Failed to create folder at <info>'{$config['data']['path-to-folder']}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['is_valid']           = false;
 
             return $config;
         }
-        $config['creation_message'][] = "Created Controller folder at <info>{$moduleEtcPath}</info>";
+        $config['creation_message'][] = "Created folder at <info>{$config['data']['path-to-folder']}</info>";
 
         return $config;
     }

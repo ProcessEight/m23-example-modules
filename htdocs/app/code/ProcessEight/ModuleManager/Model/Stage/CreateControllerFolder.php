@@ -77,7 +77,7 @@ class CreateControllerFolder
         try {
             $this->filesystemDriver->isExists($moduleEtcPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
+            $config['creation_message'][] = "Failed checking folder exists at <info>{$moduleEtcPath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -86,10 +86,11 @@ class CreateControllerFolder
         try {
             $this->filesystemDriver->createDirectory($moduleEtcPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'] = "Failed to create folder at <info>'{$moduleEtcPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['creation_message'][] = "Failed to create folder at <info>'{$moduleEtcPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }
+        $config['creation_message'][] = "Created Controller folder at <info>{$moduleEtcPath}</info>";
 
         return $config;
     }

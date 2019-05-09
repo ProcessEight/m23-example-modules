@@ -123,7 +123,6 @@ class CreateLayoutXmlFile
 
             return $config;
         }
-
         $config['creation_message'][] = "Created file at <info>{$artefactFilePath}</info>";
 
         return $config;

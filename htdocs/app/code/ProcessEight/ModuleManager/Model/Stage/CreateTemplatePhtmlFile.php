@@ -123,7 +123,6 @@ class CreateTemplatePhtmlFile
 
             return $config;
         }
-
         $config['creation_message'][] = "Created <info>{$artefactFileName}</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;

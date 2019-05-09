@@ -133,7 +133,6 @@ class CreateRoutesXmlFile
 
             return $config;
         }
-
         $config['creation_message'][] = "Created <info>" . self::ARTEFACT_FILE_NAME . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;

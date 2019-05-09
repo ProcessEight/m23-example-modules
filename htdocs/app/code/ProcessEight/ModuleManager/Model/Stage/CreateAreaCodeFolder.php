@@ -76,12 +76,12 @@ class CreateAreaCodeFolder
         // Create folder
         try {
             $this->filesystemDriver->createDirectory($areaCodeFolderPath);
-            $config['creation_message'][] = "Created folder at <info>'{$areaCodeFolderPath}'</info>";
         } catch (FileSystemException $e) {
             $config['creation_message'][] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }
+        $config['creation_message'][] = "Created folder at <info>'{$areaCodeFolderPath}'</info>";
 
         return $config;
     }
