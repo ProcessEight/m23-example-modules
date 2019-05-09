@@ -52,4 +52,9 @@ interface ConfigKey
      * Template name, used to generate the PHTML file name
      */
     const TEMPLATE_NAME = 'template-name';
+
+    /**
+     * Block class name
+     */
+    const BLOCK_CLASS_NAME = 'block-class-name';
 }
