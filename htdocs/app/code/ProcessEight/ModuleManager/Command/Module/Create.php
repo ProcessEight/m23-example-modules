@@ -33,6 +33,11 @@ class Create extends Command
     private $pipeline;
 
     /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    private $moduleDir;
+
+    /**
      * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
      */
     private $validateVendorName;
@@ -71,6 +76,7 @@ class Create extends Command
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                         $pipeline
+     * @param \Magento\Framework\Module\Dir                                     $moduleDir
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName        $validateVendorName
      * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName        $validateModuleName
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder        $createModuleFolder
@@ -81,6 +87,7 @@ class Create extends Command
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
+        \Magento\Framework\Module\Dir $moduleDir,
         \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
         \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder,
@@ -91,6 +98,7 @@ class Create extends Command
     ) {
         parent::__construct();
         $this->pipeline                  = $pipeline;
+        $this->moduleDir                 = $moduleDir;
         $this->validateVendorName        = $validateVendorName;
         $this->validateModuleName        = $validateModuleName;
         $this->createModuleFolder        = $createModuleFolder;
@@ -143,10 +151,10 @@ class Create extends Command
         }
 
         // Validate inputs
-        $validationResult = $this->validateInputs(
-            $input->getOption(ConfigKey::VENDOR_NAME),
-            $input->getOption(ConfigKey::MODULE_NAME)
-        );
+        $validationResult = $this->validateInputs([
+            ConfigKey::VENDOR_NAME   => $input->getOption(ConfigKey::VENDOR_NAME),
+            ConfigKey::MODULE_NAME   => $input->getOption(ConfigKey::MODULE_NAME),
+        ]);
 
         if (!$validationResult['is_valid']) {
             $output->writeln($validationResult['validation_message']);
@@ -155,10 +163,10 @@ class Create extends Command
         }
 
         // Generate assets
-        $creationResult = $this->generateModule(
-            $input->getOption(ConfigKey::VENDOR_NAME),
-            $input->getOption(ConfigKey::MODULE_NAME)
-        );
+        $creationResult = $this->generateModule([
+            ConfigKey::VENDOR_NAME   => $input->getOption(ConfigKey::VENDOR_NAME),
+            ConfigKey::MODULE_NAME   => $input->getOption(ConfigKey::MODULE_NAME),
+        ]);
 
         foreach ($creationResult['creation_message'] as $message) {
             $output->writeln($message);
@@ -167,23 +175,19 @@ class Create extends Command
         return $creationResult['is_valid'] ? 0 : 1;
     }
 
+
     /**
      * Create and run validation pipeline
      *
-     * @param string|null $vendorName
-     * @param string|null $moduleName
+     * @param string[] $inputs
      *
      * @return mixed[]
      * @todo Move validation pipeline logic into a 'validate module name pipeline' class and inject it, then run it here
-     *
      */
-    private function validateInputs(?string $vendorName, ?string $moduleName) : array
+    private function validateInputs(array $inputs) : array
     {
         $config             = [
-            'data'     => [
-                ConfigKey::VENDOR_NAME => $vendorName,
-                ConfigKey::MODULE_NAME => $moduleName,
-            ],
+            'data'     => $inputs,
             'is_valid' => true,
         ];
         $validationPipeline = $this->pipeline;
@@ -196,19 +200,23 @@ class Create extends Command
     /**
      * Create and run generate module pipeline
      *
-     * @param string|null $vendorName
-     * @param string|null $moduleName
+     * @param string[] $inputs
      *
      * @return int|mixed
      * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
      */
-    private function generateModule(?string $vendorName, ?string $moduleName)
+    private function generateModule(array $inputs) : array
     {
+        // Area code this command is working with
+        $inputs['area-code'] = 'frontend';
+        // Path to the folder we want to create
+        $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
+                $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
+                \Magento\Framework\Module\Dir::MODULE_VIEW_DIR
+            ) . DIRECTORY_SEPARATOR . '{{AREA_CODE}}' . DIRECTORY_SEPARATOR . 'templates';
+
         $config = [
-            'data'     => [
-                ConfigKey::VENDOR_NAME => $vendorName,
-                ConfigKey::MODULE_NAME => $moduleName,
-            ],
+            'data'     => $inputs,
             'is_valid' => true,
         ];
 
