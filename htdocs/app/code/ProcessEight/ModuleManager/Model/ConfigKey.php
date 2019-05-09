@@ -57,4 +57,19 @@ interface ConfigKey
      * Block class name
      */
     const BLOCK_CLASS_NAME = 'block-class-name';
+
+    /**
+     * Command name, used to invoke the command on the CLI
+     */
+    const COMMAND_NAME = 'command-name';
+
+    /**
+     * Brief description of what the command does
+     */
+    const COMMAND_DESCRIPTION = 'command-description';
+
+    /**
+     * Command class name
+     */
+    const COMMAND_CLASS_NAME = 'command-class-name';
 }

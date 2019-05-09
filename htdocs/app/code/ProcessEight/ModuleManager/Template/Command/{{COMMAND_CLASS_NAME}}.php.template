@@ -23,81 +23,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class {{COMMAND_CLASS_NAME}} extends Command
 {
     /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
-     */
-    private $validateVendorName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName
-     */
-    private $validateModuleName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder
-     */
-    private $createModuleFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder
-     */
-    private $createEtcFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile
-     */
-    private $createModuleXmlFile;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile
-     */
-    private $createRegistrationPhpFile;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile
-     */
-    private $createComposerJsonFile;
-
-    /**
      * Constructor.
-     *
-     * @param \League\Pipeline\Pipeline                                         $pipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName        $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName        $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder        $createModuleFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder           $createEtcFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile       $createModuleXmlFile
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile $createRegistrationPhpFile
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile    $createComposerJsonFile
      */
     public function __construct(
-        \League\Pipeline\Pipeline $pipeline,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
-        \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolder $createModuleFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolder $createEtcFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFile $createModuleXmlFile,
-        \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFile $createRegistrationPhpFile,
-        \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFile $createComposerJsonFile
     ) {
         parent::__construct();
-        $this->pipeline                  = $pipeline;
-        $this->validateVendorName        = $validateVendorName;
-        $this->validateModuleName        = $validateModuleName;
-        $this->createModuleFolder        = $createModuleFolder;
-        $this->createEtcFolder           = $createEtcFolder;
-        $this->createModuleXmlFile       = $createModuleXmlFile;
-        $this->createRegistrationPhpFile = $createRegistrationPhpFile;
-        $this->createComposerJsonFile    = $createComposerJsonFile;
+        // Assign dependencies here
     }
 
     /**

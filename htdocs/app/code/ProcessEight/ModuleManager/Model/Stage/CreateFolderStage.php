@@ -20,8 +20,20 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
 
-class CreateFolder
+/**
+ * Class CreateFolderStage
+ *
+ * This stage creates a folder in the given location
+ *
+ * @package ProcessEight\ModuleManager\Model\Stage
+ */
+class CreateFolderStage
 {
+    /**
+     * @var mixed[]
+     */
+    private $folderPath;
+
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
      */
@@ -47,32 +59,41 @@ class CreateFolder
     }
 
     /**
-     * @param mixed[] $config
+     * @param mixed[] $payload
      *
      * @return mixed[]
      */
-    public function __invoke(array $config) : array
+    public function __invoke(array $payload) : array
     {
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($config['data']['path-to-folder']);
+            $this->filesystemDriver->isExists($this->folderPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Check if folder exists at <info>{$config['data']['path-to-folder']}</info>: " . ($e->getMessage());
+            $payload['creation_message'][] = "Check if folder exists at <info>{$this->folderPath}</info>: " . ($e->getMessage());
 
-            return $config;
+            return $payload;
         }
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($config['data']['path-to-folder']);
+            $this->filesystemDriver->createDirectory($this->folderPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Failed to create folder at <info>'{$config['data']['path-to-folder']}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
-            $config['is_valid']           = false;
+            $payload['creation_message'][] = "Failed to create folder at <info>'{$this->folderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $payload['is_valid']           = false;
 
-            return $config;
+            return $payload;
         }
-        $config['creation_message'][] = "Created folder at <info>{$config['data']['path-to-folder']}</info>";
+        $payload['creation_message'][] = "Created folder at <info>{$this->folderPath}</info>";
 
-        return $config;
+        // Pass payload onto next stage/pipeline
+        return $payload;
+    }
+
+    /**
+     * @param string $folderPath
+     */
+    public function setFolderPath(string $folderPath) : void
+    {
+        $this->folderPath = $folderPath;
     }
 }
