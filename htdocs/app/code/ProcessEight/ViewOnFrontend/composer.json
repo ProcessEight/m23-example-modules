@@ -1,0 +1,17 @@
+{
+    "name": "processeight/viewonfrontend",
+    "description": "Adds a button to the admin to open the product page on the frontend",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ProcessEight\\ViewOnFrontend\\": ""
+        }
+    }
+}
