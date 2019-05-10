@@ -84,13 +84,13 @@ class CreateTemplatePhtmlFile
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if($isExists) {
-                $config['creation_message'][] = "File already exists: <info>{$artefactFilePath}</info>";
+                $config['messages'][] = "File already exists: <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
             $config['is_valid']         = false;
-            $config['creation_message'][] = "Failed checking folder exists: <info>{$artefactFilePath}</info>: " . ($e->getMessage());
+            $config['messages'][] = "Failed checking folder exists: <info>{$artefactFilePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -119,11 +119,11 @@ class CreateTemplatePhtmlFile
 
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failure: " . $e->getMessage();
+            $config['messages'][] = "Failure: " . $e->getMessage();
 
             return $config;
         }
-        $config['creation_message'][] = "Created <info>{$artefactFileName}</info> file at <info>{$artefactFilePath}</info>";
+        $config['messages'][] = "Created <info>{$artefactFileName}</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }

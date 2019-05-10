@@ -68,7 +68,7 @@ class CreateAreaCodeFolder
         // Check if folder exists
         $isExists = $this->filesystemDriver->isExists($areaCodeFolderPath);
         if ($isExists) {
-            $config['creation_message'][] = "Folder already exists: <info>" . $areaCodeFolderPath . "</info>.";
+            $config['messages'][] = "Folder already exists: <info>" . $areaCodeFolderPath . "</info>.";
 
             return $config;
         }
@@ -77,11 +77,11 @@ class CreateAreaCodeFolder
         try {
             $this->filesystemDriver->createDirectory($areaCodeFolderPath);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['messages'][] = "Failed to create folder at <info>'{$areaCodeFolderPath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }
-        $config['creation_message'][] = "Created folder at <info>'{$areaCodeFolderPath}'</info>";
+        $config['messages'][] = "Created folder at <info>'{$areaCodeFolderPath}'</info>";
 
         return $config;
     }

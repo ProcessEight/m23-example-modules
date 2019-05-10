@@ -32,26 +32,6 @@ use Magento\Framework\Exception\FileSystemException;
 class CreateXmlFileStage
 {
     /**
-     * @var string
-     */
-    private $filePath;
-
-    /**
-     * @var string
-     */
-    private $fileName;
-
-    /**
-     * @var string
-     */
-    private $templateFilePath;
-
-    /**
-     * @var string[]
-     */
-    private $templateVariables;
-
-    /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
@@ -92,15 +72,15 @@ class CreateXmlFileStage
     {
         // Check if file exists
         try {
-            $isExists = $this->filesystemDriver->isExists($this->getFilePath() . DIRECTORY_SEPARATOR . $this->getFileName());
+            $isExists = $this->filesystemDriver->isExists($payload['config']['create-xml-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $payload['config']['create-xml-file-stage']['file-name']);
             if ($isExists) {
-                $payload['creation_message'][] = "<info>" . $this->getFileName() . "</info> file already exists at <info>{$this->getFilePath()}</info>";
+                $payload['messages'][] = "<info>" . $payload['config']['create-xml-file-stage']['file-name'] . "</info> file already exists at <info>{$payload['config']['create-xml-file-stage']['file-path']}</info>";
 
                 return $payload;
             }
         } catch (FileSystemException $e) {
             $payload['is_valid']           = false;
-            $payload['creation_message'][] = "Failure: " . $e->getMessage();
+            $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
         }
@@ -108,92 +88,28 @@ class CreateXmlFileStage
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->filesystemDriver->fileGetContents($this->getTemplateFilePath());
+            $artefactFileTemplate = $this->filesystemDriver->fileGetContents($payload['config']['create-xml-file-stage']['template-file-path']);
 
-            foreach ($this->getTemplateVariables() as $templateVariable => $value) {
+            foreach ($payload['config']['create-xml-file-stage']['template-variables'] as $templateVariable => $value) {
                 $artefactFileTemplate = str_replace($templateVariable, $value, $artefactFileTemplate);
             }
 
             // Write template to file
             $artefactFileResource = $this->filesystemDriver->fileOpen(
-                $this->getFilePath() . DIRECTORY_SEPARATOR . $this->getFileName(),
+                $payload['config']['create-xml-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $payload['config']['create-xml-file-stage']['file-name'],
                 'wb+'
             );
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
 
         } catch (FileSystemException $e) {
             $payload['is_valid']           = false;
-            $payload['creation_message'][] = "Failure: " . $e->getMessage();
+            $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
         }
 
-        $payload['creation_message'][] = "Created <info>" . $this->getFileName() . "</info> file at <info>{$this->getFilePath()}</info>";
+        $payload['messages'][] = "Created <info>" . $payload['config']['create-xml-file-stage']['file-name'] . "</info> file at <info>{$payload['config']['create-xml-file-stage']['file-path']}</info>";
 
         return $payload;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getFilePath() : string
-    {
-        return $this->filePath;
-    }
-
-    /**
-     * @param string $filePath
-     */
-    public function setFilePath(string $filePath) : void
-    {
-        $this->filePath = $filePath;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileName() : string
-    {
-        return $this->fileName;
-    }
-
-    /**
-     * @param string $fileName
-     */
-    public function setFileName(string $fileName) : void
-    {
-        $this->fileName = $fileName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTemplateFilePath() : string
-    {
-        return $this->templateFilePath;
-    }
-
-    /**
-     * @param string $templateFilePath
-     */
-    public function setTemplateFilePath(string $templateFilePath) : void
-    {
-        $this->templateFilePath = $templateFilePath;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTemplateVariables() : array
-    {
-        return $this->templateVariables;
-    }
-
-    /**
-     * @param string[] $templateVariables
-     */
-    public function setTemplateVariables(array $templateVariables) : void
-    {
-        $this->templateVariables = $templateVariables;
     }
 }

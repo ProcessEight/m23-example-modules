@@ -30,11 +30,6 @@ class ValidateModuleNameStage
     const MODULE_NAME_REGEX_PATTERN = '/[A-Z]+[A-Z0-9a-z]{1,}/';
 
     /**
-     * @var string
-     */
-    private $moduleName;
-
-    /**
      * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
      *
      * @param mixed[] $payload
@@ -57,35 +52,16 @@ class ValidateModuleNameStage
      */
     public function processStage(array $payload) : array
     {
-        $moduleName = $this->getModuleName();
         if ($payload['is_valid'] === false
-            || !isset($moduleName)
-            || empty($moduleName)
-            || preg_match(self::MODULE_NAME_REGEX_PATTERN, $moduleName) !== 1
+            || !isset($payload['config']['validate-module-name-stage']['module-name'])
+            || empty($payload['config']['validate-module-name-stage']['module-name'])
+            || preg_match(self::MODULE_NAME_REGEX_PATTERN, $payload['config']['validate-module-name-stage']['module-name']) !== 1
         ) {
             $payload['is_valid']           = false;
-            $payload['validation_message'] = 'Invalid module name';
+            $payload['messages'][] = __METHOD__ . ': Invalid module name';
         }
 
         // Pass payload onto next stage/pipeline
         return $payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModuleName() : string
-    {
-        return $this->moduleName;
-    }
-
-    /**
-     * @param string $moduleName
-     *
-     * @return void
-     */
-    public function setModuleName(string $moduleName) : void
-    {
-        $this->moduleName = $moduleName;
     }
 }

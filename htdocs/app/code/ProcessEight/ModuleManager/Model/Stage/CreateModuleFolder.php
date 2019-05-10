@@ -67,7 +67,7 @@ class CreateModuleFolder
         try {
             $this->filesystemDriver->isExists($appCodePath);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Check if folder exists at <info>{$appCodePath}</info>: " . ($e->getMessage());
+            $config['messages'][] = "Check if folder exists at <info>{$appCodePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -76,11 +76,11 @@ class CreateModuleFolder
         try {
             $this->filesystemDriver->createDirectory($appCodePath);
         } catch (FileSystemException $e) {
-            $config['creation_message'][] = "Failed to create folder at <info>'{$appCodePath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
+            $config['messages'][] = "Failed to create folder at <info>'{$appCodePath}'</info> with default permissions of '<info>0777</info>'" . $e->getMessage();
 
             return $config;
         }
-        $config['creation_message'][] = "Created module folder at <info>{$appCodePath}</info>";
+        $config['messages'][] = "Created module folder at <info>{$appCodePath}</info>";
 
         return $config;
     }

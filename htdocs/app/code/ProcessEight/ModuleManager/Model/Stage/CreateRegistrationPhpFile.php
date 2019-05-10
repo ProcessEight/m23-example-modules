@@ -78,7 +78,7 @@ class CreateRegistrationPhpFile
             ]);
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed getting absolute path to module folder: " . ($e->getMessage());
+            $config['messages'][] = "Failed getting absolute path to module folder: " . ($e->getMessage());
 
             return $config;
         }
@@ -88,13 +88,13 @@ class CreateRegistrationPhpFile
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if ($isExists) {
-                $config['creation_message'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
+                $config['messages'][] = "<info>" . self::ARTEFACT_FILE_NAME . "</info> file already exists at <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$modulePath}</info>: " . ($e->getMessage());
+            $config['messages'][] = "Failed checking folder exists at <info>{$modulePath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -118,11 +118,11 @@ class CreateRegistrationPhpFile
 
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failure: " . $e->getMessage();
+            $config['messages'][] = "Failure: " . $e->getMessage();
 
             return $config;
         }
-        $config['creation_message'][] = "Created <info>" . self::ARTEFACT_FILE_NAME . "</info> file at <info>{$artefactFilePath}</info>";
+        $config['messages'][] = "Created <info>" . self::ARTEFACT_FILE_NAME . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }

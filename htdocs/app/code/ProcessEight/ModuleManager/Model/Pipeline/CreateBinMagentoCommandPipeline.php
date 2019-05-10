@@ -31,11 +31,6 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
 class CreateBinMagentoCommandPipeline
 {
     /**
-     * @var mixed[]
-     */
-    private $config;
-
-    /**
      * @var \League\Pipeline\Pipeline
      */
     private $pipeline;
@@ -100,24 +95,6 @@ class CreateBinMagentoCommandPipeline
      */
     public function processPipeline(array $payload) : array
     {
-        $config = $this->getConfig();
-
-        $this->createFolderPipeline->setConfig($config);
-
-        // 'Create PHP Class' Stage config
-        // @todo Refactor to remove these and just use setConfig, like the Pipeline classes
-        $this->createPhpClassFileStage->setFileName($config['createPhpClassFileStage']['file-name']);
-        $this->createPhpClassFileStage->setFilePath($config['createPhpClassFileStage']['file-path']);
-        $this->createPhpClassFileStage->setTemplateFilePath($config['createPhpClassFileStage']['template-file-path']);
-        $this->createPhpClassFileStage->setTemplateVariables($config['createPhpClassFileStage']['template-variables']);
-
-        // 'Create XML File' Stage config
-        // @todo Refactor to remove these and just use setConfig, like the Pipeline classes
-        $this->createXmlFileStage->setFileName($config['createXmlFileStage']['file-name']);
-        $this->createXmlFileStage->setFilePath($config['createXmlFileStage']['file-path']);
-        $this->createXmlFileStage->setTemplateFilePath($config['createXmlFileStage']['template-file-path']);
-        $this->createXmlFileStage->setTemplateVariables($config['createXmlFileStage']['template-variables']);
-
         // Add the Pipelines/Stages we need for this command
         $pipeline = $this->pipeline
             // Create the folder
@@ -130,21 +107,5 @@ class CreateBinMagentoCommandPipeline
 
         // Pass payload onto next Stage/Pipeline
         return $pipeline->process($payload);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getConfig() : array
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param mixed[] $config
-     */
-    public function setConfig(array $config) : void
-    {
-        $this->config = $config;
     }
 }

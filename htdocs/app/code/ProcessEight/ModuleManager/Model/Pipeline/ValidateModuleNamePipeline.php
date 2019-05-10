@@ -18,8 +18,6 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Model\Pipeline;
 
-use ProcessEight\ModuleManager\Model\ConfigKey;
-
 /**
  * Class ValidateModuleNamePipeline
  *
@@ -31,11 +29,6 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
  */
 class ValidateModuleNamePipeline
 {
-    /**
-     * @var mixed[]
-     */
-    private $config;
-
     /**
      * @var \League\Pipeline\Pipeline
      */
@@ -93,33 +86,11 @@ class ValidateModuleNamePipeline
      */
     public function processPipeline(array $payload) : array
     {
-        // Each stage should be responsible for the data it needs to work
-        // Values which need to be passed from stage to stage should be added to the payload array
-        $config = $this->getConfig();
-        $this->validateVendorNameStage->setVendorName($config['data'][ConfigKey::VENDOR_NAME]);
-        $this->validateModuleNameStage->setModuleName($config['data'][ConfigKey::MODULE_NAME]);
-
         $pipeline = $this->pipeline
             ->pipe($this->validateVendorNameStage)
             ->pipe($this->validateModuleNameStage);
 
         // Pass payload onto next stage/pipeline
         return $pipeline->process($payload);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getConfig() : array
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param mixed[] $config
-     */
-    public function setConfig(array $config) : void
-    {
-        $this->config = $config;
     }
 }

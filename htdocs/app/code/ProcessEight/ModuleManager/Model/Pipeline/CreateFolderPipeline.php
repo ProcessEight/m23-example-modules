@@ -30,11 +30,6 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
 class CreateFolderPipeline
 {
     /**
-     * @var mixed[]
-     */
-    private $config;
-
-    /**
      * @var \League\Pipeline\Pipeline
      */
     private $pipeline;
@@ -67,7 +62,7 @@ class CreateFolderPipeline
     }
 
     /**
-     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
+     * Called when this Pipeline is invoked by another Pipeline/Stage
      *
      * @param mixed[] $payload
      *
@@ -83,41 +78,19 @@ class CreateFolderPipeline
     }
 
     /**
-     * Define and configure the stages in this pipeline, then execute it
+     * Define the Stages/Pipelines in this Pipeline, then execute it
      *
-     * @param mixed[] $payload Values which need to be passed from stage to stage
+     * @param mixed[] $payload
      *
      * @return mixed[]
      */
     public function processPipeline(array $payload) : array
     {
-        // Each stage should be responsible for the data it needs to work
-        // Values which need to be passed from stage to stage should be added to the payload array
-        $config = $this->getConfig();
-        $this->validateModuleNamePipeline->setConfig($config);
-        $this->createFolderStage->setFolderPath($config['data']['path-to-folder']);
-
         $pipeline = $this->pipeline
             ->pipe($this->validateModuleNamePipeline)
             ->pipe($this->createFolderStage);
 
         // Pass payload onto next stage/pipeline
         return $pipeline->process($payload);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getConfig() : array
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param mixed[] $config
-     */
-    public function setConfig(array $config) : void
-    {
-        $this->config = $config;
     }
 }

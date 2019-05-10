@@ -30,11 +30,6 @@ class ValidateVendorNameStage
     const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
 
     /**
-     * @var string
-     */
-    private $vendorName;
-
-    /**
      * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
      *
      * @param mixed[] $payload
@@ -57,11 +52,10 @@ class ValidateVendorNameStage
      */
     public function processStage(array $payload) : array
     {
-        $vendorName = $this->getVendorName();
         if ($payload['is_valid'] === false
-            || !isset($vendorName)
-            || empty($vendorName)
-            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $vendorName) !== 1
+            || !isset($payload['config']['validate-vendor-name-stage']['vendor-name'])
+            || empty($payload['config']['validate-vendor-name-stage']['vendor-name'])
+            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $payload['config']['validate-vendor-name-stage']['vendor-name']) !== 1
         ) {
             $payload['is_valid']           = false;
             $payload['validation_message'] = 'Invalid vendor name';
@@ -69,23 +63,5 @@ class ValidateVendorNameStage
 
         // Pass payload onto next stage/pipeline
         return $payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVendorName() : string
-    {
-        return $this->vendorName;
-    }
-
-    /**
-     * @param string $vendorName
-     *
-     * @return void
-     */
-    public function setVendorName(string $vendorName) : void
-    {
-        $this->vendorName = $vendorName;
     }
 }

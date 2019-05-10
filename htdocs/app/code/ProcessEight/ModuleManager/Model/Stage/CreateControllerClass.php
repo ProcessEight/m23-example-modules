@@ -85,7 +85,7 @@ class CreateControllerClass
             ]);
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed getting absolute path to folder: " . ($e->getMessage());
+            $config['messages'][] = "Failed getting absolute path to folder: " . ($e->getMessage());
 
             return $config;
         }
@@ -101,13 +101,13 @@ class CreateControllerClass
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath);
             if ($isExists) {
-                $config['creation_message'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>{$artefactFilePath}</info>";
+                $config['messages'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>{$artefactFilePath}</info>";
 
                 return $config;
             }
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failed checking folder exists at <info>{$artefactFolderPath}</info>: " . ($e->getMessage());
+            $config['messages'][] = "Failed checking folder exists at <info>{$artefactFolderPath}</info>: " . ($e->getMessage());
 
             return $config;
         }
@@ -138,12 +138,12 @@ class CreateControllerClass
 
         } catch (FileSystemException $e) {
             $config['is_valid']           = false;
-            $config['creation_message'][] = "Failure: " . $e->getMessage();
+            $config['messages'][] = "Failure: " . $e->getMessage();
 
             return $config;
         }
 
-        $config['creation_message'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
+        $config['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $config;
     }

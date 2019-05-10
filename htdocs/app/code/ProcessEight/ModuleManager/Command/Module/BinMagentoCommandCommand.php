@@ -163,7 +163,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
 
         $result = $this->processPipeline($input);
 
-        foreach ($result['creation_message'] as $message) {
+        foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
@@ -180,30 +180,26 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
     private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
         // CreateFolderPipeline config
-        $data[ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
-        $data[ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $data['path-to-folder']       = $this->getAbsolutePathToFolder($input, 'Command');
-        $config                       = [
-            'data' => $data,
-        ];
+        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
+        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
+        $config['create-folder-stage']['folder-path']       = $this->getAbsolutePathToFolder($input, 'Command');
 
         // Create PHP Class Stage config
-        $config['createPhpClassFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
-        $config['createPhpClassFileStage']['file-name']          = $this->getProcessedFileName($input, '{{COMMAND_CLASS_NAME}}');
-        $config['createPhpClassFileStage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['createPhpClassFileStage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
+        $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
+        $config['create-php-class-file-stage']['file-name']          = $this->getProcessedFileName($input, '{{COMMAND_CLASS_NAME}}');
+        $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
 
         // Create di.xml Stage config
-        $config['createXmlFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
-        $config['createXmlFileStage']['file-name']          = 'di.xml';
-        $config['createXmlFileStage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['createXmlFileStage']['template-file-path'] = $this->getTemplateFilePath('di.xml', 'etc');
-
-        $this->createBinMagentoCommandPipeline->setConfig($config);
+        $config['create-xml-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
+        $config['create-xml-file-stage']['file-name']          = 'di.xml';
+        $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('di.xml', 'etc');
 
         // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
         $masterPipelineConfig = [
             'is_valid' => true,
+            'config'   => $config,
         ];
 
         // Run the pipeline

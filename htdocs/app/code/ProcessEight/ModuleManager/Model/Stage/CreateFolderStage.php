@@ -30,11 +30,6 @@ use Magento\Framework\Exception\FileSystemException;
 class CreateFolderStage
 {
     /**
-     * @var string
-     */
-    private $folderPath;
-
-    /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
@@ -75,42 +70,26 @@ class CreateFolderStage
     {
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($this->getFolderPath());
+            $this->filesystemDriver->isExists($payload['config']['create-folder-stage']['folder-path']);
         } catch (FileSystemException $e) {
-            $payload['creation_message'][] = "Check if folder exists at <info>{$this->getFolderPath()}</info>: " . ($e->getMessage());
+            $payload['messages'][] = __METHOD__ . ": Check if folder exists at <info>{$payload['config']['create-folder-stage']['folder-path']}</info>: " . ($e->getMessage());
 
             return $payload;
         }
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($this->getFolderPath());
+            $this->filesystemDriver->createDirectory($payload['config']['create-folder-stage']['folder-path']);
         } catch (FileSystemException $e) {
-            $payload['creation_message'][] = "Failed to create folder at <info>'{$this->getFolderPath()}'</info> with default permissions of '<info>0777</info>'"
+            $payload['messages'][] = "Failed to create folder at <info>'{$payload['config']['create-folder-stage']['folder-path']}'</info> with default permissions of '<info>0777</info>'"
                                              . $e->getMessage();
             $payload['is_valid']           = false;
 
             return $payload;
         }
-        $payload['creation_message'][] = "Created folder at <info>{$this->getFolderPath()}</info>";
+        $payload['messages'][] = "Created folder at <info>{$payload['config']['create-folder-stage']['folder-path']}</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getFolderPath() : string
-    {
-        return $this->folderPath;
-    }
-
-    /**
-     * @param string $folderPath
-     */
-    public function setFolderPath(string $folderPath) : void
-    {
-        $this->folderPath = $folderPath;
     }
 }
