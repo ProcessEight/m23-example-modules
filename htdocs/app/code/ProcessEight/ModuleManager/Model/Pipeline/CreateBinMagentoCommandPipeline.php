@@ -105,12 +105,14 @@ class CreateBinMagentoCommandPipeline
         $this->createFolderPipeline->setConfig($config);
 
         // 'Create PHP Class' Stage config
+        // @todo Refactor to remove these and just use setConfig, like the Pipeline classes
         $this->createPhpClassFileStage->setFileName($config['createPhpClassFileStage']['file-name']);
         $this->createPhpClassFileStage->setFilePath($config['createPhpClassFileStage']['file-path']);
         $this->createPhpClassFileStage->setTemplateFilePath($config['createPhpClassFileStage']['template-file-path']);
         $this->createPhpClassFileStage->setTemplateVariables($config['createPhpClassFileStage']['template-variables']);
 
         // 'Create XML File' Stage config
+        // @todo Refactor to remove these and just use setConfig, like the Pipeline classes
         $this->createXmlFileStage->setFileName($config['createXmlFileStage']['file-name']);
         $this->createXmlFileStage->setFilePath($config['createXmlFileStage']['file-path']);
         $this->createXmlFileStage->setTemplateFilePath($config['createXmlFileStage']['template-file-path']);

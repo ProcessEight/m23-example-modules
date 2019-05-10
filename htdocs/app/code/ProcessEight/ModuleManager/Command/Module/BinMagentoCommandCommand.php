@@ -179,7 +179,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
      */
     private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        // Stage config
+        // CreateFolderPipeline config
         $data[ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
         $data[ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
         $data['path-to-folder']       = $this->getAbsolutePathToFolder($input, 'Command');
@@ -191,7 +191,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         $config['createPhpClassFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
         $config['createPhpClassFileStage']['file-name']          = $this->getProcessedFileName($input, '{{COMMAND_CLASS_NAME}}');
         $config['createPhpClassFileStage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['createPhpClassFileStage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php',             'Command');
+        $config['createPhpClassFileStage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
 
         // Create di.xml Stage config
         $config['createXmlFileStage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
