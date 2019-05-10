@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module;
 
+use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,27 +32,12 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
  *
  * @package ProcessEight\ModuleManager\Command\Module
  */
-class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Command
+class BinMagentoCommandCommand extends BaseCommand
 {
     /**
      * Used to generate file name
      */
-    const ARTEFACT_FILE_NAME = '{{COMMAND_CLASS_NAME}}.php';
-
-    /**
-     * Area code this command is working with
-     */
-    const AREA_CODE = 'frontend';
-
-    /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $masterPipeline;
-
-    /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
+    public $artefactFileName = '{{COMMAND_CLASS_NAME}}.php';
 
     /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline
@@ -70,9 +56,7 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         \Magento\Framework\Module\Dir $moduleDir,
         \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
     ) {
-        parent::__construct();
-        $this->masterPipeline                  = $masterPipeline;
-        $this->moduleDir                       = $moduleDir;
+        parent::__construct($masterPipeline, $moduleDir);
         $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
     }
 
@@ -83,13 +67,24 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
     {
         $this->setName("process-eight:module:add:command");
         $this->setDescription("Creates a new bin/magento command.");
-        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
-        $this->addOption(ConfigKey::COMMAND_NAME, null, InputOption::VALUE_OPTIONAL,
-            'Command name, e.g. process-eight:module:create');
-        $this->addOption(ConfigKey::COMMAND_DESCRIPTION, null, InputOption::VALUE_OPTIONAL,
-            'Brief description of the command');
-        $this->addOption(ConfigKey::COMMAND_CLASS_NAME, null, InputOption::VALUE_OPTIONAL, 'Command class name');
+        $this->addOption(
+            ConfigKey::COMMAND_NAME,
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Command name, e.g. process-eight:module:create'
+        );
+        $this->addOption(
+            ConfigKey::COMMAND_DESCRIPTION,
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Brief description of the command'
+        );
+        $this->addOption(
+            ConfigKey::COMMAND_CLASS_NAME,
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Command class name'
+        );
         parent::configure();
     }
 
@@ -112,27 +107,11 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
     ) {
+        parent::execute($input, $output);
+
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
-            $question = new Question('<question>Vendor name [ProcessEight]: </question> ', 'ProcessEight');
-
-            $input->setOption(
-                ConfigKey::VENDOR_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name [Test]: </question> ', 'Test');
-
-            $input->setOption(
-                ConfigKey::MODULE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
 
         if (!$input->getOption(ConfigKey::COMMAND_NAME)) {
             $question = new Question('<question>Command name (e.g. process-eight:module:create): </question> ');
@@ -182,7 +161,8 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
         // CreateFolderPipeline config
         $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
         $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $config['create-folder-stage']['folder-path']       = $this->getAbsolutePathToFolder($input, 'Command');
+        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input,
+            'Command');
 
         // Create PHP Class Stage config
         $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
@@ -207,80 +187,22 @@ class BinMagentoCommandCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param string                                          $trailingPath
-     *
-     * @return string
-     */
-    private function getAbsolutePathToFolder(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        string $trailingPath = ''
-    ) : string {
-        return $this->moduleDir->getDir(
-                $input->getOption(ConfigKey::VENDOR_NAME) . '_' . $input->getOption(ConfigKey::MODULE_NAME)
-            ) . DIRECTORY_SEPARATOR . $trailingPath;
-    }
-
-    /**
-     * Replace template variables in file name
-     *
-     * @param InputInterface $input
-     * @param                $replace
-     *
-     * @return string
-     */
-    private function getProcessedFileName(\Symfony\Component\Console\Input\InputInterface $input, $replace) : string
-    {
-        $artefactFileName = str_replace(
-            $replace,
-            $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            self::ARTEFACT_FILE_NAME
-        );
-
-        return $artefactFileName;
-    }
-
-    /**
      * All template variables used in all pipelines used by this command
      *
      * @param InputInterface $input
      *
      * @return array
      */
-    private function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
+    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $templateVariables = [
-            '{{VENDOR_NAME}}'                  => $input->getOption(ConfigKey::VENDOR_NAME),
-            '{{MODULE_NAME}}'                  => $input->getOption(ConfigKey::MODULE_NAME),
-            '{{VENDOR_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
-            '{{MODULE_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
+        $templateVariables = parent::getTemplateVariables($input);
+        $templateVariables = array_merge($templateVariables, [
             '{{COMMAND_NAME}}'                 => $input->getOption(ConfigKey::COMMAND_NAME),
             '{{COMMAND_DESCRIPTION}}'          => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
             '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
             '{{COMMAND_CLASS_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
-            '{{YEAR}}'                         => date('Y'),
-        ];
-
-        return $templateVariables;
-    }
-
-    /**
-     * Return path to the template file
-     *
-     * @param string $fileName     File name has '.template' appended
-     * @param string $trailingPath Sub-folder within Template folder (if any) which contains the template file
-     *
-     * @return string
-     */
-    private function getTemplateFilePath(string $fileName, string $trailingPath = '') : string
-    {
-        $templateFilePath = implode(DIRECTORY_SEPARATOR, [
-            $this->moduleDir->getDir('ProcessEight_ModuleManager'),
-            'Template',
-            $trailingPath,
-            $fileName . '.template',
         ]);
 
-        return $templateFilePath;
+        return $templateVariables;
     }
 }
