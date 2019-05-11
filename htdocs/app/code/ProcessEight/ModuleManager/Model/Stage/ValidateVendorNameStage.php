@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Model\Stage;
 
+use ProcessEight\ModuleManager\Model\ConfigKey;
+
 /**
  * Class ValidateVendorNameStage
  *
@@ -25,25 +27,9 @@ namespace ProcessEight\ModuleManager\Model\Stage;
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class ValidateVendorNameStage
+class ValidateVendorNameStage extends BaseStage
 {
     const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
-
-    /**
-     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
-     *
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
-     */
-    public function __invoke(array $payload) : array
-    {
-        if ($payload['is_valid'] === true) {
-            $payload = $this->processStage($payload);
-        }
-
-        return $payload;
-    }
 
     /**
      * @param array $payload
@@ -52,10 +38,12 @@ class ValidateVendorNameStage
      */
     public function processStage(array $payload) : array
     {
+        $vendorName = $payload['config']['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME];
+
         if ($payload['is_valid'] === false
-            || !isset($payload['config']['validate-vendor-name-stage']['vendor-name'])
-            || empty($payload['config']['validate-vendor-name-stage']['vendor-name'])
-            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $payload['config']['validate-vendor-name-stage']['vendor-name']) !== 1
+            || !isset($vendorName)
+            || empty($vendorName)
+            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $vendorName) !== 1
         ) {
             $payload['is_valid']           = false;
             $payload['validation_message'] = 'Invalid vendor name';

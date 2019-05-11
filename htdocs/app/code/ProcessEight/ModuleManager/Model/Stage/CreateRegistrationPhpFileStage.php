@@ -21,13 +21,14 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
- * Class CreateXmlFileStage
+ * Class CreateRegistrationPhpFileStage
  *
- * Creates an XML file in the given location
+ * Creates a vendor-name/module-name/registration.php file
+ * Assumes that the vendor-name/module-name/ folder already exists
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateXmlFileStage extends BaseStage
+class CreateRegistrationPhpFileStage extends BaseStage
 {
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -35,7 +36,7 @@ class CreateXmlFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * Constructor
+     * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
      */
@@ -46,16 +47,16 @@ class CreateXmlFileStage extends BaseStage
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function processStage(array $payload) : array
     {
-        $filePath          = $payload['config']['create-xml-file-stage']['file-path'];
-        $fileName          = $payload['config']['create-xml-file-stage']['file-name'];
-        $templateFilePath  = $payload['config']['create-xml-file-stage']['template-file-path'];
-        $templateVariables = $payload['config']['create-xml-file-stage']['template-variables'];
+        $filePath          = $payload['config']['create-registration-php-file-stage']['file-path'];
+        $fileName          = $payload['config']['create-registration-php-file-stage']['file-name'];
+        $templateFilePath  = $payload['config']['create-registration-php-file-stage']['template-file-path'];
+        $templateVariables = $payload['config']['create-registration-php-file-stage']['template-variables'];
 
         // Check if file exists
         try {
@@ -87,14 +88,12 @@ class CreateXmlFileStage extends BaseStage
                 'wb+'
             );
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
-
         } catch (FileSystemException $e) {
             $payload['is_valid']   = false;
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
         }
-
         $payload['messages'][] = "Created <info>" . $fileName . "</info> file at <info>{$filePath}</info>";
 
         return $payload;

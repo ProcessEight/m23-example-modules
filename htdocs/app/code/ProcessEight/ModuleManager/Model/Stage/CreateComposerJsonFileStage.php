@@ -21,13 +21,14 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
- * Class CreateXmlFileStage
+ * Class CreateComposerJsonFileStage
  *
- * Creates an XML file in the given location
+ * Creates a vendor-name/module-name/composer.json file
+ * Assumes that the vendor-name/module-name/ folder already exists
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateXmlFileStage extends BaseStage
+class CreateComposerJsonFileStage extends BaseStage
 {
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -35,7 +36,7 @@ class CreateXmlFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * Constructor
+     * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
      */
@@ -48,20 +49,20 @@ class CreateXmlFileStage extends BaseStage
     /**
      * @param array $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function processStage(array $payload) : array
     {
-        $filePath          = $payload['config']['create-xml-file-stage']['file-path'];
-        $fileName          = $payload['config']['create-xml-file-stage']['file-name'];
-        $templateFilePath  = $payload['config']['create-xml-file-stage']['template-file-path'];
-        $templateVariables = $payload['config']['create-xml-file-stage']['template-variables'];
+        $filePath          = $payload['config']['create-composer-json-file-stage']['file-path'];
+        $fileName          = $payload['config']['create-composer-json-file-stage']['file-name'];
+        $templateFilePath  = $payload['config']['create-composer-json-file-stage']['template-file-path'];
+        $templateVariables = $payload['config']['create-composer-json-file-stage']['template-variables'];
 
         // Check if file exists
         try {
             $isExists = $this->filesystemDriver->isExists($filePath . DIRECTORY_SEPARATOR . $fileName);
             if ($isExists) {
-                $payload['messages'][] = "<info>" . $fileName . "</info> file already exists at <info>{$filePath}</info>";
+                $payload['messages'][] = "<info>" . $fileName . "</info> file already exists at <info>" . $filePath . DIRECTORY_SEPARATOR . $fileName . "</info>";
 
                 return $payload;
             }

@@ -1,5 +1,5 @@
 {
-    "name": "{{COMPOSER_VENDOR_NAME}}/{{COMPOSER_MODULE_NAME}}",
+    "name": "{{VENDOR_NAME_LOWERCASE}}/{{MODULE_NAME_LOWERCASE}}",
     "description": "Created by ProcessEight_ModuleManager",
     "type": "magento2-module",
     "version": "1.0.0",

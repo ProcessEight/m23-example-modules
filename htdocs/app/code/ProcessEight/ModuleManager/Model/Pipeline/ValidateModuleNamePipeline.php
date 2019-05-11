@@ -27,13 +27,8 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
  *
  * @package ProcessEight\ModuleManager\Model\Pipeline
  */
-class ValidateModuleNamePipeline
+class ValidateModuleNamePipeline extends BasePipeline
 {
-    /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorNameStage
      */
@@ -56,25 +51,9 @@ class ValidateModuleNamePipeline
         \ProcessEight\ModuleManager\Model\Stage\ValidateVendorNameStage $validateVendorNameStage,
         \ProcessEight\ModuleManager\Model\Stage\ValidateModuleNameStage $validateModuleNameStage
     ) {
-        $this->pipeline                = $pipeline;
+        parent::__construct($pipeline);
         $this->validateVendorNameStage = $validateVendorNameStage;
         $this->validateModuleNameStage = $validateModuleNameStage;
-    }
-
-    /**
-     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
-     *
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
-     */
-    public function __invoke(array $payload) : array
-    {
-        if ($payload['is_valid'] === true) {
-            $payload = $this->processPipeline($payload);
-        }
-
-        return $payload;
     }
 
     /**
