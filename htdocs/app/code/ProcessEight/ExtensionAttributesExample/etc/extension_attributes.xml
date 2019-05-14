@@ -15,10 +15,29 @@
  *
  */
  -->
+<!-- Refer to the DevDocs for a detailed description of what all the nodes and attributes mean: -->
+<!-- @see https://devdocs.magento.com/guides/v2.3/extension-dev-guide/attributes.html#declare -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <!-- Example One: Defines an attribute which adds an array of objects to the Product entity -->
     <extension_attributes for="Magento\Catalog\Api\Data\ProductInterface">
         <attribute code="external_links"
-                   type="ProcessEight\ExtensionAttributesExample\Api\Data\ExternalLinkInterface[]" />
+                   type="ProcessEight\ExtensionAttributesExample\Api\Data\ExternalLinkInterface[]"/>
+    </extension_attributes>
+    <!-- Example Two: Defines an attribute which adds an array of StockItem entity objects,
+         which satisfy the criteria defined by the join node, to the Product entity -->
+    <extension_attributes for="Magento\Catalog\Api\Data\ProductInterface">
+        <attribute code="processeight_stock_item"
+                   type="Magento\CatalogInventory\Api\Data\StockItemInterface">
+            <resources>
+                <resource ref="Magento_CatalogInventory::cataloginventory"/>
+            </resources>
+            <join reference_table="cataloginventory_stock_item"
+                  join_on_field="entity_id"
+                  reference_field="product_id">
+                <field>qty</field>
+                <field>item_id</field>
+            </join>
+        </attribute>
     </extension_attributes>
 </config>

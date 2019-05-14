@@ -17,16 +17,38 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--
+    /**
+     *  Define a plugin which allows us to add external_links to the Product as an Extension Attribute
+     */
+     -->
+    <type name="Magento\Catalog\Api\ProductRepositoryInterface">
+        <plugin name="processeight_extensionattributesexample_add_external_links_to_products"
+                type="ProcessEight\ExtensionAttributesExample\Model\Plugin\Product\Repository"/>
+    </type>
+    <!--
+    /**
+     *  The rest of this di.xml file is for configuring the custom entity used to populate our Extension Attribute
+     *  and to define a command used as a working example.
+     *  None of this is actually required to define and use Extension Attributes
+     */
+     -->
+    <!-- A command to demonstrate using Extension Attributes -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="processeight_extensionattributesexample_command_extensionattributesexamplecommand"
+                      xsi:type="object">ProcessEight\ExtensionAttributesExample\Command\ExtensionAttributesExample</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- These preferences implement a custom entity, which is used as the value which populates our external_links extension attribute -->
     <preference for="ProcessEight\ExtensionAttributesExample\Api\Data\ExternalLinkInterface"
                 type="ProcessEight\ExtensionAttributesExample\Model\ExternalLink"/>
     <preference for="ProcessEight\ExtensionAttributesExample\Api\ExternalLinksProviderInterface"
                 type="ProcessEight\ExtensionAttributesExample\Model\ExternalLinks\Provider"/>
-    <type name="Magento\Catalog\Api\ProductRepositoryInterface">
-        <plugin name="joinExternalLinksToProductRepositoryList"
-                type="ProcessEight\ExtensionAttributesExample\Model\Plugin\Product\Repository"/>
-    </type>
     <!-- This looks complicated, but all it's doing is passing the table name and primary key column to the Resource Model
-     by means of injecting \Magento\Framework\EntityManager\MetadataPool into \ProcessEight\ExtensionAttributesExample\Model\ResourceModel\ExternalLinks\Loader -->
+         by means of injecting \Magento\Framework\EntityManager\MetadataPool into \ProcessEight\ExtensionAttributesExample\Model\ResourceModel\ExternalLinks\Loader -->
     <type name="Magento\Framework\EntityManager\MetadataPool">
         <arguments>
             <argument name="metadata" xsi:type="array">

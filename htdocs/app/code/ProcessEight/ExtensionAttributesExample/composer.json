@@ -1,6 +1,6 @@
 {
     "name": "processeight/extensionattributesexample",
-    "description": "Created by ProcessEight_ModuleManager",
+    "description": "Demonstration of how to use Extension Attributes in Magento 2.",
     "type": "magento2-module",
     "version": "1.0.0",
     "license": [
