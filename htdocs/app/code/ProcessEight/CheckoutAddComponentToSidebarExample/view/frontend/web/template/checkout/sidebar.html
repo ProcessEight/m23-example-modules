@@ -1,0 +1,54 @@
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<!--
+We override this Magento core file in order to add a new KnockoutJS 'region' called 'foolsample'.
+This region is defined by the 'displayArea' node of view/frontend/layout/checkout_index_index.xml:40.
+We tell Magento to use this file and not the core one by configuring a 'map' instruction in
+view/frontend/requirejs-config.js:21.
+-->
+<div id="opc-sidebar"
+     data-bind="afterRender:setModalElement, mageInit: {
+    'Magento_Ui/js/modal/modal':{
+        'type': 'custom',
+        'modalClass': 'opc-sidebar opc-summary-wrapper',
+        'wrapperClass': 'checkout-container',
+        'parentModalClass': '_has-modal-custom',
+        'responsive': true,
+        'responsiveClass': 'custom-slide',
+        'overlayClass': 'modal-custom-overlay',
+        'buttons': []
+    }}">
+
+    <!-- ko foreach: getRegion('summary') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+
+    <div class="opc-block-shipping-information">
+        <!-- ko foreach: getRegion('shipping-information') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+    </div>
+
+    <!-- Add our new custom KnockoutJS region -->
+    <div class="opc-block-foolSample">
+        <!-- ko foreach: getRegion('foolsample') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+    </div>
+    <!-- Core changes end here -->
+
+</div>

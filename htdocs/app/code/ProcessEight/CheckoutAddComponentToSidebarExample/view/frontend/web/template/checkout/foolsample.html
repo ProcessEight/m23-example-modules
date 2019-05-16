@@ -1,0 +1,34 @@
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<!--
+ This file defines the template which will be rendered by our uiComponent, 'foolSample',
+ which is defined in view/frontend/layout/checkout_index_index.xml:30
+ and located in view/frontend/web/js/view/FoolSample.js
+ Each of the methods in this file calls the matching method in our uiComponent (or a parent uiComponent thereof)
+ -->
+<!-- ko if: (isVisible()) -->
+<div class="foolSample">
+    <div class="foolSample-title">
+        <span data-bind="i18n: getTitle()"></span>
+    </div>
+    <div class="foolSample-content">
+        <!-- ko if: (getImage()) -->
+        <img data-bind="attr: {src: getImage(), alt: $t('Ojocuidao')}" /><!-- Is the $t function here a jQuery function? Is that why we need to include jQuery in our uiComponent? -->
+        <!--/ko-->
+    </div>
+</div>
+<!--/ko-->

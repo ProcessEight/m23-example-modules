@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<!--
+ This is a standard Layout XML file. We use the ability to define the arguments that get passed to a Block class using the `arguments` node
+ in order to build up an XML tree of configuration data (which is eventually converted to an array). In this tree we define and configure our uiComponent.
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="checkout"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.root">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="sidebar" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="foolSample" xsi:type="array">
+                                            <!-- Folder path after module name is relative to view/frontend/web/ -->
+                                            <item name="component" xsi:type="string">ProcessEight_CheckoutAddComponentToSidebarExample/js/view/FoolSample</item>
+                                            <!-- Defines a sort order of all the uiComponents in this section ('sidebar') of the checkout -->
+                                            <item name="sortOrder" xsi:type="string">90</item>
+                                            <!-- displayArea: Called by the KnockoutJS comments in the HTML template -->
+                                            <item name="displayArea" xsi:type="string">foolsample</item>
+                                            <!-- Child nodes of 'config' are initialised as properties of the JS uiComponent(?) -->
+                                            <item name="config" xsi:type="array">
+                                                <item name="title" xsi:type="string" translate="true">Hello World</item>
+                                                <!-- @todo What's this for? It isn't used in this module. Can we remove it? -->
+                                                <item name="deps" xsi:type="string">checkout.steps.billing-step.payment</item>
+                                                <!--<item name="deps" xsi:type="array">
+                                                    <item name="0" xsi:type="string">checkout.steps</item>
+                                                </item>-->
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

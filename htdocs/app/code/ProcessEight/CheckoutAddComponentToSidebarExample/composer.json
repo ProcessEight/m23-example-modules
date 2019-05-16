@@ -1,0 +1,17 @@
+{
+    "name": "processeight/checkoutaddcomponenttosidebarexample",
+    "description": "Example of adding a custom uiComponent to the checkout sidebar",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ProcessEight\\CheckoutAddComponentToSidebarExample\\": ""
+        }
+    }
+}
