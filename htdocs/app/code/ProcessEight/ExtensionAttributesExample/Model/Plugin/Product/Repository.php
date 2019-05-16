@@ -183,6 +183,7 @@ class Repository
      */
     private function addExternalLinksToProduct(\Magento\Catalog\Api\Data\ProductInterface $product)
     {
+        /** @var \Magento\Catalog\Api\Data\ProductExtensionInterface $extensionAttributes */
         $extensionAttributes = $product->getExtensionAttributes();
 
         if (empty($extensionAttributes)) {
