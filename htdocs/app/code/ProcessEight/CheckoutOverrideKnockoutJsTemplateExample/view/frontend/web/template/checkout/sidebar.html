@@ -1,0 +1,52 @@
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<!--
+This template overrides the original, located in
+/vendor/magento/module-checkout/view/frontend/web/template/sidebar.html
+The uiComponent for this template is located in
+/vendor/magento/module-checkout/view/frontend/web/js/view/sidebar.js
+-->
+<div id="opc-sidebar"
+     data-bind="afterRender:setModalElement, mageInit: {
+    'Magento_Ui/js/modal/modal':{
+        'type': 'custom',
+        'modalClass': 'opc-sidebar opc-summary-wrapper',
+        'wrapperClass': 'checkout-container',
+        'parentModalClass': '_has-modal-custom',
+        'responsive': true,
+        'responsiveClass': 'custom-slide',
+        'overlayClass': 'modal-custom-overlay',
+        'buttons': []
+    }}">
+
+    <!-- ko foreach: getRegion('summary') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+
+    <div class="opc-block-shipping-information">
+        <!-- ko foreach: getRegion('shipping-information') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+    </div>
+
+    <!-- Add a new div to 'prove' this template has been overridden -->
+    <div class="opc-block-processeight-checkout-override-knockout-js-template-example">
+        <h1>ABC123</h1>
+    </div>
+    <!-- Core changes end here -->
+
+</div>
