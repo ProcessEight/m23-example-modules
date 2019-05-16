@@ -41,11 +41,6 @@
                                             <!-- Child nodes of 'config' are initialised as properties of the JS uiComponent(?) -->
                                             <item name="config" xsi:type="array">
                                                 <item name="title" xsi:type="string" translate="true">Hello World</item>
-                                                <!-- @todo What's this for? It isn't used in this module. Can we remove it? -->
-                                                <item name="deps" xsi:type="string">checkout.steps.billing-step.payment</item>
-                                                <!--<item name="deps" xsi:type="array">
-                                                    <item name="0" xsi:type="string">checkout.steps</item>
-                                                </item>-->
                                             </item>
                                         </item>
                                     </item>

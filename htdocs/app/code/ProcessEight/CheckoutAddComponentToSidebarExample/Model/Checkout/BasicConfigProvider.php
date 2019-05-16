@@ -14,8 +14,7 @@
  *
  */
 
-// @todo Uncomment and test this
-//declare(strict_types=1);
+declare(strict_types=1);
 
 namespace ProcessEight\CheckoutAddComponentToSidebarExample\Model\Checkout;
 
@@ -32,15 +31,15 @@ class BasicConfigProvider implements \Magento\Checkout\Model\ConfigProviderInter
 {
     const MINIMUM_AMOUNT = 10;
     const AMOUNT_EDGE = 100;
-    const IMAGE = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/foolsample2.gif';
-    const IMAGE2 = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/foolsample3.gif';
-    const IMAGER = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/foolsampler.gif';
+    const IMAGE_1 = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/image1.jpg';
+    const IMAGE_2 = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/image2.jpg';
+    const IMAGE_3 = 'ProcessEight_CheckoutAddComponentToSidebarExample/images/image3.jpg';
 
     /**
      * Retrieve assoc array of checkout configuration
      *
      * We're just passing an array of hardcoded values here, but the values could come from anywhere,
-     * e.g. Database, Quote, etc
+     * e.g. Config, Database, Quote, etc
      *
      * @return array
      */
@@ -50,9 +49,9 @@ class BasicConfigProvider implements \Magento\Checkout\Model\ConfigProviderInter
             'foolsample' => [
                 'minimum_amount' => self::MINIMUM_AMOUNT,
                 'amount_edge'    => self::AMOUNT_EDGE,
-                'image'          => self::IMAGE,
-                'image2'         => self::IMAGE2,
-                'imageR'         => self::IMAGER,
+                'image1'          => self::IMAGE_1,
+                'image2'         => self::IMAGE_2,
+                'image3'         => self::IMAGE_3,
             ],
         ];
 

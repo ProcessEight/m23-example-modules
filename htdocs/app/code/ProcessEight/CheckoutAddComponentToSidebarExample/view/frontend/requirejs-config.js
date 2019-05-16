@@ -17,7 +17,7 @@
  * and then sent as one file to the browser
  */
 
-var config = {
+let config = {
     map: {
         '*': {
             // Override the default Magento template with our own template

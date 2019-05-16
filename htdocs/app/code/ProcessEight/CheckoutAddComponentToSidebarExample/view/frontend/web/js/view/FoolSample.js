@@ -22,7 +22,6 @@ define([
     'jquery', // @todo Do we need to include jQuery?
     'uiComponent',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/step-navigator', // @todo Do we need to include this? Why doesn't it have a matching param in the function signature below?
 ], function ($, Component, quote) {
     'use strict';
 
@@ -30,11 +29,11 @@ define([
      * Grabs the grand total from the quote
      * @return {Number}
      */
-    var getTotal = function () {    // @todo Change to 'let' and test
+    let getTotal = function () {
         return quote.totals()['grand_total'];
     };
 
-    var getQuote = function () {
+    let getQuote = function () {
         return quote;
     };
 
@@ -64,8 +63,8 @@ define([
 
         getImage: function () {
             if (getQuote().shippingAddress()) {
-                if (getQuote().shippingAddress().regionCode
-                    && getQuote().shippingAddress().regionCode.toLowerCase() === 'albacete') {
+                if (getQuote().shippingAddress().countryId
+                    && getQuote().shippingAddress().countryId.toLowerCase() === 'us') {
                     return require.toUrl(this.config.image2);
                 }
             }
@@ -73,11 +72,11 @@ define([
             if (getTotal() >= this.config.amount_edge) {
                 return require.toUrl(this.config.image3);
             }
-            return false;
+            return require.toUrl(this.config.image1);
         },
 
         isVisible: function () {
-            return true; // (getTotal() >= this.config.minimum_amount);
+            return (getTotal() >= this.config.minimum_amount);
         }
     })
 });
