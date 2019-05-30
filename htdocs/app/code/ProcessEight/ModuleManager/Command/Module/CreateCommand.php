@@ -39,17 +39,15 @@ class CreateCommand extends BaseCommand
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                       $pipeline
-     * @param \Magento\Framework\Module\Dir                                   $moduleDir
      * @param \Magento\Framework\App\Filesystem\DirectoryList                 $directoryList
      * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateModulePipeline $createModulePipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \Magento\Framework\Module\Dir $moduleDir,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \ProcessEight\ModuleManager\Model\Pipeline\CreateModulePipeline $createModulePipeline
     ) {
-        parent::__construct($pipeline, $moduleDir);
+        parent::__construct($pipeline, $directoryList);
         $this->createModulePipeline = $createModulePipeline;
         $this->directoryList        = $directoryList;
     }

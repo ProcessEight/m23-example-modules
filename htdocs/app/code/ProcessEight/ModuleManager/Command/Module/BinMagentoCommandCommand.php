@@ -48,15 +48,15 @@ class BinMagentoCommandCommand extends BaseCommand
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                                  $masterPipeline
-     * @param \Magento\Framework\Module\Dir                                              $moduleDir
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                            $directoryList
      * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $masterPipeline,
-        \Magento\Framework\Module\Dir $moduleDir,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
     ) {
-        parent::__construct($masterPipeline, $moduleDir);
+        parent::__construct($masterPipeline, $directoryList);
         $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
     }
 
@@ -155,14 +155,14 @@ class BinMagentoCommandCommand extends BaseCommand
      * @param \Symfony\Component\Console\Input\InputInterface $input
      *
      * @return array
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
         // CreateFolderPipeline config
         $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
         $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input,
-            'Command');
+        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'Command');
 
         // Create PHP Class Stage config
         $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
@@ -200,6 +200,7 @@ class BinMagentoCommandCommand extends BaseCommand
             '{{COMMAND_NAME}}'                 => $input->getOption(ConfigKey::COMMAND_NAME),
             '{{COMMAND_DESCRIPTION}}'          => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
             '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
+            // Change LOWERCASE to STRTOLOWER
             '{{COMMAND_CLASS_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
         ]);
 

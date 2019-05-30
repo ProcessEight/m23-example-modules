@@ -1,5 +1,16 @@
 # ProcessEight_ModuleManager
 
+##Table of Contents
+
+   * [ProcessEight_ModuleManager](#processeight_modulemanager)
+      * [Add a new stage](#add-a-new-stage)
+         * [__invoke](#__invoke)
+         * [processStage](#processstage)
+      * [Add a new pipeline](#add-a-new-pipeline)
+         * [__invoke](#__invoke-1)
+         * [processPipeline](#processpipeline)
+      * [Add a new command](#add-a-new-command)
+
 ## Add a new stage
 See `\ProcessEight\ModuleManager\Model\Stage\CreateFolderStage` for a complete example.
 
@@ -7,7 +18,7 @@ Each stage should be responsible for the data it needs to work.
 
 A Stage must have two methods:
 
-### `__invoke``
+### `__invoke`
 Which is called whenever the pipeline is processed.
 
 The `__invoke` method has one parameter, `array $payload`. The payload contains data which must be accessible in all Stages/Pipelines (e.g. The `is_valid` validation flag).
@@ -31,12 +42,6 @@ Just like a Stage. The `__invoke` method has one parameter, `array $payload`. Th
 Called from the `__invoke` method. This method defines and configures the Stages (or other Pipelines) in this Pipeline, then executes it.
 
 Just like a Stage, Pipelines have a getter and setter method, which the Pipeline uses to configure the Stages and any other Pipelines in this Pipeline:
-
-### `getConfig`
-Getter used by `processPipeline` to return the data used to configure the Stages/other Pipelines in this Pipeline.
-
-### `setConfig`
-Accepts an array which should contain all the data that the Stages/other Pipelines in this Pipeline need to run.
 
 ## Add a new command
 See `\ProcessEight\ModuleManager\Command\Module\BinMagentoCommandCommand` for a complete example

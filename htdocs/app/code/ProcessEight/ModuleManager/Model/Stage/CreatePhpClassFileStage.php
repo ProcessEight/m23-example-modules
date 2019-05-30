@@ -72,9 +72,11 @@ class CreatePhpClassFileStage
     {
         // Check if file exists
         try {
-            $isExists = $this->filesystemDriver->isExists($payload['config']['create-php-class-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $payload['config']['create-php-class-file-stage']['file-name']);
+            $artefactFileName = str_replace('{{CONTROLLER_ACTION_NAME_UCFIRST}}', $payload['config']['create-php-class-file-stage']['template-variables']['{{CONTROLLER_ACTION_NAME_UCFIRST}}'], $payload['config']['create-php-class-file-stage']['file-name']);
+
+            $isExists = $this->filesystemDriver->isExists($payload['config']['create-php-class-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $artefactFileName);
             if ($isExists) {
-                $payload['messages'][] = "<info>" . $payload['config']['create-php-class-file-stage']['file-name'] . "</info> file already exists at <info>{$payload['config']['create-php-class-file-stage']['file-path']}</info>";
+                $payload['messages'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>{$payload['config']['create-php-class-file-stage']['file-path']}</info>";
 
                 return $payload;
             }
@@ -96,7 +98,7 @@ class CreatePhpClassFileStage
 
             // Write template to file
             $artefactFileResource = $this->filesystemDriver->fileOpen(
-                $payload['config']['create-php-class-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $payload['config']['create-php-class-file-stage']['file-name'],
+                $payload['config']['create-php-class-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $artefactFileName,
                 'wb+'
             );
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
@@ -108,7 +110,7 @@ class CreatePhpClassFileStage
             return $payload;
         }
 
-        $payload['messages'][] = "Created <info>" . $payload['config']['create-php-class-file-stage']['file-name'] . "</info> file at <info>{$payload['config']['create-php-class-file-stage']['file-path']}</info>";
+        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$payload['config']['create-php-class-file-stage']['file-path']}</info>";
 
         return $payload;
     }

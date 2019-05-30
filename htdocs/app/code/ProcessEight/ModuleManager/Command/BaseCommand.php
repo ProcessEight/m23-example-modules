@@ -49,23 +49,23 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
     public $masterPipeline;
 
     /**
-     * @var \Magento\Framework\Module\Dir
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
      */
-    public $moduleDir;
+    private $directoryList;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline     $masterPipeline
-     * @param \Magento\Framework\Module\Dir $moduleDir
+     * @param \League\Pipeline\Pipeline                       $masterPipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      */
     public function __construct(
         \League\Pipeline\Pipeline $masterPipeline,
-        \Magento\Framework\Module\Dir $moduleDir
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
     ) {
         parent::__construct();
         $this->masterPipeline = $masterPipeline;
-        $this->moduleDir      = $moduleDir;
+        $this->directoryList  = $directoryList;
     }
 
     /**
@@ -135,14 +135,19 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
      * @param string                                          $trailingPath
      *
      * @return string
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function getAbsolutePathToFolder(
         \Symfony\Component\Console\Input\InputInterface $input,
         string $trailingPath = ''
     ) : string {
-        return $this->moduleDir->getDir(
-                $input->getOption(ConfigKey::VENDOR_NAME) . '_' . $input->getOption(ConfigKey::MODULE_NAME)
-            ) . DIRECTORY_SEPARATOR . $trailingPath;
+        $absolutePathToFolder = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
+                                DIRECTORY_SEPARATOR . 'code' .
+                                DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::VENDOR_NAME) .
+                                DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::MODULE_NAME) .
+                                DIRECTORY_SEPARATOR . $trailingPath;
+
+        return $absolutePathToFolder;
     }
 
     /**
@@ -174,11 +179,11 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
     public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
         $templateVariables = [
-            '{{VENDOR_NAME}}'                  => $input->getOption(ConfigKey::VENDOR_NAME),
-            '{{MODULE_NAME}}'                  => $input->getOption(ConfigKey::MODULE_NAME),
-            '{{VENDOR_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
-            '{{MODULE_NAME_LOWERCASE}}'        => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
-            '{{YEAR}}'                         => date('Y'),
+            '{{VENDOR_NAME}}'           => $input->getOption(ConfigKey::VENDOR_NAME),
+            '{{MODULE_NAME}}'           => $input->getOption(ConfigKey::MODULE_NAME),
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
+            '{{YEAR}}'                  => date('Y'),
         ];
 
         return $templateVariables;
@@ -191,15 +196,17 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
      * @param string $trailingPath Sub-folder within Template folder (if any) which contains the template file
      *
      * @return string
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function getTemplateFilePath(string $fileName, string $trailingPath = '') : string
     {
-        $templateFilePath = implode(DIRECTORY_SEPARATOR, [
-            $this->moduleDir->getDir('ProcessEight_ModuleManager'),
-            'Template',
-            $trailingPath,
-            $fileName . '.template',
-        ]);
+        $templateFilePath = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
+                            DIRECTORY_SEPARATOR . 'code' .
+                            DIRECTORY_SEPARATOR . 'ProcessEight' .
+                            DIRECTORY_SEPARATOR . 'ModuleManager' .
+                            DIRECTORY_SEPARATOR . 'Template' .
+                            DIRECTORY_SEPARATOR . $trailingPath .
+                            DIRECTORY_SEPARATOR . $fileName . '.template';
 
         return $templateFilePath;
     }
