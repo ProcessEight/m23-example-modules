@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
+use ProcessEight\ModuleManager\Command\BaseCommand;
 use ProcessEight\ModuleManager\Model\ConfigKey;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class LayoutCommand extends Command
+class LayoutCommand extends BaseCommand
 {
     /**
      * @var \League\Pipeline\Pipeline
@@ -40,55 +40,25 @@ class LayoutCommand extends Command
     private $pipeline;
 
     /**
-     * @var \Magento\Framework\Module\Dir
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateXmlFilePipeline
      */
-    private $moduleDir;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
-     */
-    private $validateVendorName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName
-     */
-    private $validateModuleName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
-     */
-    private $createAreaCodeFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateLayoutXmlFile
-     */
-    private $createLayoutXmlFile;
+    private $createXmlFilePipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                    $pipeline
-     * @param \Magento\Framework\Module\Dir                                $moduleDir
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName   $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName   $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateLayoutXmlFile  $createLayoutXmlFile
+     * @param \League\Pipeline\Pipeline                                        $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                  $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateXmlFilePipeline $createXmlFilePipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \Magento\Framework\Module\Dir $moduleDir,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
-        \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateLayoutXmlFile $createLayoutXmlFile
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateXmlFilePipeline $createXmlFilePipeline
     ) {
-        parent::__construct();
-        $this->pipeline             = $pipeline;
-        $this->moduleDir            = $moduleDir;
-        $this->validateVendorName   = $validateVendorName;
-        $this->validateModuleName   = $validateModuleName;
-        $this->createAreaCodeFolder = $createAreaCodeFolder;
-        $this->createLayoutXmlFile  = $createLayoutXmlFile;
+        parent::__construct($pipeline, $directoryList);
+        $this->pipeline              = $pipeline;
+        $this->createXmlFilePipeline = $createXmlFilePipeline;
     }
 
     /**
@@ -98,8 +68,6 @@ class LayoutCommand extends Command
     {
         $this->setName("process-eight:module:add:frontend:layout");
         $this->setDescription("Adds a new Layout XML file.");
-        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         $this->addOption(ConfigKey::LAYOUT_XML_HANDLE, null, InputOption::VALUE_OPTIONAL, 'Layout XML handle');
         parent::configure();
     }
@@ -109,33 +77,18 @@ class LayoutCommand extends Command
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
+
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
-            $question = new Question('<question>Vendor name [ProcessEight]:</question> ', 'ProcessEight');
-
-            $input->setOption(
-                ConfigKey::VENDOR_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name: [Test]</question> ', 'Test');
-
-            $input->setOption(
-                ConfigKey::MODULE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
         if (!$input->getOption(ConfigKey::LAYOUT_XML_HANDLE)) {
-            $question = new Question('<question>Layout XML handle: [default]</question> ', 'default');
+            $question = new Question('<question>Layout XML handle (without .xml suffix): [default]</question> ', 'default');
 
             $input->setOption(
                 ConfigKey::LAYOUT_XML_HANDLE,
@@ -143,83 +96,60 @@ class LayoutCommand extends Command
             );
         }
 
-        // Validate inputs
-        $validationResult = $this->validateInputs([
-            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
-        ]);
+        $result = $this->processPipeline($input);
 
-        if (!$validationResult['is_valid']) {
-            $output->writeln($validationResult['validation_message']);
-
-            return 1;
-        }
-
-        // Generate assets
-        $creationResult = $this->generateModule([
-            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
-        ]);
-
-        foreach ($creationResult['creation_message'] as $message) {
+        foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
-        return $creationResult['is_valid'] ? 0 : 1;
+        return $result['is_valid'] ? 0 : 1;
     }
 
     /**
-     * Create and run validation pipeline
+     * Prepare all the data needed to run all the stages/pipelines needed for this command, then execute the pipeline
      *
-     * @param string[] $inputs
+     * @param \Symfony\Component\Console\Input\InputInterface $input
      *
-     * @return mixed[]
-     * @todo Move validation pipeline logic into a 'validate module name pipeline' class and inject it, then run it here
+     * @return array
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
-    private function validateInputs(array $inputs) : array
+    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $config             = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-        $validationPipeline = $this->pipeline;
-        $validationPipeline = $validationPipeline->pipe($this->validateVendorName);
-        $validationPipeline = $validationPipeline->pipe($this->validateModuleName);
+        // CreateFolderPipeline config
+        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
+        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
+        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
 
-        return $validationPipeline->process($config);
+        // Create layout.xml Stage config
+        $config['create-xml-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
+        $config['create-xml-file-stage']['file-name']          = strtolower(str_replace('{{LAYOUT_XML_HANDLE}}', $input->getOption(ConfigKey::LAYOUT_XML_HANDLE), '{{LAYOUT_XML_HANDLE}}.xml'));
+        $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{LAYOUT_XML_HANDLE}}.xml', 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
+
+        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+        $masterPipelineConfig = [
+            'is_valid' => true,
+            'config'   => $config,
+        ];
+
+        // Run the pipeline
+        return $this->createXmlFilePipeline->processPipeline($masterPipelineConfig);
     }
 
     /**
-     * Create and run generate module pipeline
+     * All template variables used in all pipelines used by this command
      *
-     * @param string[] $inputs
+     * @param InputInterface $input
      *
-     * @return int|mixed
-     * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
+     * @return array
      */
-    private function generateModule(array $inputs) : array
+    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        // Area code this command is working with
-        $inputs['area-code']                = 'frontend';
-        // Path to the folder we want to create
-        $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
-            $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
-            \Magento\Framework\Module\Dir::MODULE_VIEW_DIR
-        ) . DIRECTORY_SEPARATOR . '{{AREA_CODE}}' . DIRECTORY_SEPARATOR . 'layout';
+        $templateVariables = parent::getTemplateVariables($input);
+        $templateVariables = array_merge($templateVariables, [
+            '{{LAYOUT_XML_HANDLE}}' => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
+        ]);
 
-        $config = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-
-        $creationPipeline = $this->pipeline;
-        // Create view/<area-code>/layout/ folder
-        $creationPipeline = $creationPipeline->pipe($this->createAreaCodeFolder);
-        // Create Layout XML file
-        $creationPipeline = $creationPipeline->pipe($this->createLayoutXmlFile);
-
-        return $creationPipeline->process($config);
+        return $templateVariables;
     }
 }

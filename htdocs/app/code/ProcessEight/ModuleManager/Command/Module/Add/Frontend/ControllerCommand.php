@@ -179,7 +179,7 @@ class ControllerCommand extends BaseCommand
 
         // createPhpClassStage config
         $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Controller' . DIRECTORY_SEPARATOR . ucfirst($input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME)));
-        $config['create-php-class-file-stage']['file-name']          = '{{CONTROLLER_ACTION_NAME_UCFIRST}}.php';
+        $config['create-php-class-file-stage']['file-name']          = ucfirst(str_replace('{{CONTROLLER_ACTION_NAME_UCFIRST}}', $input->getOption(ConfigKey::CONTROLLER_ACTION_NAME), '{{CONTROLLER_ACTION_NAME_UCFIRST}}.php'));
         $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
         $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{CONTROLLER_ACTION_NAME_UCFIRST}}.php', 'Controller');
 

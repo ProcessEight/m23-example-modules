@@ -72,7 +72,7 @@ class CreatePhpClassFileStage
     {
         // Check if file exists
         try {
-            $artefactFileName = str_replace('{{CONTROLLER_ACTION_NAME_UCFIRST}}', $payload['config']['create-php-class-file-stage']['template-variables']['{{CONTROLLER_ACTION_NAME_UCFIRST}}'], $payload['config']['create-php-class-file-stage']['file-name']);
+            $artefactFileName = $payload['config']['create-php-class-file-stage']['file-name'];
 
             $isExists = $this->filesystemDriver->isExists($payload['config']['create-php-class-file-stage']['file-path'] . DIRECTORY_SEPARATOR . $artefactFileName);
             if ($isExists) {

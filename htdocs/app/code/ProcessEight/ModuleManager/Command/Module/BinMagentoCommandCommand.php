@@ -166,7 +166,7 @@ class BinMagentoCommandCommand extends BaseCommand
 
         // Create PHP Class Stage config
         $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
-        $config['create-php-class-file-stage']['file-name']          = $this->getProcessedFileName($input, '{{COMMAND_CLASS_NAME}}');
+        $config['create-php-class-file-stage']['file-name']          = $this->getProcessedFileName($input->getOption(ConfigKey::COMMAND_CLASS_NAME), '{{COMMAND_CLASS_NAME}}', ConfigKey::COMMAND_CLASS_NAME);
         $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
         $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
 
@@ -201,7 +201,7 @@ class BinMagentoCommandCommand extends BaseCommand
             '{{COMMAND_DESCRIPTION}}'          => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
             '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
             // Change LOWERCASE to STRTOLOWER
-            '{{COMMAND_CLASS_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
         ]);
 
         return $templateVariables;

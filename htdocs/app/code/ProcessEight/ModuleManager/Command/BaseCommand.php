@@ -153,17 +153,19 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
     /**
      * Replace template variables in file name
      *
-     * @param InputInterface $input
-     * @param                $replace
+     * @param string $replace
+     * @param string $optionValue
+     * @param string $fileName
      *
      * @return string
+     * @deprecated Just use str_replace inline instead
      */
-    public function getProcessedFileName(\Symfony\Component\Console\Input\InputInterface $input, $replace) : string
+    public function getProcessedFileName(string $replace, string $optionValue, string $fileName) : string
     {
         $artefactFileName = str_replace(
             $replace,
-            $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            $this->artefactFileName
+            $optionValue,
+            $fileName
         );
 
         return $artefactFileName;
