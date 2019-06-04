@@ -1,0 +1,17 @@
+{
+    "name": "processeight/createstoreviewgroupwebsite",
+    "description": "Demonstrates how to programmatically create a website/group/store triad",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ProcessEight\\CreateStoreViewGroupWebsite\\": ""
+        }
+    }
+}
