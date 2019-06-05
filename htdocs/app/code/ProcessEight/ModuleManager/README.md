@@ -51,3 +51,60 @@ This class is a standard Symfony Console Component class. The purpose of this cl
 The `processPipeline` method performs the same purpose as the `processPipeline` method in the Pipeline classes.
 
 The `payload` argument should have at least one element, `is_valid`. Setting this to false in any Stage/Pipeline will cause execution of the remaining Stages/Pipelines to be skipped.
+
+## Convert a command
+
+@todo: Make all these changes, then generate patch file, which can be used on multiple files (possibly) or at least a template for applying these changes
+
+- Change the class to extend from BaseCommand
+- Remove `moduleDir` dependency
+- Inject `\Magento\Framework\App\Filesystem\DirectoryList`
+- Pass `$pipeline` and `$directoryList` as arguments to `parent::__construct`
+- Move any stages into a new pipeline
+- Add `parent::configure()` to first line of `configure`
+- Remove logic to get `\ProcessEight\ModuleManager\Model\ConfigKey::VENDOR_NAME` and `\ProcessEight\ModuleManager\Model\ConfigKey::MODULE_NAME` from `configure`
+- Add `parent::execute($input, $output)` as first line of `execute` method
+- Remove logic to set `\ProcessEight\ModuleManager\Model\ConfigKey::VENDOR_NAME` and `\ProcessEight\ModuleManager\Model\ConfigKey::MODULE_NAME` from `execute`
+- Remove logic to `// Validate inputs` and `// Generate assets`
+- Refactor bottom part of method thus:
+```bash
+
+@@ -149,31 +122,13 @@
+             );
+         }
+
+-        // Validate inputs
+-        $validationResult = $this->validateInputs([
+-            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
+-            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
+-            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
+-        ]);
+-
+-        if (!$validationResult['is_valid']) {
+-            $output->writeln($validationResult['validation_message']);
++        $result = $this->processPipeline($input);
+
+-            return 1;
+-        }
+-
+-        // Generate assets
+-        $creationResult = $this->generateModule([
+-            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
+-            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
+-            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
+-        ]);
+-
+-        foreach ($creationResult['creation_message'] as $message) {
++        foreach ($result['messages'] as $message) {
+             $output->writeln($message);
+         }
+
+-        return $creationResult['is_valid'] ? 0 : 1;
++        return $result['is_valid'] ? 0 : 1;
+     }
+
+     /**
+```
+- Remove methods `validateInputs` and `generateAssets`
+- Add methods `processPipeline` and `getTemplateVariables` and configure as appropriate
+- Replace deprecated `getProcessedFilename` with `str_replace`
