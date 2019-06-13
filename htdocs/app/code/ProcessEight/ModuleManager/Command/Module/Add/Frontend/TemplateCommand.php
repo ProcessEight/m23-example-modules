@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
+use ProcessEight\ModuleManager\Command\BaseCommand;
 use ProcessEight\ModuleManager\Model\ConfigKey;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,67 +28,31 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Class TemplateCommand
  *
- * Creates a view/frontend/template/<template-name>.phtml file
+ * Creates a view/frontend/template/{{template-name}}.phtml file
  *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class TemplateCommand extends Command
+class TemplateCommand extends BaseCommand
 {
     /**
-     * @var \League\Pipeline\Pipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateTemplateCommandPipeline
      */
-    private $pipeline;
-
-    /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
-     */
-    private $validateVendorName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName
-     */
-    private $validateModuleName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
-     */
-    private $createAreaCodeFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile
-     */
-    private $createTemplatePhtmlFile;
+    private $createTemplateCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                       $pipeline
-     * @param \Magento\Framework\Module\Dir                                   $moduleDir
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName      $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName      $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder    $createAreaCodeFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile $createTemplatePhtmlFile
+     * @param \League\Pipeline\Pipeline                                                $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                          $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateTemplateCommandPipeline $createTemplateCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \Magento\Framework\Module\Dir $moduleDir,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
-        \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile $createTemplatePhtmlFile
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateTemplateCommandPipeline $createTemplateCommandPipeline
     ) {
-        parent::__construct();
-        $this->pipeline                = $pipeline;
-        $this->moduleDir               = $moduleDir;
-        $this->validateVendorName      = $validateVendorName;
-        $this->validateModuleName      = $validateModuleName;
-        $this->createAreaCodeFolder    = $createAreaCodeFolder;
-        $this->createTemplatePhtmlFile = $createTemplatePhtmlFile;
+        parent::__construct($pipeline, $directoryList);
+        $this->createTemplateCommandPipeline = $createTemplateCommandPipeline;
     }
 
     /**
@@ -96,12 +60,10 @@ class TemplateCommand extends Command
      */
     protected function configure()
     {
+        parent::configure();
         $this->setName("process-eight:module:add:frontend:template");
         $this->setDescription("Adds a new template PHTML file to the frontend area.");
-        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         $this->addOption(ConfigKey::TEMPLATE_NAME, null, InputOption::VALUE_OPTIONAL, 'Template PHTML name');
-        parent::configure();
     }
 
     /**
@@ -109,30 +71,14 @@ class TemplateCommand extends Command
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // Gather inputs
+        parent::execute($input, $output);
+
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
-            $question = new Question('<question>Vendor name [ProcessEight]:</question> ', 'ProcessEight');
-
-            $input->setOption(
-                ConfigKey::VENDOR_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name: [Test]</question> ', 'Test');
-
-            $input->setOption(
-                ConfigKey::MODULE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
 
         if (!$input->getOption(ConfigKey::TEMPLATE_NAME)) {
             $question = new Question('<question>Template PHTML name: [content]</question> ', 'content');
@@ -143,83 +89,60 @@ class TemplateCommand extends Command
             );
         }
 
-        // Validate inputs
-        $validationResult = $this->validateInputs([
-            ConfigKey::VENDOR_NAME   => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME   => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::TEMPLATE_NAME => $input->getOption(ConfigKey::TEMPLATE_NAME),
-        ]);
+        $result = $this->processPipeline($input);
 
-        if (!$validationResult['is_valid']) {
-            $output->writeln($validationResult['validation_message']);
-
-            return 1;
-        }
-
-        // Generate assets
-        $creationResult = $this->generateModule([
-            ConfigKey::VENDOR_NAME   => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME   => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::TEMPLATE_NAME => $input->getOption(ConfigKey::TEMPLATE_NAME),
-        ]);
-
-        foreach ($creationResult['creation_message'] as $message) {
+        foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
-        return $creationResult['is_valid'] ? 0 : 1;
+        return $result['is_valid'] ? 0 : 1;
     }
 
     /**
-     * Create and run validation pipeline
+     * Prepare all the data needed to run all the stages/pipelines needed for this command, then execute the pipeline
      *
-     * @param string[] $inputs
+     * @param \Symfony\Component\Console\Input\InputInterface $input
      *
-     * @return mixed[]
-     * @todo Move validation pipeline logic into a 'validate module name pipeline' class and inject it, then run it here
+     * @return array
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
-    private function validateInputs(array $inputs) : array
+    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $config             = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-        $validationPipeline = $this->pipeline;
-        $validationPipeline = $validationPipeline->pipe($this->validateVendorName);
-        $validationPipeline = $validationPipeline->pipe($this->validateModuleName);
+        // CreateFolderPipeline config
+        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
+        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
+        $config['create-folder-stage']['folder-path'] = $this->getAbsolutePathToFolder($input, 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'templates');
 
-        return $validationPipeline->process($config);
+        // Create PHTML File Stage config
+        $config['create-phtml-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
+        $config['create-phtml-file-stage']['file-name']          = strtolower(str_replace('{{TEMPLATE_NAME}}', $input->getOption(ConfigKey::TEMPLATE_NAME), '{{TEMPLATE_NAME}}.phtml'));
+        $config['create-phtml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['create-phtml-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{TEMPLATE_NAME}}.phtml', 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'templates');
+
+        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+        $masterPipelineConfig = [
+            'is_valid' => true,
+            'config'   => $config,
+        ];
+
+        // Run the pipeline
+        return $this->createTemplateCommandPipeline->processPipeline($masterPipelineConfig);
     }
 
     /**
-     * Create and run generate module pipeline
+     * All template variables used in all pipelines used by this command
      *
-     * @param string[] $inputs
+     * @param InputInterface $input
      *
-     * @return int|mixed
-     * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
+     * @return array
      */
-    private function generateModule(array $inputs) : array
+    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        // Area code this command is working with
-        $inputs['area-code'] = 'frontend';
-        // Path to the folder we want to create
-        $inputs['path-to-area-code-folder'] = $this->moduleDir->getDir(
-                $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME],
-                \Magento\Framework\Module\Dir::MODULE_VIEW_DIR
-            ) . DIRECTORY_SEPARATOR . '{{AREA_CODE}}' . DIRECTORY_SEPARATOR . 'templates';
+        $templateVariables = parent::getTemplateVariables($input);
+        $templateVariables = array_merge($templateVariables, [
+            '{{TEMPLATE_NAME}}' => $input->getOption(ConfigKey::TEMPLATE_NAME),
+        ]);
 
-        $config = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-
-        $creationPipeline = $this->pipeline;
-        // Create view/<area-code>/templates/ folder
-        $creationPipeline = $creationPipeline->pipe($this->createAreaCodeFolder);
-        // Create Template PHTML file
-        $creationPipeline = $creationPipeline->pipe($this->createTemplatePhtmlFile);
-
-        return $creationPipeline->process($config);
+        return $templateVariables;
     }
 }
