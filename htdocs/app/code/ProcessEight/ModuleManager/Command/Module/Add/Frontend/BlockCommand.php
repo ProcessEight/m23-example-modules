@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
+use ProcessEight\ModuleManager\Command\BaseCommand;
 use ProcessEight\ModuleManager\Model\ConfigKey;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ use Symfony\Component\Console\Question\Question;
  *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class BlockCommand extends Command
+class BlockCommand extends BaseCommand
 {
     /**
      * @var \League\Pipeline\Pipeline
@@ -40,46 +40,25 @@ class BlockCommand extends Command
     private $pipeline;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBlockCommandPipeline
      */
-    private $validateVendorName;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName
-     */
-    private $validateModuleName;
-
-    /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateFolder
-     */
-    private $createFolder;
+    private $createBlockCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                  $pipeline
-     * @param \Magento\Framework\Module\Dir                              $moduleDir
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName
-     * @param \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateFolder       $createFolder
+     * @param \League\Pipeline\Pipeline                                             $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                       $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBlockCommandPipeline $createBlockCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \Magento\Framework\Module\Dir $moduleDir,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateVendorName $validateVendorName,
-        \ProcessEight\ModuleManager\Model\Stage\ValidateModuleName $validateModuleName,
-        \ProcessEight\ModuleManager\Model\Stage\CreateFolder $createFolder
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateBlockCommandPipeline $createBlockCommandPipeline
     ) {
-        parent::__construct();
-        $this->pipeline           = $pipeline;
-        $this->moduleDir          = $moduleDir;
-        $this->validateVendorName = $validateVendorName;
-        $this->validateModuleName = $validateModuleName;
-        $this->createFolder       = $createFolder;
+        parent::__construct($pipeline, $directoryList);
+        $this->pipeline                   = $pipeline;
+        $this->createBlockCommandPipeline = $createBlockCommandPipeline;
     }
 
     /**
@@ -87,10 +66,9 @@ class BlockCommand extends Command
      */
     protected function configure()
     {
+        parent::configure();
         $this->setName("process-eight:module:add:frontend:block");
-        $this->setDescription("Adds a new block PHP class.");
-        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
+        $this->setDescription("Adds a new PHP Block class.");
         $this->addOption(ConfigKey::BLOCK_CLASS_NAME, null, InputOption::VALUE_OPTIONAL, 'Block class name');
         parent::configure();
     }
@@ -103,27 +81,11 @@ class BlockCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
+
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
-            $question = new Question('<question>Vendor name [ProcessEight]:</question>', 'ProcessEight');
-
-            $input->setOption(
-                ConfigKey::VENDOR_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name: [Test]</question>', 'Test');
-
-            $input->setOption(
-                ConfigKey::MODULE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
 
         if (!$input->getOption(ConfigKey::BLOCK_CLASS_NAME)) {
             $question = new Question('<question>Block class name: [Content]</question>', 'Content');
@@ -134,80 +96,64 @@ class BlockCommand extends Command
             );
         }
 
-        // Validate inputs
-        $validationResult = $this->validateInputs([
-            ConfigKey::VENDOR_NAME      => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME      => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::BLOCK_CLASS_NAME => $input->getOption(ConfigKey::BLOCK_CLASS_NAME),
-        ]);
+        $result = $this->processPipeline($input);
 
-        if (!$validationResult['is_valid']) {
-            $output->writeln($validationResult['validation_message']);
-
-            return 1;
-        }
-
-        // Generate assets
-        $creationResult = $this->generateAssets([
-            ConfigKey::VENDOR_NAME      => $input->getOption(ConfigKey::VENDOR_NAME),
-            ConfigKey::MODULE_NAME      => $input->getOption(ConfigKey::MODULE_NAME),
-            ConfigKey::BLOCK_CLASS_NAME => $input->getOption(ConfigKey::BLOCK_CLASS_NAME),
-        ]);
-
-        foreach ($creationResult['creation_message'] as $message) {
+        foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
-        return $creationResult['is_valid'] ? 0 : 1;
+        return $result['is_valid'] ? 0 : 1;
     }
 
     /**
-     * Create and run validation pipeline
+     * Prepare all the data needed to run all the stages/pipelines needed for this command, then execute the pipeline
      *
-     * @param string[] $inputs
+     * @param \Symfony\Component\Console\Input\InputInterface $input
      *
-     * @return mixed[]
-     * @todo Move validation pipeline logic into a 'validate module name pipeline' class and inject it, then run it here
+     * @return array
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
-    private function validateInputs(array $inputs) : array
+    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $config             = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-        $validationPipeline = $this->pipeline;
-        $validationPipeline = $validationPipeline->pipe($this->validateVendorName);
-        $validationPipeline = $validationPipeline->pipe($this->validateModuleName);
+        // ValidateModuleNamePipeline config
+        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
+        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
 
-        return $validationPipeline->process($config);
+        // CreateFolderPipeline config
+        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
+        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
+        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'Block');
+
+        // Create PHP Class Stage config
+        $config['create-php-class-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
+        $config['create-php-class-file-stage']['file-name']          = ucwords(str_replace('{{BLOCK_CLASS_NAME}}', $input->getOption(ConfigKey::BLOCK_CLASS_NAME), '{{BLOCK_CLASS_NAME}}.php'));
+        $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
+        $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{BLOCK_CLASS_NAME}}.php', 'Block');
+
+        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+        $masterPipelineConfig = [
+            'is_valid' => true,
+            'config'   => $config,
+        ];
+
+        // Run the pipeline
+        return $this->createBlockCommandPipeline->processPipeline($masterPipelineConfig);
     }
 
     /**
-     * Create and run pipeline
+     * All template variables used in all pipelines used by this command
      *
-     * @param string[] $inputs
+     * @param InputInterface $input
      *
-     * @return int|mixed
-     * @todo Move generation pipeline logic into a 'create module pipeline' class and inject it, then run it here
+     * @return array
      */
-    private function generateAssets(array $inputs) : array
+    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $inputs['area-code']      = 'frontend';
-        $inputs['path-to-folder'] = $this->moduleDir->getDir(
-                $inputs[ConfigKey::VENDOR_NAME] . '_' . $inputs[ConfigKey::MODULE_NAME]
-            ) . DIRECTORY_SEPARATOR . 'Block' . DIRECTORY_SEPARATOR;
+        $templateVariables = parent::getTemplateVariables($input);
+        $templateVariables = array_merge($templateVariables, [
+            '{{BLOCK_CLASS_NAME}}' => $input->getOption(ConfigKey::BLOCK_CLASS_NAME),
+        ]);
 
-        $config = [
-            'data'     => $inputs,
-            'is_valid' => true,
-        ];
-
-        $creationPipeline = $this->pipeline;
-        // Create Block folder
-        $creationPipeline = $creationPipeline->pipe($this->createFolder);
-        // Create Block class
-//        $creationPipeline = $creationPipeline->pipe($this->createAreaCodeFolder);
-
-        return $creationPipeline->process($config);
+        return $templateVariables;
     }
 }

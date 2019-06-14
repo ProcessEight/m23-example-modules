@@ -57,7 +57,7 @@ class BaseStage
 //            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $payload['config']['validate-vendor-name-stage']['vendor-name']) !== 1
 //        ) {
 //            $payload['is_valid']           = false;
-//            $payload['validation_message'] = 'Invalid vendor name';
+//            $payload['messages'][] = 'Invalid vendor name';
 //        }
 
         // Pass payload onto next stage/pipeline

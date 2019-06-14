@@ -81,7 +81,7 @@ class CreatePhpClassFileStage
                 return $payload;
             }
         } catch (FileSystemException $e) {
-            $payload['is_valid']           = false;
+            $payload['is_valid']   = false;
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
@@ -104,7 +104,7 @@ class CreatePhpClassFileStage
             $this->filesystemDriver->fileWrite($artefactFileResource, $artefactFileTemplate);
 
         } catch (FileSystemException $e) {
-            $payload['is_valid']           = false;
+            $payload['is_valid']   = false;
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
