@@ -1,0 +1,17 @@
+{
+    "name": "processeight/add-admin-users-example",
+    "description": "Demonstration of how to programmatically create admin users",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ProcessEight\\AddAdminUsersExample\\": ""
+        }
+    }
+}
