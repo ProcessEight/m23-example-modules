@@ -15,15 +15,13 @@
 
 define([
     'uiComponent',
-    'Magento_Shipping/js/model/config'
 
-], function (Component, config) {
+], function (Component) {
     'use strict';
 
     return Component.extend({
         defaults: {
             template: 'ProcessEightCheckout_CustomiseExistingStep/message'
-        },
-        config: config()
+        }
     });
 });
