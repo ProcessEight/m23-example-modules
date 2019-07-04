@@ -71,7 +71,7 @@ class CreateBinMagentoCommandPipeline
     }
 
     /**
-     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being inject by DI)
+     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being injected by DI)
      *
      * @param mixed[] $payload
      *
