@@ -30,6 +30,11 @@ use Symfony\Component\Console\Question\Question;
  *
  * Creates a block class file
  *
+ * @todo Add logic to create the block layout XML instruction and output to terminal
+ * @todo Add logic to check if the target layout XML file exists
+ * @todo Add logic to create the target layout XML file if not
+ * @todo Add logic to programmatically add the block to the target layout XML file
+ *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
 class BlockCommand extends BaseCommand
