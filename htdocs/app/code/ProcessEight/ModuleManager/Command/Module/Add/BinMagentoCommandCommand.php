@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module;
+namespace ProcessEight\ModuleManager\Command\Module\Add;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -65,24 +65,24 @@ class BinMagentoCommandCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:command");
+        $this->setName("process-eight:module:add:bin-magento-command");
         $this->setDescription("Creates a new bin/magento command.");
         $this->addOption(
             ConfigKey::COMMAND_NAME,
             null,
-            InputOption::VALUE_OPTIONAL,
+            InputOption::VALUE_REQUIRED,
             'Command name, e.g. process-eight:module:create'
         );
         $this->addOption(
             ConfigKey::COMMAND_DESCRIPTION,
             null,
-            InputOption::VALUE_OPTIONAL,
+            InputOption::VALUE_REQUIRED,
             'Brief description of the command'
         );
         $this->addOption(
             ConfigKey::COMMAND_CLASS_NAME,
             null,
-            InputOption::VALUE_OPTIONAL,
+            InputOption::VALUE_REQUIRED,
             'Command class name'
         );
         parent::configure();
@@ -101,6 +101,7 @@ class BinMagentoCommandCommand extends BaseCommand
      *
      * @return int|null null or 0 if everything went fine, or an error code
      *
+     * @throws \Magento\Framework\Exception\FileSystemException
      * @see setCode()
      */
     protected function execute(
@@ -165,8 +166,8 @@ class BinMagentoCommandCommand extends BaseCommand
         $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'Command');
 
         // Create PHP Class Stage config
-        $config['create-php-class-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'Command');
-        $config['create-php-class-file-stage']['file-name']          = $this->getProcessedFileName($input->getOption(ConfigKey::COMMAND_CLASS_NAME), '{{COMMAND_CLASS_NAME}}', ConfigKey::COMMAND_CLASS_NAME);
+        $config['create-php-class-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
+        $config['create-php-class-file-stage']['file-name']          = ucfirst(str_replace('{{COMMAND_CLASS_NAME}}', $input->getOption(ConfigKey::COMMAND_CLASS_NAME), '{{COMMAND_CLASS_NAME}}.php'));
         $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
         $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
 
@@ -197,11 +198,10 @@ class BinMagentoCommandCommand extends BaseCommand
     {
         $templateVariables = parent::getTemplateVariables($input);
         $templateVariables = array_merge($templateVariables, [
-            '{{COMMAND_NAME}}'                 => $input->getOption(ConfigKey::COMMAND_NAME),
-            '{{COMMAND_DESCRIPTION}}'          => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
-            '{{COMMAND_CLASS_NAME}}'           => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            // Change LOWERCASE to STRTOLOWER
-            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+            '{{COMMAND_NAME}}'               => $input->getOption(ConfigKey::COMMAND_NAME),
+            '{{COMMAND_DESCRIPTION}}'        => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
+            '{{COMMAND_CLASS_NAME}}'         => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
+            '{{COMMAND_CLASS_NAME_UCFIRST}}' => ucfirst($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
         ]);
 
         return $templateVariables;
