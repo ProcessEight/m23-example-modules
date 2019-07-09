@@ -18,14 +18,14 @@ define(
         'ko',
         'uiComponent',
         'underscore',
-        'ProcessEightCheckout_AddValidatedCheckbox/js/model/consent-agreement-validator',
+        'ProcessEightCheckout_AddValidatedCheckbox/js/model/welcome/additional-validators',
         'Magento_Checkout/js/model/step-navigator'
     ],
     function (
         ko,
         Component,
         _,
-        consentAgreementValidator,
+        stepValidator,
         stepNavigator
     ) {
         'use strict';
@@ -85,7 +85,7 @@ define(
              * @returns void
              */
             navigateToNextStep: function () {
-                if (consentAgreementValidator.validate(false)) {
+                if (stepValidator.validate()) {
                     stepNavigator.next();
                 }
             }

@@ -34,13 +34,13 @@
                                                     <item name="sortOrder" xsi:type="string">100</item>
                                                     <item name="displayArea" xsi:type="string">before-continue-button</item>
                                                 </item>
-                                                <!--<item name="additional-step-validators" xsi:type="array">
+                                                <item name="additional-validators" xsi:type="array">
                                                     <item name="children" xsi:type="array">
                                                         <item name="consent-agreements-validator" xsi:type="array">
                                                             <item name="component" xsi:type="string">ProcessEightCheckout_AddValidatedCheckbox/js/view/consent-agreement-validation</item>
                                                         </item>
                                                     </item>
-                                                </item>-->
+                                                </item>
                                             </item>
                                         </item>
                                     </item>

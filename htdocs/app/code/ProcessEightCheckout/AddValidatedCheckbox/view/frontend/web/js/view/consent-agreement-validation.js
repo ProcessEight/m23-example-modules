@@ -18,7 +18,7 @@
 
 define([
     'uiComponent',
-    'Magento_Checkout/js/model/payment/additional-validators',
+    'ProcessEightCheckout_AddValidatedCheckbox/js/model/welcome/additional-validators',
     'ProcessEightCheckout_AddValidatedCheckbox/js/model/consent-agreement-validator'
 ], function (Component, additionalValidators, agreementValidator) {
     'use strict';
