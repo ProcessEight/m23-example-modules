@@ -19,7 +19,7 @@ define(
     ], function (ko) {
         'use strict';
 
-        var mixin = {
+        let mixin = {
 
             /**
              * Initialise component
@@ -27,7 +27,7 @@ define(
              * @returns {mixin}
              */
             initialize: function () {
-                // Set visible to be initially false to have your step show first
+                // Set visible to be initially false to have our step show first
                 this.isVisible = ko.observable(false);
                 this._super();
 

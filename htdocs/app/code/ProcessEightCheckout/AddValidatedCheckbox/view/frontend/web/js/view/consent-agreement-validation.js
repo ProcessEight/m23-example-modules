@@ -18,12 +18,12 @@
 
 define([
     'uiComponent',
-    'ProcessEightCheckout_AddValidatedCheckbox/js/model/welcome/additional-validators',
+    'ProcessEightCheckout_AddNewStepToBeginning/js/model/step-validator',
     'ProcessEightCheckout_AddValidatedCheckbox/js/model/consent-agreement-validator'
-], function (Component, additionalValidators, agreementValidator) {
+], function (Component, stepValidator, consentAgreementValidator) {
     'use strict';
 
-    additionalValidators.registerValidator(agreementValidator);
+    stepValidator.registerValidator(consentAgreementValidator);
 
     return Component.extend({});
 });

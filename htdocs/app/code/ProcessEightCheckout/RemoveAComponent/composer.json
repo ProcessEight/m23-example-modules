@@ -3,6 +3,9 @@
     "description": "Demonstration of how to remove a component from the checkout",
     "type": "magento2-module",
     "version": "1.0.0",
+    "require": {
+        "magento/module-checkout": "*"
+    },
     "license": [
         "proprietary"
     ],

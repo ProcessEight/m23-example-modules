@@ -19,7 +19,7 @@
 define([], function () {
     'use strict';
 
-    var validators = [];
+    let validators = [];
 
     return {
         /**

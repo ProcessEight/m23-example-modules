@@ -3,6 +3,9 @@
     "description": "Demonstrates how to modify part of an existing checkout step",
     "type": "magento2-module",
     "version": "1.0.0",
+    "require": {
+        "magento/module-checkout": "*"
+    },
     "license": [
         "proprietary"
     ],

@@ -3,6 +3,9 @@
     "description": "Demonstration of how to add a new step to the checkout in Magento 2",
     "type": "magento2-module",
     "version": "1.0.0",
+    "require": {
+        "magento/module-checkout": "*"
+    },
     "license": [
         "proprietary"
     ],

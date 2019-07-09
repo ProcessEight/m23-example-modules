@@ -3,6 +3,9 @@
     "description": "Demonstrates how to disable a UI Component in the checkout",
     "type": "magento2-module",
     "version": "1.0.0",
+    "require": {
+        "magento/module-checkout": "*"
+    },
     "license": [
         "proprietary"
     ],

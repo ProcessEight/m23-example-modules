@@ -15,6 +15,7 @@
  *
  */
 -->
+<!-- Define the new checkout step UI component -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       layout="1column"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
@@ -27,7 +28,7 @@
                             <item name="children" xsi:type="array">
                                 <item name="steps" xsi:type="array">
                                     <item name="children" xsi:type="array">
-                                        <!-- New step -->
+                                        <!-- Define our new step -->
                                         <item name="first-step" xsi:type="array">
                                             <item name="component" xsi:type="string">ProcessEightCheckout_AddNewStepToBeginning/js/view/first-step</item>
                                             <!--To display step content before shipping step "sortOrder" value should be < 1-->
@@ -35,7 +36,12 @@
                                             <!--To display step content after payment step "sortOrder" > 2 -->
                                             <item name="sortOrder" xsi:type="string">2</item>
                                             <item name="children" xsi:type="array">
-                                                <!--add here child component declaration for your step-->
+                                                <!--Add here child UI components you want to use in your step-->
+                                                <item name="additional-validators" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <!-- Custom validators are defined here -->
+                                                    </item>
+                                                </item>
                                             </item>
                                         </item>
                                     </item>

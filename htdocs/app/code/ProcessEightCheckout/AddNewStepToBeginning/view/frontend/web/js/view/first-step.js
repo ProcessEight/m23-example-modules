@@ -12,13 +12,16 @@
  * @author      ProcessEightCheckout
  *
  */
+/**
+ * Define our first-step checkout UI component
+ */
 
 define(
     [
         'ko',
         'uiComponent',
         'underscore',
-        'ProcessEightCheckout_AddValidatedCheckbox/js/model/welcome/additional-validators',
+        'ProcessEightCheckout_AddNewStepToBeginning/js/model/step-validator',
         'Magento_Checkout/js/model/step-navigator'
     ],
     function (
@@ -81,7 +84,8 @@ define(
             },
 
             /**
-             * Check if the consent agreement checkbox has been ticked and proceed to next step if so
+             * Proceed to next step if all validators return true
+             *
              * @returns void
              */
             navigateToNextStep: function () {
