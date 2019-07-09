@@ -18,27 +18,29 @@ define(
         'ko',
         'uiComponent',
         'underscore',
+        'ProcessEightCheckout_AddValidatedCheckbox/js/model/consent-agreement-validator',
         'Magento_Checkout/js/model/step-navigator'
     ],
     function (
         ko,
         Component,
         _,
+        consentAgreementValidator,
         stepNavigator
     ) {
         'use strict';
+
         /**
-         *
-         * first-step - is the name of the component's .html template
-         * ProcessEightCheckout_AddNewStepToBeginning - is the name of your module directory
+         * Initialise our UI component. Similar to calling __construct() in a PHP class.
          *
          */
         return Component.extend({
             defaults: {
+                // Maps to htdocs/app/code/ProcessEightCheckout/AddNewStepToBeginning/view/frontend/web/template/first-step.html
                 template: 'ProcessEightCheckout_AddNewStepToBeginning/first-step'
             },
 
-            // Add here your logic to display step,
+            // Make sure our step is the first one to be visible when the checkout loads
             isVisible: ko.observable(true),
 
             /**
@@ -56,17 +58,13 @@ define(
                     null,
                     // Step title
                     'Welcome',
-                    // Observable property with logic when display step or hide step
+                    // Observable property; Used to hide/show the step as appropriate
                     this.isVisible,
-
                     _.bind(this.navigate, this),
-
-                    /**
-                     * Sort order value
-                     * 'sort order value' < 10: step displays before shipping step;
-                     * 10 < 'sort order value' < 20 : step displays between shipping and payment step;
-                     * 'sort order value' > 20 : step displays after payment step.
-                     */
+                    // Sort order value
+                    // 'sort order value' < 10: step displays before shipping step;
+                    // 10 < 'sort order value' < 20 : step displays between shipping and payment step;
+                    // 'sort order value' > 20 : step displays after payment step.
                     1
                 );
 
@@ -83,10 +81,13 @@ define(
             },
 
             /**
+             * Check if the consent agreement checkbox has been ticked and proceed to next step if so
              * @returns void
              */
             navigateToNextStep: function () {
-                stepNavigator.next();
+                if (consentAgreementValidator.validate(false)) {
+                    stepNavigator.next();
+                }
             }
         });
     }

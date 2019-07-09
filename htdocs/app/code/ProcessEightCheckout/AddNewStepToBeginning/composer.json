@@ -3,6 +3,9 @@
     "description": "Demonstrates how to add a new step to the beginning of checkout.",
     "type": "magento2-module",
     "version": "1.0.0",
+    "require": {
+        "magento/module-checkout": "*"
+    },
     "license": [
         "proprietary"
     ],

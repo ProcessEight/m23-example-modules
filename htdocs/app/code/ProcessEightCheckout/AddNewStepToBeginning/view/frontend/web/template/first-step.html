@@ -22,6 +22,11 @@
     <div id="checkout-step-title"
          class="step-content"
          data-role="content">
+
+        <!-- ko foreach: getRegion('before-continue-button') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+
         <form data-bind="submit: navigateToNextStep" novalidate="novalidate">
             <div class="actions-toolbar">
                 <div class="primary">
