@@ -28,7 +28,7 @@ define([
             template: 'ProcessEightCheckout_AddValidatedCheckbox/checkout/consent-agreement'
         },
         isVisible: 1,
-        agreements: [{content: 'This is my content', checkboxText: '1735 I acknowledge I have read the privacy policy and consent to receive order emails.', mode: 1, agreementId: 1}],
+        agreements: [{content: 'This is my content', checkboxText: 'I acknowledge I have read the privacy policy and consent to receive order emails.', mode: 1, agreementId: 1}],
 
         /**
          * Build a unique id for the consent checkbox
