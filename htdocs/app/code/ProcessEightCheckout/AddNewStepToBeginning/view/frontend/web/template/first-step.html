@@ -23,6 +23,10 @@
          class="step-content"
          data-role="content">
 
+        <!-- ko foreach: getRegion('after-checkout-step-title') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+
         <!-- ko foreach: getRegion('before-continue-button') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
         <!--/ko-->
