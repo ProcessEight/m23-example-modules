@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEightCheckout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEightCheckout for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEightCheckout
+ * @author      ProcessEightCheckout
+ *
+ */
+-->
+<!-- Define the new checkout step UI component -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.root">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="authentication" xsi:type="array">
+                                    <item name="config" xsi:type="array">
+                                        <item name="componentDisabled" xsi:type="boolean">true</item>
+                                    </item>
+                                </item>
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="first-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="login" xsi:type="array">
+                                                    <item name="component" xsi:type="string">ProcessEightCheckout_AddLoginFormToStep/js/view/form/element/email</item>
+                                                    <item name="displayArea" xsi:type="string">after-checkout-step-title</item>
+                                                    <item name="tooltip" xsi:type="array">
+                                                        <item name="description" xsi:type="string" translate="true">This is the email we'll send your order confirmation to.</item>
+                                                    </item>
+                                                </item>
+                                                <!--Add here child UI components you want to use in your step-->
+                                                <item name="additional-validators" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <!-- Custom validators are defined here -->
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>
