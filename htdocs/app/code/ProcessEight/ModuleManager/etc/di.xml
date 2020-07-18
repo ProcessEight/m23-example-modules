@@ -9,7 +9,6 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @package     m23-example-modules
  * @copyright   Copyright (c) 2019 ProcessEight
  * @author      ProcessEight
  *
@@ -29,6 +28,7 @@
                 <item name="processeight_modulemanager_command_add_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\ControllerCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\TemplateCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\LayoutCommand</item>
+                <item name="processeight_modulemanager_command_add_adminhtml_plugin" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\PluginCommand</item>
             </argument>
         </arguments>
     </type>

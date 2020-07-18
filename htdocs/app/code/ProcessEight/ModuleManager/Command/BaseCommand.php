@@ -8,7 +8,6 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @package     m23-example-modules
  * @copyright   Copyright (c) 2019 ProcessEight
  * @author      ProcessEight
  *
@@ -141,13 +140,11 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
         \Symfony\Component\Console\Input\InputInterface $input,
         string $trailingPath = ''
     ) : string {
-        $absolutePathToFolder = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
-                                DIRECTORY_SEPARATOR . 'code' .
-                                DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::VENDOR_NAME) .
-                                DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::MODULE_NAME) .
-                                DIRECTORY_SEPARATOR . $trailingPath;
-
-        return $absolutePathToFolder;
+        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
+               DIRECTORY_SEPARATOR . 'code' .
+               DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::VENDOR_NAME) .
+               DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::MODULE_NAME) .
+               DIRECTORY_SEPARATOR . $trailingPath;
     }
 
     /**
@@ -159,15 +156,13 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
      */
     public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        $templateVariables = [
+        return [
             '{{VENDOR_NAME}}'           => $input->getOption(ConfigKey::VENDOR_NAME),
             '{{MODULE_NAME}}'           => $input->getOption(ConfigKey::MODULE_NAME),
             '{{VENDOR_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
             '{{MODULE_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
             '{{YEAR}}'                  => date('Y'),
         ];
-
-        return $templateVariables;
     }
 
     /**
@@ -181,14 +176,12 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
      */
     public function getTemplateFilePath(string $fileName, string $trailingPath = '') : string
     {
-        $templateFilePath = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
-                            DIRECTORY_SEPARATOR . 'code' .
-                            DIRECTORY_SEPARATOR . 'ProcessEight' .
-                            DIRECTORY_SEPARATOR . 'ModuleManager' .
-                            DIRECTORY_SEPARATOR . 'Template' .
-                            DIRECTORY_SEPARATOR . $trailingPath .
-                            DIRECTORY_SEPARATOR . $fileName . '.template';
-
-        return $templateFilePath;
+        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
+               DIRECTORY_SEPARATOR . 'code' .
+               DIRECTORY_SEPARATOR . 'ProcessEight' .
+               DIRECTORY_SEPARATOR . 'ModuleManager' .
+               DIRECTORY_SEPARATOR . 'Template' .
+               DIRECTORY_SEPARATOR . $trailingPath .
+               DIRECTORY_SEPARATOR . $fileName . '.template';
     }
 }

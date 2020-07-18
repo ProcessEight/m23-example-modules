@@ -8,7 +8,6 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @package     m23-example-modules
  * @copyright   Copyright (c) 2019 ProcessEight
  * @author      ProcessEight
  *
@@ -25,6 +24,7 @@ use Magento\Framework\Exception\FileSystemException;
  *
  * This stage creates a folder in the given location
  *
+ * @api
  * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateFolderStage
@@ -82,8 +82,8 @@ class CreateFolderStage
             $this->filesystemDriver->createDirectory($payload['config']['create-folder-stage']['folder-path']);
         } catch (FileSystemException $e) {
             $payload['messages'][] = "Failed to create folder at <info>'{$payload['config']['create-folder-stage']['folder-path']}'</info> with default permissions of '<info>0777</info>'"
-                                             . $e->getMessage();
-            $payload['is_valid']           = false;
+                                     . $e->getMessage();
+            $payload['is_valid']   = false;
 
             return $payload;
         }

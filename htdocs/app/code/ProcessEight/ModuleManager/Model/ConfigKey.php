@@ -8,7 +8,6 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @package     m23-example-modules
  * @copyright   Copyright (c) 2019 ProcessEight
  * @author      ProcessEight
  *
@@ -72,4 +71,24 @@ interface ConfigKey
      * Command class name
      */
     const COMMAND_CLASS_NAME = 'command-class-name';
+
+    /**
+     * Method to intercept (in format \Vendor\Namespace\Path\To\Class::methodToIntercept)
+     */
+    const METHOD_TO_INTERCEPT_NAMESPACE = 'method-to-intercept-namespace';
+
+    /**
+     * Type of plugin to create
+     */
+    const PLUGIN_TYPE = 'plugin-type';
+
+    /**
+     * Magento config area where plugin will be created
+     */
+    const PLUGIN_AREA = 'plugin-area';
+
+    /**
+     * The name of the plugin class
+     */
+    const PLUGIN_CLASS_NAME = 'plugin-class-name';
 }

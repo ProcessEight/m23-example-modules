@@ -11,6 +11,28 @@
          * [processPipeline](#processpipeline)
       * [Add a new command](#add-a-new-command)
 
+## Architectural philosophy
+
+The architectural design of the Module Manager is built around the idea of a pipeline.
+
+Each command triggers the processing of one or more pipelines.
+
+A pipeline consists of a series of steps or _stages_.
+
+The stage is the smallest unit of logic in the Module Manager. 
+
+Stages should be designed in such a way that they can be chained with other stages (so there should be no dependencies between stages) and so that they can be re-used within other pipelines.
+
+The same applies to pipelines - there should be no dependencies between pipelines and they should also be able to be chained together with other pipelines.
+
+In this way new pipelines can be created just by chaining existing stages together and new commands can be created by chaining existing pipelines together. This should reduce the amount of time/boilerplate coding required to create new, useful commands.
+
+### Naming conventions
+
+If a file is to be created which does not have a pre-defined name, then the user must be asked for their preferred name.
+
+No 'magic' should be used to generate a name.
+
 ## Add a new stage
 See `\ProcessEight\ModuleManager\Model\Stage\CreateFolderStage` for a complete example.
 
@@ -33,15 +55,17 @@ Stages can have as many extra public methods as necessary to capture all the dat
 ## Add a new pipeline
 See `\ProcessEight\ModuleManager\Model\Pipeline\CreateFolderPipeline` for a complete example.
 
-A Pipeline must have four methods:
+The responsibility of the Pipeline class is to gather all the Stages/Pipelines needed for this Pipeline and inject them via DI; Also to invoke the processing of the Pipeline.
+
+Pipelines must not have any logic of their own (e.g. The logic to create or validate a folder should be encapsulated in a Stage and then that added to a Pipeline).
+
+A Pipeline must have two methods:
 
 ### `__invoke`
 Just like a Stage. The `__invoke` method has one parameter, `array $payload`. The payload contains data which must be accessible in all Stages/Pipelines (e.g. The `is_valid` validation flag).
 
 ### `processPipeline`
 Called from the `__invoke` method. This method defines and configures the Stages (or other Pipelines) in this Pipeline, then executes it.
-
-Just like a Stage, Pipelines have a getter and setter method, which the Pipeline uses to configure the Stages and any other Pipelines in this Pipeline:
 
 ## Add a new command
 See `\ProcessEight\ModuleManager\Command\Module\BinMagentoCommandCommand` for a complete example

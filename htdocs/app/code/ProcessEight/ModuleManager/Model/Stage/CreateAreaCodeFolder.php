@@ -8,7 +8,6 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @package     m23-example-modules
  * @copyright   Copyright (c) 2019 ProcessEight
  * @author      ProcessEight
  *
@@ -31,11 +30,6 @@ use Magento\Framework\Exception\FileSystemException;
 class CreateAreaCodeFolder
 {
     /**
-     * @var \Magento\Framework\App\Filesystem\DirectoryList
-     */
-    private $directoryList;
-
-    /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
@@ -43,14 +37,11 @@ class CreateAreaCodeFolder
     /**
      * CreateModuleFolder constructor.
      *
-     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
+     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
      */
     public function __construct(
-        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver
     ) {
-        $this->directoryList    = $directoryList;
         $this->filesystemDriver = $filesystemDriver;
     }
 
@@ -60,10 +51,10 @@ class CreateAreaCodeFolder
      * @return mixed[]
      * @throws FileSystemException
      */
-    public function __invoke(array $config)
+    public function __invoke(array $config) : array
     {
         // Get absolute path to module <path-to-area-code-folder>/<area-code> folder
-        $areaCodeFolderPath = str_replace('{{AREA_CODE}}', $config['data']['area-code'], $config['data']['path-to-area-code-folder']);
+        $areaCodeFolderPath = str_replace('{{AREA_CODE}}', $config['config']['create-area-code-folder-stage']['area-code'], $config['config']['create-area-code-folder-stage']['path-to-area-code-folder']);
 
         // Check if folder exists
         $isExists = $this->filesystemDriver->isExists($areaCodeFolderPath);
