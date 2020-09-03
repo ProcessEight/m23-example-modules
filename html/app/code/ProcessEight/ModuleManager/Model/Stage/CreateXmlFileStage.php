@@ -61,6 +61,7 @@ class CreateXmlFileStage extends BaseStage
             $isExists = $this->filesystemDriver->isExists($filePath . DIRECTORY_SEPARATOR . $fileName);
             if ($isExists) {
                 $payload['messages'][] = "<info>" . $fileName . "</info> file already exists at <info>{$filePath}</info>";
+                $payload['messages'][] = "<info>TODO: Add logic to modify existing files</info>";
 
                 return $payload;
             }

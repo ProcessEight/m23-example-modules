@@ -76,6 +76,37 @@ The `processPipeline` method performs the same purpose as the `processPipeline` 
 
 The `payload` argument should have at least one element, `is_valid`. Setting this to false in any Stage/Pipeline will cause execution of the remaining Stages/Pipelines to be skipped.
 
+## Templates
+
+Sometimes an artefact (e.g. Class, XML file, directory) needs to be generated. Templates and template variables are used to create these.
+
+### Creating a template
+
+Just save the target file into the `Template` folder, adding the `.template` suffix.
+
+The contents of the `Template` folder are designed to reflect the structure of a module folder.
+
+If an artefact can have a custom path (e.g. A Block class), then save the template in the top most folder, e.g. For Block classes this would be `Template\Block\{{BLOCK_CLASS_NAME}}.php.template`.
+
+For artefacts which don't have a defined name (e.g. Most classes), then a template variable can be used as the filename. For a Block class, this could be `Template\Block\{{BLOCK_CLASS_NAME}}.php.template`. The `BLOCK_CLASS_NAME` variable must then be defined in a stage.
+
+Template variable names are intended to be descriptive.
+
+If they are taken from user input, then the class constant is used as the variable name, e.g:
+```php
+// \ProcessEight\ModuleManager\Command\Module\Add\BinMagentoCommandCommand::getTemplateVariables
+
+        $templateVariables = array_merge($templateVariables, [
+            '{{COMMAND_NAME}}'               => $input->getOption(ConfigKey::COMMAND_NAME),
+            '{{COMMAND_DESCRIPTION}}'        => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
+            '{{COMMAND_CLASS_NAME}}'         => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
+            '{{COMMAND_CLASS_NAME_UCFIRST}}' => ucfirst($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+        ]);
+```
+
+If a template variable needs to be processed in some way (e.g. To make it upper or lower case), then this is achieved using PHP string manipulation methods. The name of the method used is appended to the template variable name (see example above).
+
 ## Convert a command
 
 @todo: Make all these changes, then generate patch file, which can be used on multiple files (possibly) or at least a template for applying these changes

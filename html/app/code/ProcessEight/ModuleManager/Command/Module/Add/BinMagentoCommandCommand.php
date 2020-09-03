@@ -201,6 +201,7 @@ class BinMagentoCommandCommand extends BaseCommand
             '{{COMMAND_DESCRIPTION}}'        => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
             '{{COMMAND_CLASS_NAME}}'         => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
             '{{COMMAND_CLASS_NAME_UCFIRST}}' => ucfirst($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
+            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
         ]);
 
         return $templateVariables;
