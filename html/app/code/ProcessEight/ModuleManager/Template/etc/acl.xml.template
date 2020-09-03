@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <!-- ACL defines resources which are used to manage permissions in the admin and APIs -->
+    <acl>
+        <resources>
+            <!-- id: Required. Value must match /([A-Z]+[a-zA-Z0-9]{1,}){1,}_[A-Z]+[A-Z0-9a-z]{1,}::[A-Za-z_0-9]{1,}/ Minimal length 3 symbol. Case insensitive. Must be unique. -->
+            <resource id="Magento_Backend::admin">
+                <resource id="{{VENDOR_NAME}}_{{MODULE_NAME}}::root" title="{{FRONT_NAME}}">
+                    <resource id="{{VENDOR_NAME}}_{{MODULE_NAME}}::{{CONTROLLER_DIRECTORY_NAME}}" title="{{CONTROLLER_DIRECTORY_NAME}}">
+                        <resource id="{{VENDOR_NAME}}_{{MODULE_NAME}}::{{CONTROLLER_ACTION_NAME}}" title="{{CONTROLLER_ACTION_NAME}}"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

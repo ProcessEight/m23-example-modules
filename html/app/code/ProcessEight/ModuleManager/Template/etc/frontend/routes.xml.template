@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <!-- Router collects routes, parses request and performs matching of request to route. -->
+    <router id="standard">
+        <!-- Node: -->
+        <!-- route: Defines a route used by a specific module -->
+        <!-- Attributes: -->
+        <!-- id: Unique route identifier, used to generate Layout XML handles and file names. Required. Value must match [A-Za-z0-9_]{3,}. Must be unique. -->
+        <!-- frontName: URL part associated with route, forms first part of three-part URL structure of a Controller Action URL. Required. Value must match [A-Za-z0-9_\-]{1,}. Must be unique. -->
+        <route id="{{VENDOR_NAME_LOWERCASE}}_{{MODULE_NAME_LOWERCASE}}"
+               frontName="{{FRONT_NAME}}">
+            <!-- name: Module is subscribed to process request with corresponding route front name. Required. Must be a valid Magento module name. -->
+            <module name="{{VENDOR_NAME}}_{{MODULE_NAME}}"/>
+        </route>
+    </router>
+</config>
