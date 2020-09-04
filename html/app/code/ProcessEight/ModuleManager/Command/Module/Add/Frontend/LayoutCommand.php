@@ -88,7 +88,7 @@ class LayoutCommand extends BaseCommand
 
         if (!$input->getOption(ConfigKey::LAYOUT_XML_HANDLE)) {
             $question = new Question(
-                '<question>Layout XML handle (e.g. frontName_controllerfoldername_controllerclassname) (without .xml suffix): [default]</question> ',
+                '<question>Layout XML handle (e.g. routerid_controllerfoldername_controllerclassname) (without .xml suffix): [default]</question> ',
                 'default');
 
             $input->setOption(
