@@ -1,6 +1,6 @@
 # ProcessEight_ModuleManager
 
-##Table of Contents
+## Table of Contents
 
    * [ProcessEight_ModuleManager](#processeight_modulemanager)
       * [Add a new stage](#add-a-new-stage)

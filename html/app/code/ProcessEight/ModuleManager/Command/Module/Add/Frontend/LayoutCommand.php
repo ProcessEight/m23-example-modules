@@ -87,7 +87,9 @@ class LayoutCommand extends BaseCommand
         $questionHelper = $this->getHelper('question');
 
         if (!$input->getOption(ConfigKey::LAYOUT_XML_HANDLE)) {
-            $question = new Question('<question>Layout XML handle (without .xml suffix): [default]</question> ', 'default');
+            $question = new Question(
+                '<question>Layout XML handle (e.g. frontName_controllerfoldername_controllerclassname) (without .xml suffix): [default]</question> ',
+                'default');
 
             $input->setOption(
                 ConfigKey::LAYOUT_XML_HANDLE,
@@ -117,13 +119,16 @@ class LayoutCommand extends BaseCommand
         // CreateFolderPipeline config
         $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
         $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
+        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input,
+            'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
 
         // Create layout.xml Stage config
         $config['create-xml-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
-        $config['create-xml-file-stage']['file-name']          = strtolower(str_replace('{{LAYOUT_XML_HANDLE}}', $input->getOption(ConfigKey::LAYOUT_XML_HANDLE), '{{LAYOUT_XML_HANDLE}}.xml'));
+        $config['create-xml-file-stage']['file-name']          = strtolower(str_replace('{{LAYOUT_XML_HANDLE}}',
+            $input->getOption(ConfigKey::LAYOUT_XML_HANDLE), '{{LAYOUT_XML_HANDLE}}.xml'));
         $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{LAYOUT_XML_HANDLE}}.xml', 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
+        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{LAYOUT_XML_HANDLE}}.xml',
+            'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout');
 
         // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
         $masterPipelineConfig = [

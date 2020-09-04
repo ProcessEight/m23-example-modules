@@ -20,7 +20,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="{{VENDOR_NAME_LOWERCASE}}_{{MODULE_NAME_LOWERCASE}}_command_{{COMMAND_CLASS_NAME_STRTOLOWER}}"
-                      xsi:type="object">{{VENDOR_NAME}}\{{MODULE_NAME}}\Command\{{COMMAND_CLASS_NAME}}</item>
+                      xsi:type="object">{{VENDOR_NAME}}\{{MODULE_NAME}}\Command\{{COMMAND_CLASS_NAME_UCFIRST}}</item>
             </argument>
         </arguments>
     </type>
