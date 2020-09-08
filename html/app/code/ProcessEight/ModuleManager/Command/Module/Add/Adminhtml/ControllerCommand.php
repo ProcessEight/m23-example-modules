@@ -37,36 +37,6 @@ class ControllerCommand extends BaseCommand
      * @var \League\Pipeline\Pipeline
      */
     private $pipeline;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
-     */
-    private $createAreaCodeFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateRoutesXmlFile
-     */
-    private $createRoutesXmlFile;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateControllerFolder
-     */
-    private $createControllerFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateControllerClass
-     */
-    private $createControllerClass;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateMenuXmlFile
-     */
-    private $createMenuXmlFile;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAclXmlFile
-     */
-    private $createAclXmlFile;
     /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateAdminhtmlControllerPipeline
      */
@@ -218,7 +188,7 @@ class ControllerCommand extends BaseCommand
         $config['create-php-class-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
         $config['create-php-class-file-stage']['file-name']          = ucfirst(str_replace('{{CONTROLLER_ACTION_NAME_UCFIRST}}',$input->getOption(ConfigKey::CONTROLLER_ACTION_NAME), '{{CONTROLLER_ACTION_NAME_UCFIRST}}.php'));
         $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{CONTROLLER_ACTION_NAME_UCFIRST}}.php','Controller');
+        $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{CONTROLLER_ACTION_NAME_UCFIRST}}.php','Controller' . DIRECTORY_SEPARATOR . 'Adminhtml');
 
         $config['create-etc-folder-stage']['folder-path']    = $this->getAbsolutePathToFolder($input,'etc' . DIRECTORY_SEPARATOR . 'adminhtml');
 

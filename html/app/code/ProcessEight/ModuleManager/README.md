@@ -163,3 +163,15 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 - Remove methods `validateInputs` and `generateAssets`
 - Add methods `processPipeline` and `getTemplateVariables` and configure as appropriate
 - Replace deprecated `getProcessedFilename` with `str_replace`
+
+## To do
+
+- Refactor so that each stage is responsible for it's own data 
+    - This will remove the setting of logic to the `config` array in the `*Command` classes which extend the Symfony command classes
+    - This could involve defining the parameters for the `input` `options` in each stage and the command class just reads these
+    - The command class could also set default values for commands based on ^above, so that questions needing identical answers (e.g. Defining VENDOR_NAME) aren't asked twice
+- Refactor to make it simpler to pass context-sensitive data to each stage
+    - Perhaps something like a context object/array?
+    - Each stage defines the data it needs
+    - The Command class somehow knows this and asks for it(?), possibly by reading the context class
+    
