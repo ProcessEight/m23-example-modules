@@ -38,7 +38,7 @@ class CreateCommand extends BaseCommand
     /**
      * @var array[]
      */
-    private $stageConfig;
+    private $stagesConfig;
 
     /**
      * Constructor.
@@ -65,10 +65,11 @@ class CreateCommand extends BaseCommand
         $this->setName("process-eight:module:create");
         $this->setDescription("Creates a new module with etc/module.xml, registration.php and composer.json files.");
 
-        $this->stageConfig = $this->configurePipeline();
+        $this->stagesConfig = $this->configurePipeline();
 
-        foreach ($this->stageConfig['config'] as $stageOptionsConfig) {
-            foreach ($stageOptionsConfig as $optionConfig) {
+        $options = array_column($this->stagesConfig['config'], 'options');
+        foreach ($options as $stageOptions) {
+            foreach ($stageOptions as $optionConfig) {
                 $this->addOption(
                     $optionConfig['name'],
                     $optionConfig['shortcut'],
@@ -77,8 +78,6 @@ class CreateCommand extends BaseCommand
                 );
             }
         }
-
-        parent::configure();
     }
 
     /**
@@ -92,19 +91,31 @@ class CreateCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::execute($input, $output);
-
+        // Ask user for values which were not passed through as options
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
 
-        foreach ($this->stageConfig['config'] as $stageClassNamespace => $stageOptionsConfig) {
-            foreach ($stageOptionsConfig as $optionName => $optionsConfig) {
-                if (!$input->getOption($optionsConfig['name'])) {
-                    $question = new Question($optionsConfig['question'], $optionsConfig['question_default_answer']);
+        $options = array_column($this->stagesConfig['config'], 'options');
+        foreach ($options as $stageOptions) {
+            foreach ($stageOptions as $optionConfig) {
+                if (!$input->getOption($optionConfig['name'])) {
+                    $question = new Question($optionConfig['question'], $optionConfig['question_default_answer']);
 
-                    $input->setOption($optionsConfig['name'], $questionHelper->ask($input, $output, $question));
+                    $input->setOption($optionConfig['name'], $questionHelper->ask($input, $output, $question));
                 }
-                $this->stageConfig['config'][$stageClassNamespace][$optionName]['value'] = $input->getOption($optionsConfig['name']);
+            }
+        }
+
+        // Loop through and populate 'values' array
+        // This step also makes all options available to all stages
+        $optionNames = [];
+        foreach ($options as $option) {
+            $optionNames = array_merge($optionNames, array_keys($option));
+        }
+        $optionNames = array_flip($optionNames);
+        foreach ($this->stagesConfig['config'] as $stageClassName => $stageConfig) {
+            foreach ($optionNames as $optionName => $optionValue) {
+                $this->stagesConfig['config'][$stageClassName]['values'][$optionName] = $input->getOption($optionName);
             }
         }
 
@@ -145,40 +156,8 @@ class CreateCommand extends BaseCommand
      */
     private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
-        // CreateFolderPipeline config
-        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
-        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $config['create-module-folder-stage']['folder-path']          = $this->getAbsolutePathToFolder($input);
-        $config['create-etc-folder-stage']['folder-path']             = $this->getAbsolutePathToFolder($input, 'etc');
-
-        // Create module.xml stage config
-        $config['create-xml-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
-        $config['create-xml-file-stage']['file-name']          = 'module.xml';
-        $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('module.xml', 'etc');
-
-        // Create composer.json Stage config
-        $config['create-composer-json-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input);
-        $config['create-composer-json-file-stage']['file-name']          = 'composer.json';
-        $config['create-composer-json-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-composer-json-file-stage']['template-file-path'] = $this->getTemplateFilePath('composer.json');
-
-        // Create registration.php Stage config
-        $config['create-registration-php-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input);
-        $config['create-registration-php-file-stage']['file-name']          = 'registration.php';
-        $config['create-registration-php-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-registration-php-file-stage']['template-file-path'] = $this->getTemplateFilePath('registration.php');
-
-//        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
-//        $masterPipelineConfig = [
-//            'is_valid' => true,
-//            'config'   => $config,
-//        ];
-
-        $this->stageConfig['config'] = array_merge($this->stageConfig['config'], $config);
-
         // Run the pipeline
-        return $this->createModulePipeline->processPipeline($this->stageConfig);
+        return $this->createModulePipeline->processPipeline($this->stagesConfig);
     }
 
     /**

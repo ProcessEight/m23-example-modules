@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateModuleFolderStage
@@ -34,28 +35,49 @@ class CreateModuleFolderStage extends BaseStage
     private $filesystemDriver;
 
     /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
+    private $directoryList;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
+     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      */
     public function __construct(
-        \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
     ) {
         $this->filesystemDriver = $filesystemDriver;
+        $this->directoryList    = $directoryList;
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function configureStage(array $payload) : array
+    {
+        $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_FOLDER_PATH] = '{{BASE}}/app/code/{{VENDOR_NAME}}/{{MODULE_NAME}}';
+
+        return $payload;
     }
 
     /**
      * @param mixed[] $payload
      *
      * @return mixed[]
+     * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $folderPath = $payload['config']['create-module-folder-stage']['folder-path'];
+        $moduleFolderPath = $this->getAbsolutePathToFolder($payload);
 
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($folderPath);
+            $this->filesystemDriver->isExists($moduleFolderPath);
         } catch (FileSystemException $e) {
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
@@ -64,16 +86,34 @@ class CreateModuleFolderStage extends BaseStage
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($folderPath);
+            $this->filesystemDriver->createDirectory($moduleFolderPath);
         } catch (FileSystemException $e) {
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
         }
 
-        $payload['messages'][] = "Created module folder at <info>{$folderPath}</info>";
+        $payload['messages'][] = "Created module folder at <info>{$moduleFolderPath}</info>";
 
         // Pass payload onto next Stage/Pipeline
         return $payload;
+    }
+
+    /**
+     * @param array  $payload
+     * @param string $subfolderPath
+     *
+     * @return string
+     * @throws FileSystemException
+     */
+    private function getAbsolutePathToFolder(
+        array $payload,
+        string $subfolderPath = ''
+    ) : string {
+        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
+               . DIRECTORY_SEPARATOR . 'code'
+               . DIRECTORY_SEPARATOR . $payload['config'][get_class($this)]['values'][ConfigKey::VENDOR_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_NAME]
+               . DIRECTORY_SEPARATOR . $subfolderPath;
     }
 }

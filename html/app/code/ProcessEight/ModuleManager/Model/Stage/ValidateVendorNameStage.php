@@ -40,12 +40,12 @@ class ValidateVendorNameStage extends BaseStage
      */
     public function configureStage(array $payload) : array
     {
-        $payload['config'][get_class($this)][ConfigKey::VENDOR_NAME] = [
-            'name'        => ConfigKey::VENDOR_NAME,
-            'shortcut'    => null,
-            'mode'        => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
-            'description' => 'Vendor name',
-            'question' => '<question>Vendor name [ProcessEight]: </question> ',
+        $payload['config'][get_class($this)]['options'][ConfigKey::VENDOR_NAME] = [
+            'name'                    => ConfigKey::VENDOR_NAME,
+            'shortcut'                => null,
+            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
+            'description'             => 'Vendor name',
+            'question'                => '<question>Vendor name [ProcessEight]: </question> ',
             'question_default_answer' => 'ProcessEight',
         ];
 
@@ -59,7 +59,7 @@ class ValidateVendorNameStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $vendorName = $payload['config'][get_class($this)][ConfigKey::VENDOR_NAME]['value'];
+        $vendorName = $payload['config'][get_class($this)]['values'][ConfigKey::VENDOR_NAME];
 
         if ($payload['is_valid'] === false
             || !isset($vendorName)
@@ -68,6 +68,8 @@ class ValidateVendorNameStage extends BaseStage
         ) {
             $payload['is_valid']   = false;
             $payload['messages'][] = 'Invalid vendor name';
+        } else {
+            $payload['messages'][] = 'Vendor name "' . $vendorName . '" passed validation';
         }
 
         // Pass payload onto next stage/pipeline

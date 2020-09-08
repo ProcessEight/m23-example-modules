@@ -28,6 +28,11 @@ interface ConfigKey
     const MODULE_NAME = 'module-name';
 
     /**
+     * Absolute path to module
+     */
+    const MODULE_FOLDER_PATH = 'module-folder-path';
+
+    /**
      * Front name of controller, used to generate routes.xml
      */
     const FRONT_NAME = 'front-name';

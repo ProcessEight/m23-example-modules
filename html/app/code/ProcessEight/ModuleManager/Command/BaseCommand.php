@@ -19,9 +19,6 @@ namespace ProcessEight\ModuleManager\Command;
 
 use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Class BaseCommand
@@ -65,59 +62,6 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
         parent::__construct();
         $this->masterPipeline = $masterPipeline;
         $this->directoryList  = $directoryList;
-    }
-
-    /**
-     * Configure
-     */
-    protected function configure()
-    {
-//        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
-        $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
-        parent::configure();
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * This method is not abstract because you can use this class
-     * as a concrete class. In this case, instead of defining the
-     * execute() method, you set the code to execute by passing
-     * a Closure to the setCode() method.
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int|null null or 0 if everything went fine, or an error code
-     *
-     * @see setCode()
-     */
-    protected function execute(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
-        $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::MODULE_NAME)) {
-            $question = new Question('<question>Module name [Test]: </question> ', 'Test');
-
-            $input->setOption(
-                ConfigKey::MODULE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        // Example of how to call, and handle the results from, the pipeline
-//        $result = $this->processPipeline($input);
-//
-//        foreach ($result['messages'] as $message) {
-//            $output->writeln($message);
-//        }
-//
-//        return $result['is_valid'] ? 0 : 1;
-
-        return null;
     }
 
     /**

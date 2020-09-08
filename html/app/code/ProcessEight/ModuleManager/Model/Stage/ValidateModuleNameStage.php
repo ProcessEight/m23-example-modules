@@ -35,9 +35,28 @@ class ValidateModuleNameStage extends BaseStage
      *
      * @return array
      */
+    public function configureStage(array $payload) : array
+    {
+        $payload['config'][get_class($this)]['options'][ConfigKey::MODULE_NAME] = [
+            'name'        => ConfigKey::MODULE_NAME,
+            'shortcut'    => null,
+            'mode'        => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
+            'description' => 'Module name',
+            'question' => '<question>Module name [Test]: </question> ',
+            'question_default_answer' => 'Test',
+        ];
+
+        return $payload;
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return array
+     */
     public function processStage(array $payload) : array
     {
-        $moduleName = $payload['config']['validate-module-name-stage'][ConfigKey::MODULE_NAME];
+        $moduleName = $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_NAME];
 
         if ($payload['is_valid'] === false
             || !isset($moduleName)
@@ -45,7 +64,9 @@ class ValidateModuleNameStage extends BaseStage
             || preg_match(self::MODULE_NAME_REGEX_PATTERN, $moduleName) !== 1
         ) {
             $payload['is_valid']   = false;
-            $payload['messages'][] = __METHOD__ . ': Invalid module name';
+            $payload['messages'][] = 'Invalid module name';
+        } else {
+            $payload['messages'][] = 'Module name "' . $moduleName . '" passed validation';
         }
 
         // Pass payload onto next stage/pipeline
