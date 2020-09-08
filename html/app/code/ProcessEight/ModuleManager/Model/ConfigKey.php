@@ -33,6 +33,11 @@ interface ConfigKey
     const MODULE_FOLDER_PATH = 'module-folder-path';
 
     /**
+     * Absolute path to etc folder
+     */
+    const ETC_FOLDER_PATH = 'etc-folder-path';
+
+    /**
      * Front name of controller, used to generate routes.xml
      */
     const FRONT_NAME = 'front-name';

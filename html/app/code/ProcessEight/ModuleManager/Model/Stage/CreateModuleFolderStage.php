@@ -54,18 +54,6 @@ class CreateModuleFolderStage extends BaseStage
     }
 
     /**
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function configureStage(array $payload) : array
-    {
-        $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_FOLDER_PATH] = '{{BASE}}/app/code/{{VENDOR_NAME}}/{{MODULE_NAME}}';
-
-        return $payload;
-    }
-
-    /**
      * @param mixed[] $payload
      *
      * @return mixed[]

@@ -62,6 +62,15 @@ class CreateCommand extends BaseCommand
      */
     protected function configure()
     {
+        $this->stagesConfig = [
+            // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+            'is_valid' => true,
+            // Stage options definition and values are added here by each stage
+            'config'   => [],
+            // 'configure' mode prepares each stage, 'process' mode executes logic of each stage
+            'mode'     => '',
+        ];
+
         $this->setName("process-eight:module:create");
         $this->setDescription("Creates a new module with etc/module.xml, registration.php and composer.json files.");
 
@@ -107,7 +116,7 @@ class CreateCommand extends BaseCommand
         }
 
         // Loop through and populate 'values' array
-        // This step also makes all options available to all stages
+        // This step also makes all option values available to all stages
         $optionNames = [];
         foreach ($options as $option) {
             $optionNames = array_merge($optionNames, array_keys($option));
@@ -129,34 +138,26 @@ class CreateCommand extends BaseCommand
     }
 
     /**
-     * This method gathers all the options of each stage
+     * This method gathers all the options defined by each stage
      *
      * @return array
      */
     public function configurePipeline() : array
     {
-        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
-        $masterPipelineConfig = [
-            'is_valid' => true,
-            'config'   => [],
-        ];
+        $this->stagesConfig['mode'] = 'configure';
 
-        return $this->createModulePipeline->processPipeline($masterPipelineConfig);
+        return $this->createModulePipeline->processPipeline($this->stagesConfig);
     }
 
     /**
-     * Prepare all the data needed to run all the Stages/Pipelines needed for this command, then execute the Pipeline
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * Execute the logic in each stage
      *
      * @return array
-     * @throws \Magento\Framework\Exception\FileSystemException
-     * @deprecated
-     *
      */
-    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
+    private function processPipeline() : array
     {
-        // Run the pipeline
+        $this->stagesConfig['mode'] = 'process';
+
         return $this->createModulePipeline->processPipeline($this->stagesConfig);
     }
 

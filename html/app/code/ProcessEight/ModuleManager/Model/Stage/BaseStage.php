@@ -35,14 +35,19 @@ class BaseStage
      */
     public function __invoke(array $payload) : array
     {
-        $stageClassNamespace = get_class($this);
-        if ($payload['is_valid'] === true && !empty($payload['config'][$stageClassNamespace])) {
-            $payload = $this->processStage($payload);
-        }
-        if(empty($payload['config'][$stageClassNamespace])) {
+        if ($payload['is_valid'] === true && $payload['mode'] === 'configure') {
+            /**
+             * Hotfix: This adds every stage to payload[config]. The reason was to avoid calling {{stage}}->configure() in every stage, even if there was nothing to configure
+             * This was also necessary because the payload processing in {{command}}->execute would skip stages which didn't call {{stage}}->configure()
+             */
+            $payload['config'] = array_merge($payload['config'], [get_called_class() => []]);
             $payload = $this->configureStage($payload);
         }
+        if ($payload['is_valid'] === true && $payload['mode'] === 'process') {
+            $payload = $this->processStage($payload);
+        }
 
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 
@@ -64,17 +69,6 @@ class BaseStage
      */
     public function processStage(array $payload) : array
     {
-        // Example
-//        if ($payload['is_valid'] === false
-//            || !isset($payload['config']['validate-vendor-name-stage']['vendor-name'])
-//            || empty($payload['config']['validate-vendor-name-stage']['vendor-name'])
-//            || preg_match(self::VENDOR_NAME_REGEX_PATTERN, $payload['config']['validate-vendor-name-stage']['vendor-name']) !== 1
-//        ) {
-//            $payload['is_valid']           = false;
-//            $payload['messages'][] = 'Invalid vendor name';
-//        }
-
-        // Pass payload onto next stage/pipeline
         return $payload;
     }
 }
