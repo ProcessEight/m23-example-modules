@@ -21,6 +21,7 @@ use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ProcessEight\ModuleManager\Model\ConfigKey;
+use Symfony\Component\Console\Question\Question;
 
 class CreateCommand extends BaseCommand
 {
@@ -35,6 +36,11 @@ class CreateCommand extends BaseCommand
     private $directoryList;
 
     /**
+     * @var array[]
+     */
+    private $stageConfig;
+
+    /**
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                       $pipeline
@@ -46,22 +52,38 @@ class CreateCommand extends BaseCommand
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \ProcessEight\ModuleManager\Model\Pipeline\CreateModulePipeline $createModulePipeline
     ) {
-        parent::__construct($pipeline, $directoryList);
         $this->createModulePipeline = $createModulePipeline;
         $this->directoryList        = $directoryList;
+        parent::__construct($pipeline, $directoryList);
     }
 
     /**
-     * Configure
+     * Configure the command
      */
     protected function configure()
     {
         $this->setName("process-eight:module:create");
         $this->setDescription("Creates a new module with etc/module.xml, registration.php and composer.json files.");
+
+        $this->stageConfig = $this->configurePipeline();
+
+        foreach ($this->stageConfig['config'] as $stageOptionsConfig) {
+            foreach ($stageOptionsConfig as $optionConfig) {
+                $this->addOption(
+                    $optionConfig['name'],
+                    $optionConfig['shortcut'],
+                    $optionConfig['mode'],
+                    $optionConfig['description']
+                );
+            }
+        }
+
         parent::configure();
     }
 
     /**
+     * Execute the command
+     *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
@@ -71,6 +93,20 @@ class CreateCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
+        /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
+        $questionHelper = $this->getHelper('question');
+
+        foreach ($this->stageConfig['config'] as $stageClassNamespace => $stageOptionsConfig) {
+            foreach ($stageOptionsConfig as $optionName => $optionsConfig) {
+                if (!$input->getOption($optionsConfig['name'])) {
+                    $question = new Question($optionsConfig['question'], $optionsConfig['question_default_answer']);
+
+                    $input->setOption($optionsConfig['name'], $questionHelper->ask($input, $output, $question));
+                }
+                $this->stageConfig['config'][$stageClassNamespace][$optionName]['value'] = $input->getOption($optionsConfig['name']);
+            }
+        }
 
         $result = $this->processPipeline($input);
 
@@ -82,12 +118,30 @@ class CreateCommand extends BaseCommand
     }
 
     /**
+     * This method gathers all the options of each stage
+     *
+     * @return array
+     */
+    public function configurePipeline() : array
+    {
+        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+        $masterPipelineConfig = [
+            'is_valid' => true,
+            'config'   => [],
+        ];
+
+        return $this->createModulePipeline->processPipeline($masterPipelineConfig);
+    }
+
+    /**
      * Prepare all the data needed to run all the Stages/Pipelines needed for this command, then execute the Pipeline
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
      *
      * @return array
      * @throws \Magento\Framework\Exception\FileSystemException
+     * @deprecated
+     *
      */
     private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
     {
@@ -115,14 +169,16 @@ class CreateCommand extends BaseCommand
         $config['create-registration-php-file-stage']['template-variables'] = $this->getTemplateVariables($input);
         $config['create-registration-php-file-stage']['template-file-path'] = $this->getTemplateFilePath('registration.php');
 
-        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
-        $masterPipelineConfig = [
-            'is_valid' => true,
-            'config'   => $config,
-        ];
+//        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
+//        $masterPipelineConfig = [
+//            'is_valid' => true,
+//            'config'   => $config,
+//        ];
+
+        $this->stageConfig['config'] = array_merge($this->stageConfig['config'], $config);
 
         // Run the pipeline
-        return $this->createModulePipeline->processPipeline($masterPipelineConfig);
+        return $this->createModulePipeline->processPipeline($this->stageConfig);
     }
 
     /**

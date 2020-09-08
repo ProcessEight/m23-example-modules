@@ -72,7 +72,7 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
      */
     protected function configure()
     {
-        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
+//        $this->addOption(ConfigKey::VENDOR_NAME, null, InputOption::VALUE_OPTIONAL, 'Vendor name');
         $this->addOption(ConfigKey::MODULE_NAME, null, InputOption::VALUE_OPTIONAL, 'Module name');
         parent::configure();
     }
@@ -98,15 +98,6 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
     ) {
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::VENDOR_NAME)) {
-            $question = new Question('<question>Vendor name [ProcessEight]: </question> ', 'ProcessEight');
-
-            $input->setOption(
-                ConfigKey::VENDOR_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
 
         if (!$input->getOption(ConfigKey::MODULE_NAME)) {
             $question = new Question('<question>Module name [Test]: </question> ', 'Test');

@@ -35,10 +35,25 @@ class BaseStage
      */
     public function __invoke(array $payload) : array
     {
-        if ($payload['is_valid'] === true) {
+        $stageClassNamespace = get_class($this);
+        if ($payload['is_valid'] === true && !empty($payload['config'][$stageClassNamespace])) {
             $payload = $this->processStage($payload);
         }
+        if(empty($payload['config'][$stageClassNamespace])) {
+            $payload = $this->configureStage($payload);
+        }
 
+        return $payload;
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function configureStage(array $payload) : array
+    {
+        // Override this method to add stage-specific data configuration
         return $payload;
     }
 
