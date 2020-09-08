@@ -29,6 +29,8 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
  */
 class CreateEtcFolderStage extends BaseStage
 {
+    public $id = 'createEtcFolderStage';
+
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
@@ -100,8 +102,8 @@ class CreateEtcFolderStage extends BaseStage
     ) : string {
         return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
                . DIRECTORY_SEPARATOR . 'code'
-               . DIRECTORY_SEPARATOR . $payload['config'][get_class($this)]['values'][ConfigKey::VENDOR_NAME]
-               . DIRECTORY_SEPARATOR . $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME]
                . DIRECTORY_SEPARATOR . $subfolderPath;
     }
 }

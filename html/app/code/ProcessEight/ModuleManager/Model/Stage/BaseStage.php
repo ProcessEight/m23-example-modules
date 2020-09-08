@@ -27,6 +27,15 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 class BaseStage
 {
     /**
+     * Override me in child classes
+     * 'baseStage' should never actually appear in payload[config].
+     * If it does, it most likely means a stage class is missing this property
+     *
+     * @var string
+     */
+    public $id = 'baseStage';
+
+    /**
      * Called when this pipeline is invoked by another pipeline/stage (as opposed to being injected by DI)
      *
      * @param mixed[] $payload
@@ -40,8 +49,8 @@ class BaseStage
              * Hotfix: This adds every stage to payload[config]. The reason was to avoid calling {{stage}}->configure() in every stage, even if there was nothing to configure
              * This was also necessary because the payload processing in {{command}}->execute would skip stages which didn't call {{stage}}->configure()
              */
-            $payload['config'] = array_merge($payload['config'], [get_called_class() => []]);
-            $payload = $this->configureStage($payload);
+            $payload['config'] = array_merge($payload['config'], [$this->id => []]);
+            $payload           = $this->configureStage($payload);
         }
         if ($payload['is_valid'] === true && $payload['mode'] === 'process') {
             $payload = $this->processStage($payload);
@@ -52,17 +61,20 @@ class BaseStage
     }
 
     /**
+     * Override this method to add stage-specific configuration
+     *
      * @param array $payload
      *
      * @return array
      */
     public function configureStage(array $payload) : array
     {
-        // Override this method to add stage-specific data configuration
         return $payload;
     }
 
     /**
+     * Override this method to add stage-specific logic
+     *
      * @param array $payload
      *
      * @return array

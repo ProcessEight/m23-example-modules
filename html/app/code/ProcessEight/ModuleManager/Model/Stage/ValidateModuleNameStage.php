@@ -30,6 +30,8 @@ class ValidateModuleNameStage extends BaseStage
 {
     const MODULE_NAME_REGEX_PATTERN = '/[A-Z]+[A-Z0-9a-z]{1,}/';
 
+    public $id = 'validateModuleNameStage';
+
     /**
      * @param array $payload
      *
@@ -37,7 +39,8 @@ class ValidateModuleNameStage extends BaseStage
      */
     public function configureStage(array $payload) : array
     {
-        $payload['config'][get_class($this)]['options'][ConfigKey::MODULE_NAME] = [
+        // Ask the user for the module name, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::MODULE_NAME] = [
             'name'        => ConfigKey::MODULE_NAME,
             'shortcut'    => null,
             'mode'        => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
@@ -56,7 +59,7 @@ class ValidateModuleNameStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $moduleName = $payload['config'][get_class($this)]['values'][ConfigKey::MODULE_NAME];
+        $moduleName = $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME];
 
         if ($payload['is_valid'] === false
             || !isset($moduleName)

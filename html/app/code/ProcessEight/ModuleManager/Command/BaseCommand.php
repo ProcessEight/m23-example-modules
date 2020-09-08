@@ -82,23 +82,23 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
                DIRECTORY_SEPARATOR . $trailingPath;
     }
 
-    /**
-     * All template variables used in all Stages/Pipelines used by this command
-     *
-     * @param InputInterface $input
-     *
-     * @return array
-     */
-    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
-    {
-        return [
-            '{{VENDOR_NAME}}'           => $input->getOption(ConfigKey::VENDOR_NAME),
-            '{{MODULE_NAME}}'           => $input->getOption(ConfigKey::MODULE_NAME),
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
-            '{{YEAR}}'                  => date('Y'),
-        ];
-    }
+//    /**
+//     * All template variables used in all Stages/Pipelines used by this command
+//     *
+//     * @param InputInterface $input
+//     *
+//     * @return array
+//     */
+//    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
+//    {
+//        return [
+//            '{{VENDOR_NAME}}'           => $input->getOption(ConfigKey::VENDOR_NAME),
+//            '{{MODULE_NAME}}'           => $input->getOption(ConfigKey::MODULE_NAME),
+//            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::VENDOR_NAME)),
+//            '{{MODULE_NAME_LOWERCASE}}' => strtolower($input->getOption(ConfigKey::MODULE_NAME)),
+//            '{{YEAR}}'                  => date('Y'),
+//        ];
+//    }
 
     /**
      * Return path to the template file

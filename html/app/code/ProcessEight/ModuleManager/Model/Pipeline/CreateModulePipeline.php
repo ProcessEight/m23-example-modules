@@ -53,6 +53,11 @@ class CreateModulePipeline extends BasePipeline
     private $createXmlFileStage;
 
     /**
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
+     */
+    private $createDiXmlFileStage;
+
+    /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFileStage
      */
     private $createComposerJsonFileStage;
@@ -87,6 +92,7 @@ class CreateModulePipeline extends BasePipeline
         $this->createModuleFolderStage        = $createModuleFolderStage;
         $this->createEtcFolderStage           = $createEtcFolderStage;
         $this->createXmlFileStage             = $createXmlFileStage;
+        $this->createDiXmlFileStage           = clone $createXmlFileStage; // Just an example, you understand
         $this->createComposerJsonFileStage    = $createComposerJsonFileStage;
         $this->createRegistrationPhpFileStage = $createRegistrationPhpFileStage;
     }
@@ -100,6 +106,17 @@ class CreateModulePipeline extends BasePipeline
      */
     public function processPipeline(array $payload) : array
     {
+        /**
+         * Hotfix:
+         * How to use one stage to generate different files/folders, each requiring different values?
+         * E.g. Use one class to generate two different XML files?
+         * The answer is to inject the class once, then clone it (see constructor above)
+         * Then we assign different values to the 'id' property
+         * This means we can avoid having to create a stage for every conceivable unique folder/file in Magento 2
+         */
+        $this->createXmlFileStage->id   = 'createModuleXmlFileStage';
+        $this->createDiXmlFileStage->id = 'createDiXmlFileStage';
+
         // Add the Pipelines/Stages we need for this command
         $pipeline = $this->pipeline
             // Validate the module name
@@ -110,10 +127,13 @@ class CreateModulePipeline extends BasePipeline
             ->pipe($this->createEtcFolderStage)
             // Create the module.xml
             ->pipe($this->createXmlFileStage)
+            // Create another XML file (just for testing module-manager-v3)
+            ->pipe($this->createDiXmlFileStage) // Refactor to use module-manager-v3 method of doing things
             // Create the composer.json
-            ->pipe($this->createComposerJsonFileStage)
+//            ->pipe($this->createComposerJsonFileStage) // Refactor to use module-manager-v3 method of doing things
             // Create the registration.php
-            ->pipe($this->createRegistrationPhpFileStage);
+//            ->pipe($this->createRegistrationPhpFileStage) // Refactor to use module-manager-v3 method of doing things
+        ;
 
         // Pass payload onto next Stage/Pipeline
         return $pipeline->process($payload);

@@ -33,6 +33,8 @@ class ValidateVendorNameStage extends BaseStage
 {
     const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
 
+    public $id = 'validateVendorNameStage';
+
     /**
      * @param array $payload
      *
@@ -40,7 +42,8 @@ class ValidateVendorNameStage extends BaseStage
      */
     public function configureStage(array $payload) : array
     {
-        $payload['config'][get_class($this)]['options'][ConfigKey::VENDOR_NAME] = [
+        // Ask the user for the vendor name, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::VENDOR_NAME] = [
             'name'                    => ConfigKey::VENDOR_NAME,
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
@@ -59,7 +62,7 @@ class ValidateVendorNameStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $vendorName = $payload['config'][get_class($this)]['values'][ConfigKey::VENDOR_NAME];
+        $vendorName = $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME];
 
         if ($payload['is_valid'] === false
             || !isset($vendorName)

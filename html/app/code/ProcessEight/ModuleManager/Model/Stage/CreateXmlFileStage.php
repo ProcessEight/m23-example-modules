@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateXmlFileStage
@@ -29,32 +30,51 @@ use Magento\Framework\Exception\FileSystemException;
 class CreateXmlFileStage extends BaseStage
 {
     /**
+     * Override me in child classes
+     * 'createXmlFileStage' should never actually appear in payload[config].
+     * If it does, it most likely means a stage class is missing this property
+     *
+     * @var string
+     */
+    public $id = 'createXmlFileStage';
+
+    /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
 
     /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
+    private $directoryList;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
+     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      */
     public function __construct(
-        \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
     ) {
         $this->filesystemDriver = $filesystemDriver;
+        $this->directoryList    = $directoryList;
     }
 
     /**
      * @param array $payload
      *
      * @return array
+     * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $artefactFilePath  = $payload['config']['create-xml-file-stage']['file-path'];
-        $artefactFileName  = $payload['config']['create-xml-file-stage']['file-name'];
-        $templateFilePath  = $payload['config']['create-xml-file-stage']['template-file-path'];
-        $templateVariables = $payload['config']['create-xml-file-stage']['template-variables'];
+        $subfolderPath = $payload['config'][$this->id]['values']['subfolder-path'];
+        $artefactFilePath  = $this->getAbsolutePathToFolder($payload, $subfolderPath);
+        $artefactFileName  = $payload['config'][$this->id]['values']['file-name'];
+        $templateFilePath  = $this->getTemplateFilePath($artefactFileName, $subfolderPath);
+        $templateVariables = $payload['config'][$this->id]['values']['template-variables'];
 
         // Check if file exists
         try {
@@ -96,6 +116,44 @@ class CreateXmlFileStage extends BaseStage
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $payload;
+    }
+
+    /**
+     * @param array  $payload
+     * @param string $subfolderPath
+     *
+     * @return string
+     * @throws FileSystemException
+     */
+    private function getAbsolutePathToFolder(
+        array $payload,
+        string $subfolderPath = ''
+    ) : string {
+        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
+               . DIRECTORY_SEPARATOR . 'code'
+               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME]
+               . DIRECTORY_SEPARATOR . $subfolderPath;
+    }
+
+    /**
+     * Return path to the template file
+     *
+     * @param string $fileName      File name has '.template' appended
+     * @param string $subfolderPath Sub-folder within Template folder (if any) which contains the template file
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    public function getTemplateFilePath(string $fileName, string $subfolderPath = '') : string
+    {
+        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
+               DIRECTORY_SEPARATOR . 'code' .
+               DIRECTORY_SEPARATOR . 'ProcessEight' .
+               DIRECTORY_SEPARATOR . 'ModuleManager' .
+               DIRECTORY_SEPARATOR . 'Template' .
+               DIRECTORY_SEPARATOR . $subfolderPath .
+               DIRECTORY_SEPARATOR . $fileName . '.template';
     }
 
     /**
