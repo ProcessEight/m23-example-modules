@@ -37,30 +37,30 @@ class CreateRegistrationPhpFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \Magento\Framework\App\Filesystem\DirectoryList
-     */
-    private $directoryList;
-
-    /**
      * @var \ProcessEight\ModuleManager\Model\Folder
      */
     private $folder;
 
     /**
+     * @var \ProcessEight\ModuleManager\Service\Template
+     */
+    private $template;
+
+    /**
      * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
      * @param \ProcessEight\ModuleManager\Model\Folder        $folder
+     * @param \ProcessEight\ModuleManager\Service\Template    $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Folder $folder
+        \ProcessEight\ModuleManager\Model\Folder $folder,
+        \ProcessEight\ModuleManager\Service\Template $template
     ) {
         $this->filesystemDriver = $filesystemDriver;
-        $this->directoryList    = $directoryList;
         $this->folder           = $folder;
+        $this->template         = $template;
     }
 
     /**
@@ -73,7 +73,7 @@ class CreateRegistrationPhpFileStage extends BaseStage
     {
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id);
         $artefactFileName  = $payload['config'][$this->id]['values']['file-name'];
-        $templateFilePath  = $this->getTemplateFilePath($artefactFileName);
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName);
         $templateVariables = $payload['config'][$this->id]['values']['template-variables'];
 
         // Check if file exists
@@ -83,7 +83,7 @@ class CreateRegistrationPhpFileStage extends BaseStage
                 $payload['messages'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>" . $artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName . "</info>";
                 $payload['messages'][] = "<info>TODO: Add logic to modify existing files. For now, copy and paste the following into " . $artefactFileName . "</info>";
                 $payload['messages'][] = "<info>" .
-                                         $this->getProcessedTemplate($templateFilePath, $templateVariables) .
+                                         $this->template->getProcessedTemplate($templateFilePath, $templateVariables) .
                                          "</info>";
 
                 return $payload;
@@ -98,7 +98,7 @@ class CreateRegistrationPhpFileStage extends BaseStage
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->getProcessedTemplate($templateFilePath, $templateVariables);
+            $artefactFileTemplate = $this->template->getProcessedTemplate($templateFilePath, $templateVariables);
 
             // Write template to file
             $artefactFileResource = $this->filesystemDriver->fileOpen(
@@ -115,44 +115,5 @@ class CreateRegistrationPhpFileStage extends BaseStage
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $payload;
-    }
-
-    /**
-     * Return path to the template file
-     *
-     * @param string $fileName      File name has '.template' appended
-     * @param string $subfolderPath Sub-folder within Template folder (if any) which contains the template file
-     *
-     * @return string
-     * @throws \Magento\Framework\Exception\FileSystemException
-     */
-    public function getTemplateFilePath(string $fileName, string $subfolderPath = '') : string
-    {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
-               DIRECTORY_SEPARATOR . 'code' .
-               DIRECTORY_SEPARATOR . 'ProcessEight' .
-               DIRECTORY_SEPARATOR . 'ModuleManager' .
-               DIRECTORY_SEPARATOR . 'Template' .
-               DIRECTORY_SEPARATOR . $subfolderPath .
-               DIRECTORY_SEPARATOR . $fileName . '.template';
-    }
-
-    /**
-     * @param string $templateFilePath
-     * @param array  $templateVariables
-     *
-     * @return string
-     * @throws FileSystemException
-     */
-    private function getProcessedTemplate(string $templateFilePath, array $templateVariables) : string
-    {
-        // Read template
-        $artefactFileTemplate = $this->filesystemDriver->fileGetContents($templateFilePath);
-
-        foreach ($templateVariables as $templateVariable => $value) {
-            $artefactFileTemplate = str_replace($templateVariable, $value, $artefactFileTemplate);
-        }
-
-        return $artefactFileTemplate;
     }
 }

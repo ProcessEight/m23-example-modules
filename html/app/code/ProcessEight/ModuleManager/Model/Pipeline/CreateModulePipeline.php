@@ -92,7 +92,7 @@ class CreateModulePipeline extends BasePipeline
         $this->createModuleFolderStage        = $createModuleFolderStage;
         $this->createEtcFolderStage           = $createEtcFolderStage;
         $this->createXmlFileStage             = $createXmlFileStage;
-        $this->createDiXmlFileStage           = clone $createXmlFileStage; // Just an example, you understand
+//        $this->createDiXmlFileStage           = clone $createXmlFileStage; // Just an example, you understand
         $this->createComposerJsonFileStage    = $createComposerJsonFileStage;
         $this->createRegistrationPhpFileStage = $createRegistrationPhpFileStage;
     }
@@ -115,7 +115,7 @@ class CreateModulePipeline extends BasePipeline
          * This means we can avoid having to create a stage for every conceivable unique folder/file in Magento 2
          */
         $this->createXmlFileStage->id   = 'createModuleXmlFileStage';
-        $this->createDiXmlFileStage->id = 'createDiXmlFileStage';
+//        $this->createDiXmlFileStage->id = 'createDiXmlFileStage';
 
         // Add the Pipelines/Stages we need for this command
         $pipeline = $this->pipeline
