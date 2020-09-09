@@ -15,17 +15,19 @@
 
 The architectural design of the Module Manager is built around the idea of a pipeline.
 
-Each command triggers the processing of one or more pipelines.
+Each command triggers the processing of a pipeline.
 
 A pipeline consists of a series of steps or _stages_.
 
 The stage is the smallest unit of logic in the Module Manager. 
 
-Stages should be designed in such a way that they can be chained with other stages (so there should be no dependencies between stages) and so that they can be re-used within other pipelines.
+Stages and Pipelines should be designed in such a way that they can be chained with other Stages (so there should be no dependencies between Stages and Pipelines) and so that they can be re-used within other Pipelines.
 
-The same applies to pipelines - there should be no dependencies between pipelines and they should also be able to be chained together with other pipelines.
+The same applies to Pipelines - there should be no dependencies between Pipelines and they should also be able to be chained together with other Pipelines.
 
-In this way new pipelines can be created just by chaining existing stages together and new commands can be created by chaining existing pipelines together. This should reduce the amount of time/boilerplate coding required to create new, useful commands.
+In this way new Pipelines can be created just by chaining existing Stages/Pipelines together and new Commands can be created by chaining existing Pipelines together. 
+
+This should reduce the amount of time/boilerplate coding required to create new, useful Commands.
 
 ### Naming conventions
 

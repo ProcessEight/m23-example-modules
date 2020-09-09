@@ -128,11 +128,11 @@ class CreateModulePipeline extends BasePipeline
             // Create the module.xml
             ->pipe($this->createXmlFileStage)
             // Create another XML file (just for testing module-manager-v3)
-            ->pipe($this->createDiXmlFileStage) // Refactor to use module-manager-v3 method of doing things
+//            ->pipe($this->createDiXmlFileStage) // Refactor to use module-manager-v3 method of doing things
             // Create the composer.json
-//            ->pipe($this->createComposerJsonFileStage) // Refactor to use module-manager-v3 method of doing things
+            ->pipe($this->createComposerJsonFileStage) // Refactor to use module-manager-v3 method of doing things
             // Create the registration.php
-//            ->pipe($this->createRegistrationPhpFileStage) // Refactor to use module-manager-v3 method of doing things
+            ->pipe($this->createRegistrationPhpFileStage) // Refactor to use module-manager-v3 method of doing things
         ;
 
         // Pass payload onto next Stage/Pipeline

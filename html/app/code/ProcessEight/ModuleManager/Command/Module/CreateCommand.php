@@ -134,30 +134,22 @@ class CreateCommand extends BaseCommand
         // The pipeline class?
         // An external config file? e.g  YAML.
         // Or we could just leave it here.
+//        // Create module.xml stage config
         $this->stagesConfig['config']['createModuleXmlFileStage']['values']['file-name'] = 'module.xml';
         $this->stagesConfig['config']['createModuleXmlFileStage']['values']['subfolder-path'] = 'etc';
         $this->stagesConfig['config']['createModuleXmlFileStage']['values']['template-variables'] = $this->getTemplateVariables('createModuleXmlFileStage');
-        $this->stagesConfig['config']['createDiXmlFileStage']['values']['file-name'] = 'di.xml';
-        $this->stagesConfig['config']['createDiXmlFileStage']['values']['subfolder-path'] = 'etc';
-        $this->stagesConfig['config']['createDiXmlFileStage']['values']['template-variables'] = $this->getTemplateVariables('createDiXmlFileStage');
+        // Example of how to use one class to generate different files
+//        $this->stagesConfig['config']['createDiXmlFileStage']['values']['file-name'] = 'di.xml';
+//        $this->stagesConfig['config']['createDiXmlFileStage']['values']['subfolder-path'] = 'etc';
+//        $this->stagesConfig['config']['createDiXmlFileStage']['values']['template-variables'] = $this->getTemplateVariables('createDiXmlFileStage');
 
-//        // Create module.xml stage config
-//        $config['create-xml-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
-//        $config['create-xml-file-stage']['file-name']          = 'module.xml';
-//        $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-//        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('module.xml', 'etc');
-//
 //        // Create composer.json Stage config
-//        $config['create-composer-json-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input);
-//        $config['create-composer-json-file-stage']['file-name']          = 'composer.json';
-//        $config['create-composer-json-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-//        $config['create-composer-json-file-stage']['template-file-path'] = $this->getTemplateFilePath('composer.json');
+        $this->stagesConfig['config']['createComposerJsonFileStage']['values']['file-name']          = 'composer.json';
+        $this->stagesConfig['config']['createComposerJsonFileStage']['values']['template-variables'] = $this->getTemplateVariables('createComposerJsonFileStage');
 //
 //        // Create registration.php Stage config
-//        $config['create-registration-php-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input);
-//        $config['create-registration-php-file-stage']['file-name']          = 'registration.php';
-//        $config['create-registration-php-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-//        $config['create-registration-php-file-stage']['template-file-path'] = $this->getTemplateFilePath('registration.php');
+        $this->stagesConfig['config']['createRegistrationPhpFileStage']['values']['file-name'] = 'registration.php';
+        $this->stagesConfig['config']['createRegistrationPhpFileStage']['values']['template-variables'] = $this->getTemplateVariables('createRegistrationPhpFileStage');
 
         $result = $this->processPipeline();
 
@@ -166,25 +158,6 @@ class CreateCommand extends BaseCommand
         }
 
         return $result['is_valid'] ? 0 : 1;
-    }
-
-    /**
-     * All template variables used in all Stages/Pipelines used by this command
-     *
-     *
-     * @param string $stageId
-     *
-     * @return array
-     */
-    public function getTemplateVariables(string $stageId) : array
-    {
-        return [
-            '{{VENDOR_NAME}}'           => $this->stagesConfig['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'           => $this->stagesConfig['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($this->stagesConfig['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($this->stagesConfig['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                  => date('Y'),
-        ];
     }
 
     /**
@@ -227,5 +200,24 @@ class CreateCommand extends BaseCommand
                . DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::VENDOR_NAME)
                . DIRECTORY_SEPARATOR . $input->getOption(ConfigKey::MODULE_NAME)
                . DIRECTORY_SEPARATOR . $trailingPath;
+    }
+
+    /**
+     * All template variables used in all Stages/Pipelines used by this command
+     *
+     *
+     * @param string $stageId
+     *
+     * @return array
+     */
+    public function getTemplateVariables(string $stageId) : array
+    {
+        return [
+            '{{VENDOR_NAME}}'           => $this->stagesConfig['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'           => $this->stagesConfig['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($this->stagesConfig['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($this->stagesConfig['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                  => date('Y'),
+        ];
     }
 }
