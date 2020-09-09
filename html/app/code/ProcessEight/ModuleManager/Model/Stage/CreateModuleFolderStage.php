@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
-use ProcessEight\ModuleManager\Model\ConfigKey;
+use ProcessEight\ModuleManager\Model\Folder;
 
 /**
  * Class CreateModuleFolderStage
@@ -37,22 +37,22 @@ class CreateModuleFolderStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     * @var Folder
      */
-    private $directoryList;
+    private $folder;
 
     /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Model\Folder  $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+        \ProcessEight\ModuleManager\Model\Folder $folder
     ) {
         $this->filesystemDriver = $filesystemDriver;
-        $this->directoryList    = $directoryList;
+        $this->folder           = $folder;
     }
 
     /**
@@ -63,7 +63,7 @@ class CreateModuleFolderStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $moduleFolderPath = $this->getAbsolutePathToFolder($payload);
+        $moduleFolderPath = $this->folder->getAbsolutePathToFolder($payload, $this->id);
 
         // Check if folder exists
         try {
@@ -87,23 +87,5 @@ class CreateModuleFolderStage extends BaseStage
 
         // Pass payload onto next Stage/Pipeline
         return $payload;
-    }
-
-    /**
-     * @param array  $payload
-     * @param string $subfolderPath
-     *
-     * @return string
-     * @throws FileSystemException
-     */
-    private function getAbsolutePathToFolder(
-        array $payload,
-        string $subfolderPath = ''
-    ) : string {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
-               . DIRECTORY_SEPARATOR . 'code'
-               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME]
-               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME]
-               . DIRECTORY_SEPARATOR . $subfolderPath;
     }
 }

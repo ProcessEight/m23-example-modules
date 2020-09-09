@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateEtcFolderStage
@@ -37,22 +36,22 @@ class CreateEtcFolderStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     * @var \ProcessEight\ModuleManager\Model\Folder
      */
-    private $directoryList;
+    private $folder;
 
     /**
      * CreateModuleFolder constructor.
      *
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Model\Folder  $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+        \ProcessEight\ModuleManager\Model\Folder $folder
     ) {
         $this->filesystemDriver = $filesystemDriver;
-        $this->directoryList    = $directoryList;
+        $this->folder           = $folder;
     }
 
     /**
@@ -63,11 +62,11 @@ class CreateEtcFolderStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $folderPath = $this->getAbsolutePathToFolder($payload, 'etc');
+        $etcFolderPath = $this->folder->getAbsolutePathToFolder($payload, $this->id, 'etc');
 
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($folderPath);
+            $this->filesystemDriver->isExists($etcFolderPath);
         } catch (FileSystemException $e) {
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
@@ -76,34 +75,16 @@ class CreateEtcFolderStage extends BaseStage
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($folderPath);
+            $this->filesystemDriver->createDirectory($etcFolderPath);
         } catch (FileSystemException $e) {
             $payload['messages'][] = "Failure: " . $e->getMessage();
 
             return $payload;
         }
 
-        $payload['messages'][] = "Created etc folder at <info>{$folderPath}</info>";
+        $payload['messages'][] = "Created etc folder at <info>{$etcFolderPath}</info>";
 
         // Pass payload onto next Stage/Pipeline
         return $payload;
-    }
-
-    /**
-     * @param array  $payload
-     * @param string $subfolderPath
-     *
-     * @return string
-     * @throws FileSystemException
-     */
-    private function getAbsolutePathToFolder(
-        array $payload,
-        string $subfolderPath = ''
-    ) : string {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
-               . DIRECTORY_SEPARATOR . 'code'
-               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME]
-               . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME]
-               . DIRECTORY_SEPARATOR . $subfolderPath;
     }
 }
