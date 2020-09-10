@@ -77,8 +77,8 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
             'description'             => 'Command name, e.g. process-eight:module:create',
-            'question'                => '<question>Command name [process-eight:command]: </question> ',
-            'question_default_answer' => 'process-eight:command',
+            'question'                => '<question>Command name [process-eight:example:custom-command]: </question> ',
+            'question_default_answer' => 'process-eight:example:custom-command',
         ];
         // Ask the user for the command-description, if it was not passed in as an option
         $payload['config'][$this->id]['options'][ConfigKey::COMMAND_DESCRIPTION] = [
