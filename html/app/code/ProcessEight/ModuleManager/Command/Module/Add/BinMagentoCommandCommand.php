@@ -34,11 +34,6 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 class BinMagentoCommandCommand extends BaseCommand
 {
     /**
-     * Used to generate file name
-     */
-    public $artefactFileName = '{{COMMAND_CLASS_NAME}}.php';
-
-    /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline
      */
     private $createBinMagentoCommandPipeline;
@@ -46,62 +41,41 @@ class BinMagentoCommandCommand extends BaseCommand
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                                  $masterPipeline
+     * @param \League\Pipeline\Pipeline                                                  $pipeline
      * @param \Magento\Framework\App\Filesystem\DirectoryList                            $directoryList
      * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
      */
     public function __construct(
-        \League\Pipeline\Pipeline $masterPipeline,
+        \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
     ) {
-        parent::__construct($masterPipeline, $directoryList);
         $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
+        parent::__construct($pipeline, $directoryList);
     }
 
     /**
-     * Configure
+     * Configure the command
      */
     protected function configure()
     {
         $this->setName("process-eight:module:add:bin-magento-command");
         $this->setDescription("Creates a new bin/magento command.");
-        $this->addOption(
-            ConfigKey::COMMAND_NAME,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Command name, e.g. process-eight:module:create'
-        );
-        $this->addOption(
-            ConfigKey::COMMAND_DESCRIPTION,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Brief description of the command'
-        );
-        $this->addOption(
-            ConfigKey::COMMAND_CLASS_NAME,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Command class name'
-        );
+
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
         parent::configure();
     }
 
     /**
-     * Executes the current command.
-     *
-     * This method is not abstract because you can use this class
-     * as a concrete class. In this case, instead of defining the
-     * execute() method, you set the code to execute by passing
-     * a Closure to the setCode() method.
+     * Execute the command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
      * @return int|null null or 0 if everything went fine, or an error code
-     *
-     * @throws \Magento\Framework\Exception\FileSystemException
-     * @see setCode()
      */
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
@@ -109,101 +83,14 @@ class BinMagentoCommandCommand extends BaseCommand
     ) {
         parent::execute($input, $output);
 
-        // Gather inputs
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
-        $questionHelper = $this->getHelper('question');
+        $this->pipelineConfig['mode'] = 'process';
 
-        if (!$input->getOption(ConfigKey::COMMAND_NAME)) {
-            $question = new Question('<question>Command name (e.g. process-eight:module:create): </question> ');
-
-            $input->setOption(
-                ConfigKey::COMMAND_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::COMMAND_DESCRIPTION)) {
-            $question = new Question('<question>Command description: </question> ');
-
-            $input->setOption(
-                ConfigKey::COMMAND_DESCRIPTION,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        if (!$input->getOption(ConfigKey::COMMAND_CLASS_NAME)) {
-            $question = new Question('<question>Command class name: </question> ');
-
-            $input->setOption(
-                ConfigKey::COMMAND_CLASS_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        $result = $this->processPipeline($input);
+        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
         return $result['is_valid'] ? 0 : 1;
-    }
-
-    /**
-     * Prepare all the data needed to run all the stages/pipelines needed for this command, then execute the pipeline
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     *
-     * @return array
-     * @throws \Magento\Framework\Exception\FileSystemException
-     */
-    private function processPipeline(\Symfony\Component\Console\Input\InputInterface $input) : array
-    {
-        // CreateFolderPipeline config
-        $config['validate-vendor-name-stage'][ConfigKey::VENDOR_NAME] = $input->getOption(ConfigKey::VENDOR_NAME);
-        $config['validate-module-name-stage'][ConfigKey::MODULE_NAME] = $input->getOption(ConfigKey::MODULE_NAME);
-        $config['create-folder-stage']['folder-path']                 = $this->getAbsolutePathToFolder($input, 'Command');
-
-        // Create PHP Class Stage config
-        $config['create-php-class-file-stage']['file-path']          = $config['create-folder-stage']['folder-path'];
-        $config['create-php-class-file-stage']['file-name']          = ucfirst(str_replace('{{COMMAND_CLASS_NAME}}', $input->getOption(ConfigKey::COMMAND_CLASS_NAME), '{{COMMAND_CLASS_NAME}}.php'));
-        $config['create-php-class-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-php-class-file-stage']['template-file-path'] = $this->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', 'Command');
-
-        // Create di.xml Stage config
-        $config['create-xml-file-stage']['file-path']          = $this->getAbsolutePathToFolder($input, 'etc');
-        $config['create-xml-file-stage']['file-name']          = 'di.xml';
-        $config['create-xml-file-stage']['template-variables'] = $this->getTemplateVariables($input);
-        $config['create-xml-file-stage']['template-file-path'] = $this->getTemplateFilePath('di.xml', 'etc');
-
-        // Validation flag. Will terminate pipeline if set to false by any pipeline/stage.
-        $masterPipelineConfig = [
-            'is_valid' => true,
-            'config'   => $config,
-        ];
-
-        // Run the pipeline
-        return $this->createBinMagentoCommandPipeline->processPipeline($masterPipelineConfig);
-    }
-
-    /**
-     * All template variables used in all pipelines used by this command
-     *
-     * @param InputInterface $input
-     *
-     * @return array
-     */
-    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
-    {
-        $templateVariables = parent::getTemplateVariables($input);
-        $templateVariables = array_merge($templateVariables, [
-            '{{COMMAND_NAME}}'               => $input->getOption(ConfigKey::COMMAND_NAME),
-            '{{COMMAND_DESCRIPTION}}'        => $input->getOption(ConfigKey::COMMAND_DESCRIPTION),
-            '{{COMMAND_CLASS_NAME}}'         => $input->getOption(ConfigKey::COMMAND_CLASS_NAME),
-            '{{COMMAND_CLASS_NAME_UCFIRST}}' => ucfirst($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
-            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($input->getOption(ConfigKey::COMMAND_CLASS_NAME)),
-        ]);
-
-        return $templateVariables;
     }
 }

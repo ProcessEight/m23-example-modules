@@ -114,7 +114,14 @@ class CreateModulePipeline extends BasePipeline
          * Then we assign different values to the 'id' property
          * This means we can avoid having to create a stage for every conceivable unique folder/file in Magento 2
          */
-        $this->createXmlFileStage->id   = 'createModuleXmlFileStage';
+        /**
+         * @todo Bug:
+         * The id property persists between pipelines, causing unexpected behaviour
+         * If this solution is to be reliable, all future instance of \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
+         * must have this value changed to something else, or at least reset to it's initial value, even if future pipelines
+         * do not use this class twice
+         */
+//        $this->createXmlFileStage->id   = 'createModuleXmlFileStage';
 //        $this->createDiXmlFileStage->id = 'createDiXmlFileStage';
 
         // Add the Pipelines/Stages we need for this command
@@ -134,6 +141,10 @@ class CreateModulePipeline extends BasePipeline
             // Create the registration.php
             ->pipe($this->createRegistrationPhpFileStage) // Refactor to use module-manager-v3 method of doing things
         ;
+
+        /**
+         * Or perhaps we could just reset it here? (See bug above)
+         */
 
         // Pass payload onto next Stage/Pipeline
         return $pipeline->process($payload);

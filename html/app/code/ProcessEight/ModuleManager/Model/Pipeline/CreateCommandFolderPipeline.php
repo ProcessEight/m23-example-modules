@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Pipeline;
 
 /**
- * Class CreateFolderPipeline
+ * Class CreateCommandFolderPipeline
  *
  * This pipeline:
  * - Calls the ValidateModuleNamePipeline
@@ -26,7 +26,7 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
  *
  * @package ProcessEight\ModuleManager\Model\Pipeline
  */
-class CreateFolderPipeline
+class CreateCommandFolderPipeline
 {
     /**
      * @var \League\Pipeline\Pipeline
@@ -44,11 +44,11 @@ class CreateFolderPipeline
     private $createCommandFolderStage;
 
     /**
-     * CreateFolderPipeline constructor.
+     * CreateCommandFolderPipeline constructor.
      *
-     * @param \League\Pipeline\Pipeline                                             $pipeline
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateCommandFolderStage      $createCommandFolderStage
+     * @param \League\Pipeline\Pipeline                                        $pipeline
+     * @param ValidateModuleNamePipeline                                       $validateModuleNamePipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateCommandFolderStage $createCommandFolderStage
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,

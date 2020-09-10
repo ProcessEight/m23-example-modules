@@ -20,15 +20,14 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
- * Class CreateEtcFolderStage
+ * Class CreateCommandFolderStage
  *
- * Creates an etc folder
+ * This stage creates the folder {{VENDOR_NAME}}/{{MODULE_NAME}}/Command/
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateEtcFolderStage extends BaseStage
+class CreateCommandFolderStage extends BaseStage
 {
-    public $id = 'createEtcFolderStage';
+    public $id = 'createCommandFolderStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -36,12 +35,13 @@ class CreateEtcFolderStage extends BaseStage
     private $filesystemDriver;
 
     /**
+     * @todo Refactor this class into Service folder
      * @var \ProcessEight\ModuleManager\Model\Folder
      */
     private $folder;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
      * @param \ProcessEight\ModuleManager\Model\Folder  $folder
@@ -55,38 +55,39 @@ class CreateEtcFolderStage extends BaseStage
     }
 
     /**
-     * @param mixed[] $payload
+     * @param array $payload
      *
-     * @return mixed[]
+     * @return array
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $etcFolderPath = $this->folder->getAbsolutePathToFolder($payload, $this->id, 'etc');
+        $commandFolderPath = $this->folder->getAbsolutePathToFolder($payload, $this->id, 'Command');
 
         // Check if folder exists
         try {
-            $this->filesystemDriver->isExists($etcFolderPath);
+            $this->filesystemDriver->isExists($commandFolderPath);
         } catch (FileSystemException $e) {
             $payload['is_valid']   = false;
             $payload['messages'][] = "Failure: " . $e->getMessage();
+            $payload['messages'][] = "Check if folder exists at <info>{$commandFolderPath}</info>";
 
             return $payload;
         }
 
         // Create folder
         try {
-            $this->filesystemDriver->createDirectory($etcFolderPath);
+            $this->filesystemDriver->createDirectory($commandFolderPath);
         } catch (FileSystemException $e) {
             $payload['is_valid']   = false;
             $payload['messages'][] = "Failure: " . $e->getMessage();
+            $payload['messages'][] = "Failed to create folder at <info>'{$commandFolderPath}'</info> with default permissions of '<info>0777</info>'";
 
             return $payload;
         }
+        $payload['messages'][] = "Created folder at <info>{$commandFolderPath}</info>";
 
-        $payload['messages'][] = "Created etc folder at <info>{$etcFolderPath}</info>";
-
-        // Pass payload onto next Stage/Pipeline
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 }

@@ -34,14 +34,15 @@ class Template
 
     /**
      * Return path to the template file
+     * @todo Refactor to remove the appending of '.template'
      *
-     * @param string $fileName      File name has '.template' appended
-     * @param string $subfolderPath Sub-folder within Template folder (if any) which contains the template file
+     * @param string $templateFileName File name has '.template' appended
+     * @param string $subfolderPath    Sub-folder within Template folder (if any) which contains the template file
      *
      * @return string
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function getTemplateFilePath(string $fileName, string $subfolderPath = '') : string
+    public function getTemplateFilePath(string $templateFileName, string $subfolderPath = '') : string
     {
         return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) .
                DIRECTORY_SEPARATOR . 'code' .
@@ -49,7 +50,7 @@ class Template
                DIRECTORY_SEPARATOR . 'ModuleManager' .
                DIRECTORY_SEPARATOR . 'Template' .
                DIRECTORY_SEPARATOR . $subfolderPath .
-               DIRECTORY_SEPARATOR . $fileName . '.template';
+               DIRECTORY_SEPARATOR . $templateFileName . '.template';
     }
 
     /**

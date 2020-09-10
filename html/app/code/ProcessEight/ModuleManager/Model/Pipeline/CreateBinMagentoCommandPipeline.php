@@ -21,7 +21,7 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
  * Class CreateBinMagentoCommandPipeline
  *
  * This pipeline:
- * - Calls the CreateFolderPipeline
+ * - Calls the CreateCommandFolderPipeline
  * - Creates the PHP Command class
  * - Creates the di.xml file
  *
@@ -35,38 +35,38 @@ class CreateBinMagentoCommandPipeline
     private $pipeline;
 
     /**
-     * @var CreateFolderPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateCommandFolderPipeline
      */
-    private $createFolderPipeline;
+    private $createCommandFolderPipeline;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateBinMagentoCommandClassFileStage
      */
-    private $createPhpClassFileStage;
+    private $createBinMagentoCommandClassFileStage;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage
      */
-    private $createXmlFileStage;
+    private $createDiXmlFileStage;
 
     /**
-     * CreateFolderPipeline constructor.
+     * CreateCommandFolderPipeline constructor.
      *
-     * @param \League\Pipeline\Pipeline                                       $pipeline
-     * @param CreateFolderPipeline                                            $createFolderPipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage $createPhpClassFileStage
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage      $createXmlFileStage
+     * @param \League\Pipeline\Pipeline                                                     $pipeline
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateCommandFolderPipeline        $createCommandFolderPipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateBinMagentoCommandClassFileStage $createBinMagentoCommandClassFileStage
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage                    $createDiXmlFileStage
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateFolderPipeline $createFolderPipeline,
-        \ProcessEight\ModuleManager\Model\Stage\CreatePhpClassFileStage $createPhpClassFileStage,
-        \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage $createXmlFileStage
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateCommandFolderPipeline $createCommandFolderPipeline,
+        \ProcessEight\ModuleManager\Model\Stage\CreateBinMagentoCommandClassFileStage $createBinMagentoCommandClassFileStage,
+        \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage $createDiXmlFileStage
     ) {
-        $this->pipeline                = $pipeline;
-        $this->createFolderPipeline    = $createFolderPipeline;
-        $this->createPhpClassFileStage = $createPhpClassFileStage;
-        $this->createXmlFileStage      = $createXmlFileStage;
+        $this->pipeline                              = $pipeline;
+        $this->createCommandFolderPipeline           = $createCommandFolderPipeline;
+        $this->createBinMagentoCommandClassFileStage = $createBinMagentoCommandClassFileStage;
+        $this->createDiXmlFileStage                    = $createDiXmlFileStage;
     }
 
     /**
@@ -97,11 +97,11 @@ class CreateBinMagentoCommandPipeline
         // Add the Pipelines/Stages we need for this command
         $pipeline = $this->pipeline
             // Create the folder
-            ->pipe($this->createFolderPipeline)
+            ->pipe($this->createCommandFolderPipeline)
             // Create the class
-            ->pipe($this->createPhpClassFileStage)
+            ->pipe($this->createBinMagentoCommandClassFileStage)
             // Create the di.xml
-            ->pipe($this->createXmlFileStage)
+            ->pipe($this->createDiXmlFileStage)
         ;
 
         // Pass payload onto next Stage/Pipeline

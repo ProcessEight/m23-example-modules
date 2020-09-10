@@ -15,9 +15,9 @@
 
 The architectural design of the Module Manager is built around the idea of a pipeline.
 
-Each command triggers the processing of a pipeline.
+Each _command_ triggers the processing of a _pipeline_.
 
-A pipeline consists of a series of steps or _stages_.
+A Pipeline consists of a series of steps or _stages_.
 
 The stage is the smallest unit of logic in the Module Manager. 
 
@@ -36,7 +36,7 @@ If a file is to be created which does not have a pre-defined name, then the user
 No 'magic' should be used to generate a name.
 
 ## Add a new stage
-See `\ProcessEight\ModuleManager\Model\Stage\CreateFolderStage` for a complete example.
+See `\ProcessEight\ModuleManager\Model\Stage\CreateCommandFolderStage` for a complete example.
 
 Each stage should be responsible for the data it needs to work.
 
@@ -169,7 +169,7 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 ## To do
 
 - [ ] Group messages by class name for easier debugging
-- Refactor so that each stage is responsible for it's own data 
+- [ ] Refactor so that each stage is responsible for it's own data 
     - This will remove the setting of logic to the `config` array in the `*Command` classes which extend the Symfony command classes
     - This could involve defining the parameters for the `input` `options` in each stage and the command class just reads these
     - The command class could also set default values for commands based on ^above, so that questions needing identical answers (e.g. Defining VENDOR_NAME) aren't asked twice
@@ -177,4 +177,10 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
     - Perhaps something like a context object/array?
     - Each stage defines the data it needs
     - The Command class somehow knows this and asks for it(?), possibly by reading the context class
-    
+- Perhaps we should start all over again and use traits instead of pipelines?
+    - The traits could contain arrays of command options and define the template variables
+    - A new command could be created by adding traits to a new command class
+- Perhaps we should start all over again and use standalone classes injected into (or inherited by) the command class instead of stages and pipelines?
+    - The standalone classes could contain arrays of command options and define the template variables
+    - ...and also contain all logic needed to fulfil its responsibility (i.e. Create a folder)
+    - A new command could be created by adding new standalone classes to a new command class (either by injecting or by extending the command class)
