@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class CreateRegistrationPhpFileStage
@@ -72,9 +73,9 @@ class CreateRegistrationPhpFileStage extends BaseStage
     public function processStage(array $payload) : array
     {
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id);
-        $artefactFileName  = $payload['config'][$this->id]['values']['file-name'];
-        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName);
-        $templateVariables = $payload['config'][$this->id]['values']['template-variables'];
+        $artefactFileName  = 'registration.php';
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template');
+        $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
         try {
@@ -115,5 +116,34 @@ class CreateRegistrationPhpFileStage extends BaseStage
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         return $payload;
+    }
+
+    /**
+     * All template variables used by this stage
+     *
+     * @param string $stageId
+     * @param array  $payload
+     *
+     * @return array
+     */
+    public function getTemplateVariables(string $stageId, array $payload) : array
+    {
+        return [
+            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                          => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a di.xml file
+             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
+             */
+//            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
+//            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
+//            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
+//            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+//            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+        ];
     }
 }

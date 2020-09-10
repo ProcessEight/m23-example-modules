@@ -52,9 +52,9 @@ class CreateDiXmlFileStage extends BaseStage
     /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder        $folder
-     * @param \ProcessEight\ModuleManager\Service\Template    $template
+     * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
+     * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
@@ -78,7 +78,7 @@ class CreateDiXmlFileStage extends BaseStage
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
         $artefactFileName  = 'di.xml';
         $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template', $subfolderPath);
-        $templateVariables = $this->getTemplateVariables('createDiXmlFileStage', $payload);
+        $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
         try {
@@ -134,11 +134,11 @@ class CreateDiXmlFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                  => date('Y'),
+            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                          => date('Y'),
             /**
              * @todo These kind of Command-specific template variables should be moved out of here
              *       This stage is for creating a di.xml file

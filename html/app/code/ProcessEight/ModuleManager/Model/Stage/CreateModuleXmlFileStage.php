@@ -21,16 +21,17 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Class CreateComposerJsonFileStage
- *
- * Creates a vendor-name/module-name/composer.json file
- * Assumes that the vendor-name/module-name/ folder already exists
- *
- * @package ProcessEight\ModuleManager\Model\Stage
+ * Creates a vendor-name/module-name/etc/module.xml file
+ * Assumes that the vendor-name/module-name/etc/ folder already exists
  */
-class CreateComposerJsonFileStage extends BaseStage
+class CreateModuleXmlFileStage extends BaseStage
 {
-    public $id = 'createComposerJsonFileStage';
+    public $id = 'createModuleXmlFileStage';
+
+    /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
+    private $directoryList;
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -38,10 +39,14 @@ class CreateComposerJsonFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    private $moduleDir;
+
+    /**
      * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
-
     /**
      * @var \ProcessEight\ModuleManager\Service\Template
      */
@@ -50,31 +55,38 @@ class CreateComposerJsonFileStage extends BaseStage
     /**
      * CreateModuleFolder constructor.
      *
-     * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
-     * @param \ProcessEight\ModuleManager\Service\Template $template
+     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
+     * @param \Magento\Framework\Module\Dir                   $moduleDir
+     * @param \ProcessEight\ModuleManager\Service\Folder      $folder
+     * @param \ProcessEight\ModuleManager\Service\Template    $template
      */
     public function __construct(
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
+        \Magento\Framework\Module\Dir $moduleDir,
         \ProcessEight\ModuleManager\Service\Folder $folder,
         \ProcessEight\ModuleManager\Service\Template $template
     ) {
+        $this->directoryList    = $directoryList;
         $this->filesystemDriver = $filesystemDriver;
+        $this->moduleDir        = $moduleDir;
         $this->folder           = $folder;
         $this->template         = $template;
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
      * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id);
-        $artefactFileName  = 'composer.json';
-        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template');
+        $subfolderPath     = 'etc';
+        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
+        $artefactFileName  = 'module.xml';
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template', $subfolderPath);
         $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
@@ -116,6 +128,7 @@ class CreateComposerJsonFileStage extends BaseStage
 
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 
@@ -130,21 +143,21 @@ class CreateComposerJsonFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                          => date('Y'),
+            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                  => date('Y'),
             /**
              * @todo These kind of Command-specific template variables should be moved out of here
              *       This stage is for creating a di.xml file
              *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
              */
-//            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
-//            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
-//            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
-//            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
-//            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+            //            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
+            //            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
+            //            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
+            //            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+            //            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
         ];
     }
 }

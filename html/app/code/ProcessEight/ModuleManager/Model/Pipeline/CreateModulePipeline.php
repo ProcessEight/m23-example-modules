@@ -48,14 +48,9 @@ class CreateModulePipeline extends BasePipeline
     private $createEtcFolderStage;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
+     * @var \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFileStage
      */
-    private $createXmlFileStage;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
-     */
-    private $createDiXmlFileStage;
+    private $createModuleXmlFileStage;
 
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFileStage
@@ -74,7 +69,7 @@ class CreateModulePipeline extends BasePipeline
      * @param \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline  $validateModuleNamePipeline
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolderStage        $createModuleFolderStage
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolderStage           $createEtcFolderStage
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage             $createXmlFileStage
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFileStage       $createModuleXmlFileStage
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFileStage    $createComposerJsonFileStage
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFileStage $createRegistrationPhpFileStage
      */
@@ -83,7 +78,7 @@ class CreateModulePipeline extends BasePipeline
         \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline,
         \ProcessEight\ModuleManager\Model\Stage\CreateModuleFolderStage $createModuleFolderStage,
         \ProcessEight\ModuleManager\Model\Stage\CreateEtcFolderStage $createEtcFolderStage,
-        \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage $createXmlFileStage,
+        \ProcessEight\ModuleManager\Model\Stage\CreateModuleXmlFileStage $createModuleXmlFileStage,
         \ProcessEight\ModuleManager\Model\Stage\CreateComposerJsonFileStage $createComposerJsonFileStage,
         \ProcessEight\ModuleManager\Model\Stage\CreateRegistrationPhpFileStage $createRegistrationPhpFileStage
     ) {
@@ -91,8 +86,7 @@ class CreateModulePipeline extends BasePipeline
         $this->validateModuleNamePipeline     = $validateModuleNamePipeline;
         $this->createModuleFolderStage        = $createModuleFolderStage;
         $this->createEtcFolderStage           = $createEtcFolderStage;
-        $this->createXmlFileStage             = $createXmlFileStage;
-//        $this->createDiXmlFileStage           = clone $createXmlFileStage; // Just an example, you understand
+        $this->createModuleXmlFileStage       = $createModuleXmlFileStage;
         $this->createComposerJsonFileStage    = $createComposerJsonFileStage;
         $this->createRegistrationPhpFileStage = $createRegistrationPhpFileStage;
     }
@@ -106,24 +100,6 @@ class CreateModulePipeline extends BasePipeline
      */
     public function processPipeline(array $payload) : array
     {
-        /**
-         * Hotfix:
-         * How to use one stage to generate different files/folders, each requiring different values?
-         * E.g. Use one class to generate two different XML files?
-         * The answer is to inject the class once, then clone it (see constructor above)
-         * Then we assign different values to the 'id' property
-         * This means we can avoid having to create a stage for every conceivable unique folder/file in Magento 2
-         */
-        /**
-         * @todo Bug:
-         * The id property persists between pipelines, causing unexpected behaviour
-         * If this solution is to be reliable, all future instance of \ProcessEight\ModuleManager\Model\Stage\CreateXmlFileStage
-         * must have this value changed to something else, or at least reset to it's initial value, even if future pipelines
-         * do not use this class twice
-         */
-//        $this->createXmlFileStage->id   = 'createModuleXmlFileStage';
-//        $this->createDiXmlFileStage->id = 'createDiXmlFileStage';
-
         // Add the Pipelines/Stages we need for this command
         $pipeline = $this->pipeline
             // Validate the module name
@@ -133,18 +109,12 @@ class CreateModulePipeline extends BasePipeline
             // Create the etc folder
             ->pipe($this->createEtcFolderStage)
             // Create the module.xml
-            ->pipe($this->createXmlFileStage)
-            // Create another XML file (just for testing module-manager-v3)
-//            ->pipe($this->createDiXmlFileStage) // Refactor to use module-manager-v3 method of doing things
+            ->pipe($this->createModuleXmlFileStage)
             // Create the composer.json
-            ->pipe($this->createComposerJsonFileStage) // Refactor to use module-manager-v3 method of doing things
+            ->pipe($this->createComposerJsonFileStage)
             // Create the registration.php
-            ->pipe($this->createRegistrationPhpFileStage) // Refactor to use module-manager-v3 method of doing things
+            ->pipe($this->createRegistrationPhpFileStage)
         ;
-
-        /**
-         * Or perhaps we could just reset it here? (See bug above)
-         */
 
         // Pass payload onto next Stage/Pipeline
         return $pipeline->process($payload);
