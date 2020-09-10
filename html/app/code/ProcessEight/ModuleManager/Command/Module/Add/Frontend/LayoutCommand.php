@@ -20,7 +20,6 @@ namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -33,11 +32,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class LayoutCommand extends BaseCommand
 {
-    /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
     /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateXmlFilePipeline
      */
@@ -56,7 +50,6 @@ class LayoutCommand extends BaseCommand
         \ProcessEight\ModuleManager\Model\Pipeline\CreateXmlFilePipeline $createXmlFilePipeline
     ) {
         parent::__construct($pipeline, $directoryList);
-        $this->pipeline              = $pipeline;
         $this->createXmlFilePipeline = $createXmlFilePipeline;
     }
 
@@ -67,7 +60,11 @@ class LayoutCommand extends BaseCommand
     {
         $this->setName("process-eight:module:add:frontend:layout");
         $this->setDescription("Adds a new Layout XML file.");
-        $this->addOption(ConfigKey::LAYOUT_XML_HANDLE, null, InputOption::VALUE_OPTIONAL, 'Layout XML handle');
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+//        $this->addOption(ConfigKey::LAYOUT_XML_HANDLE, null, InputOption::VALUE_OPTIONAL, 'Layout XML handle');
         parent::configure();
     }
 
@@ -81,6 +78,15 @@ class LayoutCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        $this->pipelineConfig['mode'] = 'process';
+
+        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */

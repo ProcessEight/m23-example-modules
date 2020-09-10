@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -20,69 +20,87 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
+ * @deprecated
+ *
  * Class CreatePhpClassFileStage
  *
  * Creates a PHP class file.
  *
- * Don't add any configuration for specific PHP classes here,
- * that should be added to the relevant command which creates the class
- *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreatePhpClassFileStage
+class CreatePhpClassFileStage extends BaseStage
 {
+    public $id = 'createPhpClassFileStage';
+
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
 
     /**
-     * Constructor
-     *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
+     * @var \ProcessEight\ModuleManager\Service\Folder
      */
-    public function __construct(
-        \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-    ) {
-        $this->filesystemDriver = $filesystemDriver;
-    }
+    private $folder;
 
     /**
-     * Called when this Pipeline is invoked by another Pipeline/Stage
-     *
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
+     * @var \ProcessEight\ModuleManager\Service\Template
      */
-    public function __invoke(array $payload) : array
-    {
-        if ($payload['is_valid'] === true) {
-            $payload = $this->processStage($payload);
-        }
+    private $template;
 
-        return $payload;
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder     $folder
+     * @param \ProcessEight\ModuleManager\Service\Template $template
+     */
+    public function __construct(
+        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
+        \ProcessEight\ModuleManager\Service\Folder $folder,
+        \ProcessEight\ModuleManager\Service\Template $template
+    ) {
+        $this->filesystemDriver = $filesystemDriver;
+        $this->folder           = $folder;
+        $this->template         = $template;
     }
+
+//    /**
+//     * Called when this Pipeline is invoked by another Pipeline/Stage
+//     *
+//     * @param mixed[] $payload
+//     *
+//     * @return mixed[]
+//     */
+//    public function __invoke(array $payload) : array
+//    {
+//        if ($payload['is_valid'] === true) {
+//            $payload = $this->processStage($payload);
+//        }
+//
+//        return $payload;
+//    }
 
     /**
      * @param array $payload
      *
      * @return array
+     * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $artefactFilePath  = $payload['config']['create-php-class-file-stage']['file-path'];
-        $artefactFileName  = $payload['config']['create-php-class-file-stage']['file-name'];
-        $templateFilePath  = $payload['config']['create-php-class-file-stage']['template-file-path'];
-        $templateVariables = $payload['config']['create-php-class-file-stage']['template-variables'];
+        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id);
+        $artefactFileName  = $payload['config'][$this->id]['values']['file-name'];
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName);
+        $templateVariables = $payload['config'][$this->id]['values']['template-variables'];
 
         // Check if file exists
         try {
             $isExists = $this->filesystemDriver->isExists($artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName);
             if ($isExists) {
-                $payload['messages'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>{$artefactFilePath}</info>";
+                $payload['messages'][] = "<info>" . $artefactFileName . "</info> file already exists at <info>" . $artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName . "</info>";
                 $payload['messages'][] = "<info>TODO: Add logic to modify existing files. For now, copy and paste the following into " . $artefactFileName . "</info>";
                 $payload['messages'][] = "<info>" .
-                                         $this->getProcessedTemplate($templateFilePath, $templateVariables) .
+                                         $this->template->getProcessedTemplate($templateFilePath, $templateVariables) .
                                          "</info>";
 
                 return $payload;
@@ -97,7 +115,7 @@ class CreatePhpClassFileStage
         // Create file from template
         try {
             // Read template
-            $artefactFileTemplate = $this->getProcessedTemplate($templateFilePath, $templateVariables);
+            $artefactFileTemplate = $this->template->getProcessedTemplate($templateFilePath, $templateVariables);
 
             // Write template to file
             $artefactFileResource = $this->filesystemDriver->fileOpen(
@@ -111,28 +129,31 @@ class CreatePhpClassFileStage
 
             return $payload;
         }
-
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 
     /**
-     * @param string $templateFilePath
-     * @param array  $templateVariables
-     *
-     * @return string
-     * @throws FileSystemException
+     * @todo Verify this can be removed
      */
-    private function getProcessedTemplate(string $templateFilePath, array $templateVariables) : string
-    {
-        // Read template
-        $artefactFileTemplate = $this->filesystemDriver->fileGetContents($templateFilePath);
-
-        foreach ($templateVariables as $templateVariable => $value) {
-            $artefactFileTemplate = str_replace($templateVariable, $value, $artefactFileTemplate);
-        }
-
-        return $artefactFileTemplate;
-    }
+//    /**
+//     * @param string $templateFilePath
+//     * @param array  $templateVariables
+//     *
+//     * @return string
+//     * @throws FileSystemException
+//     */
+//    private function getProcessedTemplate(string $templateFilePath, array $templateVariables) : string
+//    {
+//        // Read template
+//        $artefactFileTemplate = $this->filesystemDriver->fileGetContents($templateFilePath);
+//
+//        foreach ($templateVariables as $templateVariable => $value) {
+//            $artefactFileTemplate = str_replace($templateVariable, $value, $artefactFileTemplate);
+//        }
+//
+//        return $artefactFileTemplate;
+//    }
 }

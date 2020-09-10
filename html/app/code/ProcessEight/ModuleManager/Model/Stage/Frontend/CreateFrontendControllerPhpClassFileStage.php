@@ -15,21 +15,21 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model\Stage;
+namespace ProcessEight\ModuleManager\Model\Stage\Frontend;
 
 use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Class CreateBinMagentoCommandClassFileStage
+ * Class CreateFrontendControllerPhpClassFileStage
  *
- * Creates a bin/magento command PHP class file.
+ * Creates a PHP class file.
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateBinMagentoCommandClassFileStage extends BaseStage
+class CreateFrontendControllerPhpClassFileStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
-    public $id = 'createBinMagentoCommandClassFileStage';
+    public $id = 'createFrontendControllerPhpClassFileStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -50,7 +50,7 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder     $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
      * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
@@ -64,39 +64,20 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     }
 
     /**
-     *
      * @param array $payload
      *
      * @return array
      */
     public function configureStage(array $payload) : array
     {
-        // Ask the user for the command-name, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::COMMAND_NAME] = [
-            'name'                    => ConfigKey::COMMAND_NAME,
+        // Ask the user for the CONTROLLER_ACTION_NAME, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::CONTROLLER_ACTION_NAME] = [
+            'name'                    => ConfigKey::CONTROLLER_ACTION_NAME,
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Command name, e.g. process-eight:module:create',
-            'question'                => '<question>Command name [process-eight:example:custom-command]: </question> ',
-            'question_default_answer' => 'process-eight:example:custom-command',
-        ];
-        // Ask the user for the command-description, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::COMMAND_DESCRIPTION] = [
-            'name'                    => ConfigKey::COMMAND_DESCRIPTION,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Brief description of the command',
-            'question'                => '<question>Command description [This is a bin/magento command]: </question> ',
-            'question_default_answer' => 'This is a bin/magento command',
-        ];
-        // Ask the user for the command-class-name, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::COMMAND_CLASS_NAME] = [
-            'name'                    => ConfigKey::COMMAND_CLASS_NAME,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Command class name, e.g. CustomCommand',
-            'question'                => '<question>Command class name [CustomCommand]: </question> ',
-            'question_default_answer' => 'CustomCommand',
+            'description'             => 'Controller action name',
+            'question'                => '<question>Controller action name (the \'view\' in \'/catalog/product/view\') [view]:</question> ',
+            'question_default_answer' => 'view',
         ];
 
         return $payload;
@@ -110,18 +91,21 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $subfolderPath     = 'Command';
-        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
+        $artefactFilePath  = $this->folder->getAbsolutePathToFolder(
+            $payload,
+            $this->id,
+            'Controller' . DIRECTORY_SEPARATOR . ucfirst($payload['config'][$this->id]['values'][ConfigKey::CONTROLLER_DIRECTORY_NAME])
+        );
         $artefactFileName  = ucfirst(
             str_replace(
-                '{{COMMAND_CLASS_NAME}}',
-                $payload['config'][$this->id]['values'][ConfigKey::COMMAND_CLASS_NAME],
-                '{{COMMAND_CLASS_NAME}}.php'
+                '{{CONTROLLER_ACTION_NAME}}',
+                $payload['config'][$this->id]['values'][ConfigKey::CONTROLLER_ACTION_NAME],
+                '{{CONTROLLER_ACTION_NAME}}.php'
             )
         );
         $templateFilePath  = $this->template->getTemplateFilePath(
-            '{{COMMAND_CLASS_NAME}}.php.template',
-            $subfolderPath
+            '{{CONTROLLER_ACTION_NAME_UCFIRST}}.php.template',
+            'Controller'
         );
         $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
@@ -161,7 +145,7 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
 
             return $payload;
         }
-        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>" . $artefactFilePath . "</info>";
+        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;
@@ -178,16 +162,21 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                  => date('Y'),
-            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
-            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
-            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
-            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
-            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+            '{{VENDOR_NAME}}'                       => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'                       => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}'             => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}'             => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                              => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a php file
+             *       Updating the php file to include command-specific template variables should be added to a new 'UpdateWhateverPhpFileStage'
+             */
+            '{{FRONT_NAME}}'                        => $payload['config'][$stageId]['values'][ConfigKey::FRONT_NAME],
+            '{{CONTROLLER_ACTION_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::CONTROLLER_ACTION_NAME],
+            '{{CONTROLLER_ACTION_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::CONTROLLER_ACTION_NAME]),
+            '{{CONTROLLER_DIRECTORY_NAME}}'         => $payload['config'][$stageId]['values'][ConfigKey::CONTROLLER_DIRECTORY_NAME],
+            '{{CONTROLLER_DIRECTORY_NAME_UCFIRST}}' => ucfirst($payload['config'][$stageId]['values'][ConfigKey::CONTROLLER_DIRECTORY_NAME]),
         ];
     }
 }

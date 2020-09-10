@@ -20,6 +20,8 @@ namespace ProcessEight\ModuleManager\Model\Stage;
 use Magento\Framework\Exception\FileSystemException;
 
 /**
+ * @deprecated
+ *
  * Class CreateAreaCodeFolder
  *
  * Creates a folder with the name <path-to-area-code-folder>/<area-code>

@@ -21,6 +21,8 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
+ * @deprecated
+ *
  * Class CreateControllerClass
  *
  * Creates controller class for frontend or adminhtml

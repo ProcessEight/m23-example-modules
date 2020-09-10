@@ -39,11 +39,6 @@ use Symfony\Component\Console\Question\Question;
 class BlockCommand extends BaseCommand
 {
     /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
-    /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBlockCommandPipeline
      */
     private $createBlockCommandPipeline;
@@ -61,7 +56,6 @@ class BlockCommand extends BaseCommand
         \ProcessEight\ModuleManager\Model\Pipeline\CreateBlockCommandPipeline $createBlockCommandPipeline
     ) {
         parent::__construct($pipeline, $directoryList);
-        $this->pipeline                   = $pipeline;
         $this->createBlockCommandPipeline = $createBlockCommandPipeline;
     }
 
@@ -70,10 +64,13 @@ class BlockCommand extends BaseCommand
      */
     protected function configure()
     {
-        parent::configure();
         $this->setName("process-eight:module:add:frontend:block");
         $this->setDescription("Adds a new PHP Block class.");
-        $this->addOption(ConfigKey::BLOCK_CLASS_NAME, null, InputOption::VALUE_OPTIONAL, 'Block class name');
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+//        $this->addOption(ConfigKey::BLOCK_CLASS_NAME, null, InputOption::VALUE_OPTIONAL, 'Block class name');
         parent::configure();
     }
 
@@ -82,10 +79,21 @@ class BlockCommand extends BaseCommand
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
+        $this->pipelineConfig['mode'] = 'process';
+
+        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */

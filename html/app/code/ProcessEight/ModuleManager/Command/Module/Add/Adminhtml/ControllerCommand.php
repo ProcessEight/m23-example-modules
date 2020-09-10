@@ -65,26 +65,34 @@ class ControllerCommand extends BaseCommand
      */
     protected function configure()
     {
-        parent::configure();
         $this->setName("process-eight:module:add:adminhtml:controller");
         $this->setDescription("Creates an etc/adminhtml/routes.xml file and Controller/Adminhtml/<controller-directory-name>/<controller-action-name>.php file.");
-        $this->addOption(ConfigKey::FRONT_NAME,
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Front name'
-        );
-        $this->addOption(
-            ConfigKey::CONTROLLER_DIRECTORY_NAME,
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Controller directory name'
-        );
-        $this->addOption(
-            ConfigKey::CONTROLLER_ACTION_NAME,
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Controller action name'
-        );
+
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createAdminhtmlControllerPipeline->processPipeline($this->pipelineConfig);
+
+        parent::configure();
+
+        return null;
+
+//        $this->addOption(ConfigKey::FRONT_NAME,
+//            null,
+//            InputOption::VALUE_OPTIONAL,
+//            'Front name'
+//        );
+//        $this->addOption(
+//            ConfigKey::CONTROLLER_DIRECTORY_NAME,
+//            null,
+//            InputOption::VALUE_OPTIONAL,
+//            'Controller directory name'
+//        );
+//        $this->addOption(
+//            ConfigKey::CONTROLLER_ACTION_NAME,
+//            null,
+//            InputOption::VALUE_OPTIONAL,
+//            'Controller action name'
+//        );
     }
 
     /**
@@ -99,6 +107,16 @@ class ControllerCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
+        $this->pipelineConfig['mode'] = 'process';
+
+        $result = $this->createAdminhtmlControllerPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */

@@ -35,11 +35,6 @@ use Symfony\Component\Console\Question\Question;
 class PluginCommand extends BaseCommand
 {
     /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
-    /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateAdminhtmlPluginPipeline
      */
     private $createAdminhtmlPluginPipeline;
@@ -66,33 +61,38 @@ class PluginCommand extends BaseCommand
      */
     protected function configure()
     {
-        parent::configure();
         $this->setName("process-eight:module:add:adminhtml:plugin");
         $this->setDescription("Creates an etc/adminhtml/di.xml file and Plugin/Adminhtml/<plugin-class-name>.php file");
-        $this->addOption(
-            ConfigKey::METHOD_TO_INTERCEPT_NAMESPACE,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Method to intercept (in format \Vendor\Namespace\Path\To\Class::methodToIntercept)'
-        );
-        $this->addOption(
-            ConfigKey::PLUGIN_TYPE,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Plugin type (before, around, after)'
-        );
-        $this->addOption(
-            ConfigKey::PLUGIN_AREA,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Plugin area (global, adminhtml, frontend, webapi_rest, webapi_soap)'
-        );
-        $this->addOption(
-            ConfigKey::PLUGIN_CLASS_NAME,
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Plugin class name'
-        );
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createAdminhtmlPluginPipeline->processPipeline($this->pipelineConfig);
+
+//        $this->addOption(
+//            ConfigKey::METHOD_TO_INTERCEPT_NAMESPACE,
+//            null,
+//            InputOption::VALUE_REQUIRED,
+//            'Method to intercept (in format \Vendor\Namespace\Path\To\Class::methodToIntercept)'
+//        );
+//        $this->addOption(
+//            ConfigKey::PLUGIN_TYPE,
+//            null,
+//            InputOption::VALUE_REQUIRED,
+//            'Plugin type (before, around, after)'
+//        );
+//        $this->addOption(
+//            ConfigKey::PLUGIN_AREA,
+//            null,
+//            InputOption::VALUE_REQUIRED,
+//            'Plugin area (global, adminhtml, frontend, webapi_rest, webapi_soap)'
+//        );
+//        $this->addOption(
+//            ConfigKey::PLUGIN_CLASS_NAME,
+//            null,
+//            InputOption::VALUE_REQUIRED,
+//            'Plugin class name'
+//        );
+
+        parent::configure();
     }
 
     /**
@@ -107,6 +107,16 @@ class PluginCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
+        $this->pipelineConfig['mode'] = 'process';
+
+        $result = $this->createAdminhtmlPluginPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */

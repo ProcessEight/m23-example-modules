@@ -21,6 +21,8 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
+ * @deprecated
+ *
  * Class CreateControllerFolder
  *
  * Creates a directory structure in the format Controller/<Adminhtml>/<controller-directory-name>/

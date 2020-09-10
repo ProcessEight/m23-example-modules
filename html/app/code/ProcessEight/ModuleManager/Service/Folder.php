@@ -26,7 +26,7 @@ class Folder
 
     /**
      * @param array  $payload
-     * @param string $id
+     * @param string $stageId
      * @param string $subfolderPath
      *
      * @return string
@@ -34,13 +34,13 @@ class Folder
      */
     public function getAbsolutePathToFolder(
         array $payload,
-        string $id,
+        string $stageId,
         string $subfolderPath = ''
     ) : string {
         return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP)
                . DIRECTORY_SEPARATOR . 'code'
-               . DIRECTORY_SEPARATOR . $payload['config'][$id]['values'][ConfigKey::VENDOR_NAME]
-               . DIRECTORY_SEPARATOR . $payload['config'][$id]['values'][ConfigKey::MODULE_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]
+               . DIRECTORY_SEPARATOR . $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]
                . DIRECTORY_SEPARATOR . $subfolderPath;
     }
 }

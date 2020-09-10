@@ -168,6 +168,7 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 
 ## To do
 
+- [ ] Add some way to detect Magento version and generate code for that version
 - [ ] Group messages by class name for easier debugging
 - [ ] Refactor so that each stage is responsible for it's own data 
     - This will remove the setting of logic to the `config` array in the `*Command` classes which extend the Symfony command classes

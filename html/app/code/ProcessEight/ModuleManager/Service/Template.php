@@ -34,7 +34,6 @@ class Template
 
     /**
      * Return path to the template file
-     * @todo Refactor to remove the appending of '.template'
      *
      * @param string $templateFileName File name has '.template' appended
      * @param string $subfolderPath    Sub-folder within Template folder (if any) which contains the template file

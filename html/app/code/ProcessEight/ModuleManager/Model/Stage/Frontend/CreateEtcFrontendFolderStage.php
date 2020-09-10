@@ -15,20 +15,23 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model\Stage;
+namespace ProcessEight\ModuleManager\Model\Stage\Frontend;
 
 use Magento\Framework\Exception\FileSystemException;
 
 /**
- * Class CreateEtcFolderStage
+ * Class CreateEtcFrontendFolderStage
  *
  * Creates an etc folder
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateEtcFolderStage extends BaseStage
+class CreateEtcFrontendFolderStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
-    public $id = 'createEtcFolderStage';
+    /**
+     * @var string
+     */
+    public $id = 'createEtcFrontendFolderStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -41,10 +44,10 @@ class CreateEtcFolderStage extends BaseStage
     private $folder;
 
     /**
-     * CreateModuleFolder constructor.
+     * CreateEtcFrontendFolderStage constructor.
      *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder  $folder
+     * @param \Magento\Framework\Filesystem\Driver\File  $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
@@ -62,7 +65,11 @@ class CreateEtcFolderStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $absolutePathToFolder = $this->folder->getAbsolutePathToFolder($payload, $this->id, 'etc');
+        $absolutePathToFolder = $this->folder->getAbsolutePathToFolder(
+            $payload,
+            $this->id,
+            'etc' . DIRECTORY_SEPARATOR . 'frontend'
+        );
 
         // Check if folder exists
         try {

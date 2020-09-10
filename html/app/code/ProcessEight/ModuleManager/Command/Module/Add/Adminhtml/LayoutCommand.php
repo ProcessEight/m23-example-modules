@@ -74,15 +74,20 @@ class LayoutCommand extends BaseCommand
      */
     protected function configure()
     {
-        parent::configure();
         $this->setName("process-eight:module:add:adminhtml:layout");
         $this->setDescription("Adds a new Layout XML file.");
-        $this->addOption(
-            ConfigKey::LAYOUT_XML_HANDLE,
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Layout XML handle'
-        );
+
+        $this->pipelineConfig['mode'] = 'configure';
+
+//        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+//        $this->addOption(
+//            ConfigKey::LAYOUT_XML_HANDLE,
+//            null,
+//            InputOption::VALUE_OPTIONAL,
+//            'Layout XML handle'
+//        );
+        parent::configure();
     }
 
     /**
@@ -94,6 +99,16 @@ class LayoutCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
+        $this->pipelineConfig['mode'] = 'process';
+
+//        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         // Gather inputs
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */

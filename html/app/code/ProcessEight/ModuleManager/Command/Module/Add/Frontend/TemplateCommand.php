@@ -59,10 +59,14 @@ class TemplateCommand extends BaseCommand
      */
     protected function configure()
     {
-        parent::configure();
         $this->setName("process-eight:module:add:frontend:template");
         $this->setDescription("Adds a new template PHTML file to the frontend area.");
-        $this->addOption(ConfigKey::TEMPLATE_NAME, null, InputOption::VALUE_OPTIONAL, 'Template PHTML name');
+        $this->pipelineConfig['mode'] = 'configure';
+
+        $this->pipelineConfig = $this->createTemplateCommandPipeline->processPipeline($this->pipelineConfig);
+
+//        $this->addOption(ConfigKey::TEMPLATE_NAME, null, InputOption::VALUE_OPTIONAL, 'Template PHTML name');
+        parent::configure();
     }
 
     /**
@@ -75,6 +79,15 @@ class TemplateCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        $this->pipelineConfig['mode'] = 'process';
+
+        $result = $this->createTemplateCommandPipeline->processPipeline($this->pipelineConfig);
+
+        foreach ($result['messages'] as $message) {
+            $output->writeln($message);
+        }
+
+        return $result['is_valid'] ? 0 : 1;
 
         /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');

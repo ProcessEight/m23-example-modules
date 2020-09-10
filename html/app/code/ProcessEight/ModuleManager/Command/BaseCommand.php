@@ -44,7 +44,7 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
     /**
      * @var \League\Pipeline\Pipeline
      */
-    public $masterPipeline;
+    public $pipeline;
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -74,11 +74,8 @@ class BaseCommand extends \Symfony\Component\Console\Command\Command
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList
     ) {
         parent::__construct();
-        /**
-         * @todo Why did we rename masterPipeline to pipeline?
-         */
-        $this->masterPipeline = $pipeline;
-        $this->directoryList  = $directoryList;
+        $this->pipeline      = $pipeline;
+        $this->directoryList = $directoryList;
     }
 
     /**
