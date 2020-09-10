@@ -37,7 +37,7 @@ class CreateComposerJsonFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Folder
+     * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
 
@@ -50,12 +50,12 @@ class CreateComposerJsonFileStage extends BaseStage
      * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Model\Folder        $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder        $folder
      * @param \ProcessEight\ModuleManager\Service\Template    $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \ProcessEight\ModuleManager\Model\Folder $folder,
+        \ProcessEight\ModuleManager\Service\Folder $folder,
         \ProcessEight\ModuleManager\Service\Template $template
     ) {
         $this->filesystemDriver = $filesystemDriver;

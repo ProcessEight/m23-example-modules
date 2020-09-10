@@ -15,6 +15,13 @@
 
 namespace ProcessEight\ModuleManager\Model;
 
+/**
+ * Interface ConfigKey
+ *
+ * @todo Refactor to move these constants into the appropriate stages
+ *
+ * @package ProcessEight\ModuleManager\Model
+ */
 interface ConfigKey
 {
     /**

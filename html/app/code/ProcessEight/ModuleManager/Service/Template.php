@@ -50,7 +50,7 @@ class Template
                DIRECTORY_SEPARATOR . 'ModuleManager' .
                DIRECTORY_SEPARATOR . 'Template' .
                DIRECTORY_SEPARATOR . $subfolderPath .
-               DIRECTORY_SEPARATOR . $templateFileName . '.template';
+               DIRECTORY_SEPARATOR . $templateFileName;
     }
 
     /**

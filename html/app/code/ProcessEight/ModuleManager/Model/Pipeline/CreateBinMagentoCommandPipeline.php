@@ -102,6 +102,8 @@ class CreateBinMagentoCommandPipeline
             ->pipe($this->createBinMagentoCommandClassFileStage)
             // Create the di.xml
             ->pipe($this->createDiXmlFileStage)
+            // Update the di.xml with our command config (coming soon)
+//            ->pipe($this->updateDiXmlFileStage)
         ;
 
         // Pass payload onto next Stage/Pipeline

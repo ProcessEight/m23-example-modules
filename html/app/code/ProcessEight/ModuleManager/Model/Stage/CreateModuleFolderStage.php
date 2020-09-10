@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
-use ProcessEight\ModuleManager\Model\Folder;
+use ProcessEight\ModuleManager\Service\Folder;
 
 /**
  * Class CreateModuleFolderStage
@@ -45,11 +45,11 @@ class CreateModuleFolderStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Model\Folder  $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder  $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \ProcessEight\ModuleManager\Model\Folder $folder
+        \ProcessEight\ModuleManager\Service\Folder $folder
     ) {
         $this->filesystemDriver = $filesystemDriver;
         $this->folder           = $folder;

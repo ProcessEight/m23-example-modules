@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model;
+namespace ProcessEight\ModuleManager\Service;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 class Folder
 {

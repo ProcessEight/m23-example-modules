@@ -35,8 +35,7 @@ class CreateCommandFolderStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @todo Refactor this class into Service folder
-     * @var \ProcessEight\ModuleManager\Model\Folder
+     * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
 
@@ -44,11 +43,11 @@ class CreateCommandFolderStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Model\Folder  $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder  $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \ProcessEight\ModuleManager\Model\Folder $folder
+        \ProcessEight\ModuleManager\Service\Folder $folder
     ) {
         $this->filesystemDriver = $filesystemDriver;
         $this->folder           = $folder;

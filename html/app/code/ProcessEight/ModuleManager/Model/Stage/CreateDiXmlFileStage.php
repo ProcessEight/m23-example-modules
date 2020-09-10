@@ -40,7 +40,7 @@ class CreateDiXmlFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Folder
+     * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
 
@@ -53,12 +53,12 @@ class CreateDiXmlFileStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Model\Folder        $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder        $folder
      * @param \ProcessEight\ModuleManager\Service\Template    $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \ProcessEight\ModuleManager\Model\Folder $folder,
+        \ProcessEight\ModuleManager\Service\Folder $folder,
         \ProcessEight\ModuleManager\Service\Template $template
     ) {
         $this->filesystemDriver = $filesystemDriver;
@@ -77,7 +77,7 @@ class CreateDiXmlFileStage extends BaseStage
         $subfolderPath     = 'etc';
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
         $artefactFileName  = 'di.xml';
-        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName, $subfolderPath);
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template', $subfolderPath);
         $templateVariables = $this->getTemplateVariables('createDiXmlFileStage', $payload);
 
         // Check if file exists
@@ -139,6 +139,11 @@ class CreateDiXmlFileStage extends BaseStage
             '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
             '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
             '{{YEAR}}'                  => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a di.xml file
+             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
+             */
             '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
             '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
             '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],

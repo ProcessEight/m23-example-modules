@@ -67,7 +67,7 @@ class ValidateModuleNameStage extends BaseStage
             || preg_match(self::MODULE_NAME_REGEX_PATTERN, $moduleName) !== 1
         ) {
             $payload['is_valid']   = false;
-            $payload['messages'][] = 'Invalid module name';
+            $payload['messages'][] = 'Invalid module name. Module name should match regex ' . self::MODULE_NAME_REGEX_PATTERN;
         } else {
             $payload['messages'][] = 'Module name "' . $moduleName . '" passed validation';
         }

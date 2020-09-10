@@ -37,7 +37,7 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \ProcessEight\ModuleManager\Model\Folder
+     * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
 
@@ -50,12 +50,12 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Model\Folder     $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder     $folder
      * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \ProcessEight\ModuleManager\Model\Folder $folder,
+        \ProcessEight\ModuleManager\Service\Folder $folder,
         \ProcessEight\ModuleManager\Service\Template $template
     ) {
         $this->filesystemDriver = $filesystemDriver;
@@ -119,7 +119,7 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
                 '{{COMMAND_CLASS_NAME}}.php'
             )
         );
-        $templateFilePath  = $this->template->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php', $subfolderPath);
+        $templateFilePath  = $this->template->getTemplateFilePath('{{COMMAND_CLASS_NAME}}.php.template', $subfolderPath);
         $templateVariables = $this->getTemplateVariables('createBinMagentoCommandClassFileStage', $payload);
 
         // Check if file exists
