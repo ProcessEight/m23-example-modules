@@ -9,7 +9,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -22,7 +22,7 @@
                 <item name="processeight_modulemanager_command_create" xsi:type="object">ProcessEight\ModuleManager\Command\Module\CreateCommand</item>
                 <item name="processeight_modulemanager_command_add_bin_magento_command" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\BinMagentoCommandCommand</item>
                 <item name="processeight_modulemanager_command_add_frontend_controller" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\ControllerCommand</item>
-<!--                <item name="processeight_modulemanager_command_add_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\LayoutCommand</item>-->
+                <item name="processeight_modulemanager_command_add_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\LayoutCommand</item>
 <!--                <item name="processeight_modulemanager_command_add_frontend_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\TemplateCommand</item>-->
 <!--                <item name="processeight_modulemanager_command_add_frontend_block" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\BlockCommand</item>-->
 <!--                <item name="processeight_modulemanager_command_add_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\ControllerCommand</item>-->
