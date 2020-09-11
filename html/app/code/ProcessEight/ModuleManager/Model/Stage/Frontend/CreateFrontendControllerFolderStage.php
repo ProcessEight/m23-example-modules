@@ -57,9 +57,9 @@ class CreateFrontendControllerFolderStage extends \ProcessEight\ModuleManager\Mo
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {

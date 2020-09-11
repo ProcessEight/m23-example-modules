@@ -23,12 +23,14 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateBinMagentoCommandClassFileStage
  *
- * Creates a bin/magento command PHP class file.
+ * Creates a Command/COMMAND_CLASS_NAME.php file
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateBinMagentoCommandClassFileStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createBinMagentoCommandClassFileStage';
 
     /**
@@ -50,7 +52,7 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder     $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
      * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
@@ -64,10 +66,9 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     }
 
     /**
+     * @param mixed[] $payload
      *
-     * @param array $payload
-     *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {
@@ -103,9 +104,9 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array
@@ -178,11 +179,11 @@ class CreateBinMagentoCommandClassFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                  => date('Y'),
+            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                          => date('Y'),
             '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
             '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
             '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],

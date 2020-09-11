@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -21,11 +21,17 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Creates a vendor-name/module-name/etc/module.xml file
- * Assumes that the vendor-name/module-name/etc/ folder already exists
+ * Class CreateModuleXmlFileStage
+ *
+ * Creates a VENDOR_NAME/MODULE_NAME/etc/module.xml file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/etc/ folder already exists
+ *
  */
 class CreateModuleXmlFileStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createModuleXmlFileStage';
 
     /**
@@ -47,6 +53,7 @@ class CreateModuleXmlFileStage extends BaseStage
      * @var \ProcessEight\ModuleManager\Service\Folder
      */
     private $folder;
+
     /**
      * @var \ProcessEight\ModuleManager\Service\Template
      */
@@ -148,16 +155,6 @@ class CreateModuleXmlFileStage extends BaseStage
             '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
             '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
             '{{YEAR}}'                  => date('Y'),
-            /**
-             * @todo These kind of Command-specific template variables should be moved out of here
-             *       This stage is for creating a di.xml file
-             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
-             */
-            //            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
-            //            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
-            //            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
-            //            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
-            //            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
         ];
     }
 }

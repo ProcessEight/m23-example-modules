@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -23,9 +23,8 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateDiXmlFileStage
  *
- * Creates an XML file in the given location
+ * Creates a etc/di.xml file
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateDiXmlFileStage extends BaseStage
 {
@@ -67,9 +66,9 @@ class CreateDiXmlFileStage extends BaseStage
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

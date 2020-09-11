@@ -25,7 +25,7 @@ class Folder
     }
 
     /**
-     * @param array  $payload
+     * @param mixed[] $payload
      * @param string $stageId
      * @param string $subfolderPath
      *

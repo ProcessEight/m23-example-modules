@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -22,11 +22,14 @@ use Magento\Framework\Exception\FileSystemException;
 /**
  * Class CreateCommandFolderStage
  *
- * This stage creates the folder {{VENDOR_NAME}}/{{MODULE_NAME}}/Command/
+ * Creates the folder VENDOR_NAME/MODULE_NAME/Command/
  *
  */
 class CreateCommandFolderStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createCommandFolderStage';
 
     /**
@@ -42,8 +45,8 @@ class CreateCommandFolderStage extends BaseStage
     /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder  $folder
+     * @param \Magento\Framework\Filesystem\Driver\File  $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
@@ -54,9 +57,9 @@ class CreateCommandFolderStage extends BaseStage
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

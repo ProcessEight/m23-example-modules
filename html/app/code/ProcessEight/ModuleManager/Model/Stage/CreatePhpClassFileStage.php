@@ -81,9 +81,9 @@ class CreatePhpClassFileStage extends BaseStage
 //    }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

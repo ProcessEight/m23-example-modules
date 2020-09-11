@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -23,12 +23,14 @@ use ProcessEight\ModuleManager\Service\Folder;
 /**
  * Class CreateModuleFolderStage
  *
- * Creates the module folder
+ * Creates the VENDOR_NAME/MODULE_NAME/ folder
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateModuleFolderStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createModuleFolderStage';
 
     /**
@@ -44,8 +46,8 @@ class CreateModuleFolderStage extends BaseStage
     /**
      * Constructor
      *
-     * @param \Magento\Framework\Filesystem\Driver\File $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder  $folder
+     * @param \Magento\Framework\Filesystem\Driver\File  $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder $folder
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,

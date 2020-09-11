@@ -23,29 +23,22 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateFrontendRoutesXmlFileStage
  *
- * Creates a vendor-name/module-name/etc/frontend/routes.xml file
- * Assumes that the vendor-name/module-name/etc/frontend folder already exists
+ * Creates a VENDOR_NAME/MODULE_NAME/etc/frontend/routes.xml file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/etc/frontend folder already exists
  *
  * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateFrontendRoutesXmlFileStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
-    public $id = 'createFrontendRoutesXmlFileStage';
-
     /**
-     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     * @var string
      */
-    private $directoryList;
+    public $id = 'createFrontendRoutesXmlFileStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
      */
     private $filesystemDriver;
-
-    /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
 
     /**
      * @var \ProcessEight\ModuleManager\Service\Folder
@@ -60,35 +53,29 @@ class CreateFrontendRoutesXmlFileStage extends \ProcessEight\ModuleManager\Model
     /**
      * CreateModuleFolder constructor.
      *
-     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \Magento\Framework\Module\Dir                   $moduleDir
-     * @param \ProcessEight\ModuleManager\Service\Folder      $folder
-     * @param \ProcessEight\ModuleManager\Service\Template    $template
+     * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
+     * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
-        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\Module\Dir $moduleDir,
         \ProcessEight\ModuleManager\Service\Folder $folder,
         \ProcessEight\ModuleManager\Service\Template $template
     ) {
-        $this->directoryList    = $directoryList;
         $this->filesystemDriver = $filesystemDriver;
-        $this->moduleDir        = $moduleDir;
         $this->folder           = $folder;
         $this->template         = $template;
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {
         // Ask the user for the front name, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::FRONT_NAME]                = [
+        $payload['config'][$this->id]['options'][ConfigKey::FRONT_NAME] = [
             'name'                    => ConfigKey::FRONT_NAME,
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
@@ -101,9 +88,9 @@ class CreateFrontendRoutesXmlFileStage extends \ProcessEight\ModuleManager\Model
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

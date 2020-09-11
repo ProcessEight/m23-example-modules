@@ -22,12 +22,14 @@ use Magento\Framework\Exception\FileSystemException;
 /**
  * Class CreateEtcFolderStage
  *
- * Creates an etc folder
+ * Creates an etc/ folder
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateEtcFolderStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createEtcFolderStage';
 
     /**

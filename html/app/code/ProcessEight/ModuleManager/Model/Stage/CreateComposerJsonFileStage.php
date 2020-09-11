@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -23,13 +23,15 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateComposerJsonFileStage
  *
- * Creates a vendor-name/module-name/composer.json file
- * Assumes that the vendor-name/module-name/ folder already exists
+ * Creates a VENDOR_NAME/MODULE_NAME/composer.json file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/ folder already exists
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateComposerJsonFileStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createComposerJsonFileStage';
 
     /**
@@ -65,7 +67,7 @@ class CreateComposerJsonFileStage extends BaseStage
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
      * @return mixed[]
      * @throws FileSystemException
@@ -116,6 +118,7 @@ class CreateComposerJsonFileStage extends BaseStage
 
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 
@@ -130,21 +133,11 @@ class CreateComposerJsonFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                          => date('Y'),
-            /**
-             * @todo These kind of Command-specific template variables should be moved out of here
-             *       This stage is for creating a di.xml file
-             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
-             */
-//            '{{COMMAND_NAME}}'                  => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_NAME],
-//            '{{COMMAND_DESCRIPTION}}'           => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_DESCRIPTION],
-//            '{{COMMAND_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME],
-//            '{{COMMAND_CLASS_NAME_UCFIRST}}'    => ucfirst($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
-//            '{{COMMAND_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::COMMAND_CLASS_NAME]),
+            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                  => date('Y'),
         ];
     }
 }

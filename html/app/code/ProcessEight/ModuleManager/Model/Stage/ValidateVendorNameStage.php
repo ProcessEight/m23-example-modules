@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -22,23 +22,25 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class ValidateVendorNameStage
  *
- * Verifies that the Vendor Name meets the pre-defined criteria
+ * Verifies that the VENDOR_NAME meets the pre-defined criteria
  *
  * - First iteration of pipeline will define the data this stage needs
  * - Second iteration of pipeline will execute the logic in the stage
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class ValidateVendorNameStage extends BaseStage
 {
     const VENDOR_NAME_REGEX_PATTERN = '/[A-Z]+[A-Za-z0-9]{1,}/';
 
+    /**
+     * @var string
+     */
     public $id = 'validateVendorNameStage';
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {
@@ -52,13 +54,14 @@ class ValidateVendorNameStage extends BaseStage
             'question_default_answer' => 'ProcessEight',
         ];
 
+        // Pass payload onto next stage/pipeline
         return $payload;
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function processStage(array $payload) : array
     {

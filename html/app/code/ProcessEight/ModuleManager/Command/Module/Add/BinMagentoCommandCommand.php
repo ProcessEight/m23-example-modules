@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -19,17 +19,13 @@ namespace ProcessEight\ModuleManager\Command\Module\Add;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
  * Class BinMagentoCommandCommand
  *
- * Creates a new di.xml and PHP class
+ * Creates new etc/di.xml and Command/COMMAND_CLASS_NAME.php files
  *
- * @package ProcessEight\ModuleManager\Command\Module
  */
 class BinMagentoCommandCommand extends BaseCommand
 {

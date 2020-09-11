@@ -23,14 +23,16 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateRoutesXmlFileStage
  *
- * Creates a vendor-name/module-name/etc/<area-code>/routes.xml file
- * Assumes that the vendor-name/module-name/etc/<area-code> folder already exists
+ * Creates a VENDOR_NAME/MODULE_NAME/etc/frontend/routes.xml file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/etc/frontend/ folder already exists
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateRoutesXmlFileStage extends BaseStage
 {
-    public $id = 'createRoutesXmlFile';
+    /**
+     * @var string
+     */
+    public $id = 'createRoutesXmlFileStage';
 
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
@@ -43,11 +45,6 @@ class CreateRoutesXmlFileStage extends BaseStage
     private $filesystemDriver;
 
     /**
-     * @var \Magento\Framework\Module\Dir
-     */
-    private $moduleDir;
-
-    /**
      * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
@@ -56,18 +53,16 @@ class CreateRoutesXmlFileStage extends BaseStage
      */
     public function __construct(
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
-        \Magento\Framework\Module\Dir $moduleDir
+        \Magento\Framework\Filesystem\Driver\File $filesystemDriver
     ) {
         $this->directoryList    = $directoryList;
         $this->filesystemDriver = $filesystemDriver;
-        $this->moduleDir        = $moduleDir;
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

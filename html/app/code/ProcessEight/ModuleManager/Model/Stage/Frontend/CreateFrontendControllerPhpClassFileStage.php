@@ -64,9 +64,9 @@ class CreateFrontendControllerPhpClassFileStage extends \ProcessEight\ModuleMana
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {
@@ -84,9 +84,9 @@ class CreateFrontendControllerPhpClassFileStage extends \ProcessEight\ModuleMana
     }
 
     /**
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array

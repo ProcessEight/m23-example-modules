@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -27,13 +27,8 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
  *
  * @package ProcessEight\ModuleManager\Model\Pipeline
  */
-class CreateBinMagentoCommandPipeline
+class CreateBinMagentoCommandPipeline extends BasePipeline
 {
-    /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
     /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateCommandFolderPipeline
      */
@@ -55,7 +50,7 @@ class CreateBinMagentoCommandPipeline
      * @param \League\Pipeline\Pipeline                                                     $pipeline
      * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateCommandFolderPipeline        $createCommandFolderPipeline
      * @param \ProcessEight\ModuleManager\Model\Stage\CreateBinMagentoCommandClassFileStage $createBinMagentoCommandClassFileStage
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage                    $createDiXmlFileStage
+     * @param \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage                  $createDiXmlFileStage
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
@@ -63,26 +58,10 @@ class CreateBinMagentoCommandPipeline
         \ProcessEight\ModuleManager\Model\Stage\CreateBinMagentoCommandClassFileStage $createBinMagentoCommandClassFileStage,
         \ProcessEight\ModuleManager\Model\Stage\CreateDiXmlFileStage $createDiXmlFileStage
     ) {
-        $this->pipeline                              = $pipeline;
+        parent::__construct($pipeline);
         $this->createCommandFolderPipeline           = $createCommandFolderPipeline;
         $this->createBinMagentoCommandClassFileStage = $createBinMagentoCommandClassFileStage;
-        $this->createDiXmlFileStage                    = $createDiXmlFileStage;
-    }
-
-    /**
-     * Called when this pipeline is invoked by another pipeline/stage (as opposed to being injected by DI)
-     *
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
-     */
-    public function __invoke(array $payload) : array
-    {
-        if ($payload['is_valid'] === true) {
-            $payload = $this->processPipeline($payload);
-        }
-
-        return $payload;
+        $this->createDiXmlFileStage                  = $createDiXmlFileStage;
     }
 
     /**

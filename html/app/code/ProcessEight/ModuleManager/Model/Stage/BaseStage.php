@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -63,9 +63,9 @@ class BaseStage
     /**
      * Override this method to add stage-specific configuration
      *
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function configureStage(array $payload) : array
     {
@@ -75,9 +75,9 @@ class BaseStage
     /**
      * Override this method to add stage-specific logic
      *
-     * @param array $payload
+     * @param mixed[] $payload
      *
-     * @return array
+     * @return mixed[]
      */
     public function processStage(array $payload) : array
     {

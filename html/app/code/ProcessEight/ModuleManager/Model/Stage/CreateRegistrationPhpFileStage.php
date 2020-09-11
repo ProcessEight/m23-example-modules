@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -23,13 +23,15 @@ use ProcessEight\ModuleManager\Model\ConfigKey;
 /**
  * Class CreateRegistrationPhpFileStage
  *
- * Creates a vendor-name/module-name/registration.php file
- * Assumes that the vendor-name/module-name/ folder already exists
+ * Creates a VENDOR_NAME/MODULE_NAME/registration.php file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/ folder already exists
  *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
 class CreateRegistrationPhpFileStage extends BaseStage
 {
+    /**
+     * @var string
+     */
     public $id = 'createRegistrationPhpFileStage';
 
     /**
@@ -50,9 +52,9 @@ class CreateRegistrationPhpFileStage extends BaseStage
     /**
      * CreateModuleFolder constructor.
      *
-     * @param \Magento\Framework\Filesystem\Driver\File       $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder        $folder
-     * @param \ProcessEight\ModuleManager\Service\Template    $template
+     * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
+     * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
@@ -129,11 +131,11 @@ class CreateRegistrationPhpFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                          => date('Y'),
+            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                  => date('Y'),
             /**
              * @todo These kind of Command-specific template variables should be moved out of here
              *       This stage is for creating a di.xml file
