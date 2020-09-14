@@ -18,7 +18,7 @@ namespace ProcessEight\ModuleManager\Model;
 /**
  * Interface ConfigKey
  *
- * @todo Refactor to move these constants into the appropriate stages
+ * @todo    Refactor to move these constants into the appropriate stages
  *
  * @package ProcessEight\ModuleManager\Model
  */
@@ -68,6 +68,11 @@ interface ConfigKey
      * Template name, used to generate the PHTML file name
      */
     const TEMPLATE_NAME = 'template-name';
+
+    /**
+     * Block directory name
+     */
+    const BLOCK_DIRECTORY_NAME = 'block-directory-name';
 
     /**
      * Block class name

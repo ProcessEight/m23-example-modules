@@ -15,21 +15,43 @@
 
 declare(strict_types=1);
 
-namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Block;
+/**
+ * Delete as appropriate
+ */
+// If you entered a subdirectory, use this namespace
+// namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Block\{{BLOCK_DIRECTORY_NAME}};
+// If you did not, uncomment this one instead
+// namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Block;
 
 /**
  * Class {{BLOCK_CLASS_NAME}}
  *
- * Description of this class goes here
+ * Example of a block class which renders a template
  *
- * @package {{VENDOR_NAME}}\{{MODULE_NAME}}\Block;
+ * Add the following to the desired Layout XML handle to render the blocks' template:
+ *
+ * <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ *       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+ *     <body>
+ *         <referenceBlock name="main">
+ *             <block class="{{VENDOR_NAME}}\{{MODULE_NAME}}\Block\{{BLOCK_CLASS_NAME_UCFIRST}}"
+ *                    name="{{VENDOR_NAME_STRTOLOWER}}_{{MODULE_NAME_STRTOLOWER}}.block.{{BLOCK_CLASS_NAME_STRTOLOWER}}"
+ *                    template="{{VENDOR_NAME}}_{{MODULE_NAME}}::content.phtml">
+ * <!--                <arguments>-->
+ * <!--                    <argument name="view_model" xsi:type="object"></argument>-->
+ * <!--                </arguments>-->
+ *             </block>
+ *         </referenceBlock>
+ *     </body>
+ * </page>
+ *
  */
 class {{BLOCK_CLASS_NAME}} extends \Magento\Framework\View\Element\Template
 {
     /**
      * Get block cache life time.
      *
-     * Defines how long (in seconds) the block should be stored in cache
+     * Defines how long (in seconds) the block should be stored in the block_html cache
      *
      * @return int
      */
