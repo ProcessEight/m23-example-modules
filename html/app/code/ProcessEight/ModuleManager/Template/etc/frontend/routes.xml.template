@@ -19,13 +19,17 @@
     <!-- Router collects routes, parses request and performs matching of request to route. -->
     <router id="standard">
         <!-- Node: -->
-        <!-- route: Defines a route used by a specific module -->
+        <!--    route: Defines a route used by a specific module -->
         <!-- Attributes: -->
-        <!-- id: Unique route identifier, used to generate Layout XML handles and file names. Required. Value must match [A-Za-z0-9_]{3,}. Must be unique. -->
-        <!-- frontName: URL part associated with route, forms first part of three-part URL structure of a Controller Action URL. Required. Value must match [A-Za-z0-9_\-]{1,}. Must be unique. -->
+        <!--    id: Required. Unique route identifier, used to generate Layout XML handles and file names. Value must match [A-Za-z0-9_]{3,}. Must be unique. -->
+        <!--    frontName: Requried. URL part associated with route, forms first part of three-part URL structure of a Controller Action URL. Value must match [A-Za-z0-9_\-]{1,}. Must be unique. -->
         <route id="{{VENDOR_NAME_LOWERCASE}}_{{MODULE_NAME_LOWERCASE}}"
                frontName="{{FRONT_NAME}}">
-            <!-- name: Module is subscribed to process request with corresponding route front name. Required. Must be a valid Magento module name. -->
+            <!-- Node: -->
+            <!--    module: Defines a Magento 2-compatible module -->
+            <!-- Attributes: -->
+            <!--    name: Required. Module is subscribed to process request with corresponding route front name. Must be a valid Magento module name. -->
+            <!--    before: Optional. Attributes "before" and "after" help you to specify a priority of routes matching. Must be a valid Magento module name. -->
             <module name="{{VENDOR_NAME}}_{{MODULE_NAME}}"/>
         </route>
     </router>

@@ -108,7 +108,7 @@ class CreateFrontendControllerFolderStage extends \ProcessEight\ModuleManager\Mo
             return $payload;
         }
 
-        $payload['messages'][] = "Created module folder at <info>{$absolutePathToFolder}</info>";
+        $payload['messages'][] = "Created controller folder at <info>{$absolutePathToFolder}</info>";
 
         // Pass payload onto next Stage/Pipeline
         return $payload;

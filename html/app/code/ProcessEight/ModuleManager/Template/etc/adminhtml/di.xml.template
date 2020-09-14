@@ -16,6 +16,7 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Example of how to define a plugin -->
     <type name="{{PLUGIN_ORIGINAL_CLASS_PATH}}">
         <plugin name="{{VENDOR_NAME}}_{{MODULE_NAME}}::{{PLUGIN_METHOD_NAME}}"
                 type="{{VENDOR_NAME}}\{{MODULE_NAME}}\Plugin\{{PLUGIN_CLASS_NAME}}" />

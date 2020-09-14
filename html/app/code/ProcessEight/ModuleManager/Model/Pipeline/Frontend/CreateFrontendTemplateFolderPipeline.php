@@ -52,6 +52,7 @@ class CreateFrontendTemplateFolderPipeline extends BasePipeline
         \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline,
         \ProcessEight\ModuleManager\Model\Stage\Frontend\CreateFrontendTemplateFolderStage $createFrontendTemplateStage
     ) {
+        parent::__construct($pipeline);
         $this->validateModuleNamePipeline  = $validateModuleNamePipeline;
         $this->createFrontendTemplateStage = $createFrontendTemplateStage;
     }

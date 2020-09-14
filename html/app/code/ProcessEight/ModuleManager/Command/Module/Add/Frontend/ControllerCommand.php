@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -18,18 +18,14 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
- * Class Controller
+ * Class ControllerCommand
  *
- * Creates an etc/frontend/routes.xml file and Controller/<controller-directory-name>/<controller-action-name>.php file
+ * Creates an etc/frontend/routes.xml file and Controller/CONTROLLER_DIRECTORY_NAME/CONTROLLER_ACTION_NAME.php file
  *
- * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
 class ControllerCommand extends BaseCommand
 {
