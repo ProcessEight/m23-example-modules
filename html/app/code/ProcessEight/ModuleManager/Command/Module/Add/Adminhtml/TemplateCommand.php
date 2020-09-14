@@ -8,7 +8,7 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact ProcessEight for more information.
  *
- * @copyright   Copyright (c) 2019 ProcessEight
+ * @copyright   Copyright (c) 2020 ProcessEight
  * @author      ProcessEight
  *
  */
@@ -18,52 +18,41 @@ declare(strict_types=1);
 namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
-use ProcessEight\ModuleManager\Model\ConfigKey;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Class TemplateCommand
  *
- * Creates a view/adminhtml/template/<template-name>.phtml file
+ * Creates a view/adminhtml/templates/TEMPLATE_NAME.phtml file
  *
  * @package ProcessEight\ModuleManager\Command\Module\Add\Adminhtml
  */
 class TemplateCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlTemplateCommandPipeline
      */
-    private $createAreaCodeFolder;
-
-    /**
-     * @var \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile
-     */
-    private $createTemplatePhtmlFile;
+    private $createAdminhtmlTemplateCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                       $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                 $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder    $createAreaCodeFolder
-     * @param \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile $createTemplatePhtmlFile
+     * @param \League\Pipeline\Pipeline                                                                 $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                                           $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlTemplateCommandPipeline $createAdminhtmlTemplateCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Stage\CreateAreaCodeFolder $createAreaCodeFolder,
-        \ProcessEight\ModuleManager\Model\Stage\CreateTemplatePhtmlFile $createTemplatePhtmlFile
+        \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlTemplateCommandPipeline $createAdminhtmlTemplateCommandPipeline
     ) {
+        $this->createAdminhtmlTemplateCommandPipeline = $createAdminhtmlTemplateCommandPipeline;
         parent::__construct($pipeline, $directoryList);
-        $this->createAreaCodeFolder    = $createAreaCodeFolder;
-        $this->createTemplatePhtmlFile = $createTemplatePhtmlFile;
     }
 
     /**
-     * Configure
+     * Configure the command
      */
     protected function configure()
     {
@@ -72,75 +61,30 @@ class TemplateCommand extends BaseCommand
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createAdminhtmlTemplateCommandPipeline->processPipeline($this->pipelineConfig);
 
-//        $this->addOption(ConfigKey::TEMPLATE_NAME, null, InputOption::VALUE_OPTIONAL, 'Template PHTML name');
         parent::configure();
     }
 
     /**
+     * Execute the command
+     *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int|null null or 0 if everything went fine, or an error code
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createAdminhtmlTemplateCommandPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);
         }
 
         return $result['is_valid'] ? 0 : 1;
-
-        // Gather inputs
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $questionHelper */
-        $questionHelper = $this->getHelper('question');
-
-        if (!$input->getOption(ConfigKey::TEMPLATE_NAME)) {
-            $question = new Question(
-                '<question>Template PHTML name: [content]</question> ',
-                'content'
-            );
-
-            $input->setOption(
-                ConfigKey::TEMPLATE_NAME,
-                $questionHelper->ask($input, $output, $question)
-            );
-        }
-
-        $result = $this->processPipeline($input);
-
-        foreach ($result['messages'] as $message) {
-            $output->writeln($message);
-        }
-
-        return $result['is_valid'] ? 0 : 1;
-    }
-
-    /**
-     * All template variables used in all Stages/Pipelines used by this command
-     *
-     * @param InputInterface $input
-     *
-     * @return array
-     */
-    public function getTemplateVariables(\Symfony\Component\Console\Input\InputInterface $input) : array
-    {
-        $parentTemplateVariables = parent::getTemplateVariables($input);
-        $templateVariables       = [
-            '{{FRONT_NAME}}'                        => $input->getOption(ConfigKey::FRONT_NAME),
-            '{{CONTROLLER_DIRECTORY_NAME}}'         => $input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME),
-            '{{CONTROLLER_DIRECTORY_NAME_UCFIRST}}' => ucfirst($input->getOption(ConfigKey::CONTROLLER_DIRECTORY_NAME)),
-            '{{CONTROLLER_ACTION_NAME}}'            => $input->getOption(ConfigKey::CONTROLLER_ACTION_NAME),
-            '{{CONTROLLER_ACTION_NAME_UCFIRST}}'    => ucfirst($input->getOption(ConfigKey::CONTROLLER_ACTION_NAME)),
-        ];
-
-        return array_merge($templateVariables, $parentTemplateVariables);
     }
 }

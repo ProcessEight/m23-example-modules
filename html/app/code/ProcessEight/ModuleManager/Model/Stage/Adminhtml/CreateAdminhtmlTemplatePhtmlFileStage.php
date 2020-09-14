@@ -15,22 +15,24 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model\Stage;
+namespace ProcessEight\ModuleManager\Model\Stage\Adminhtml;
 
 use Magento\Framework\Exception\FileSystemException;
+use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * @deprecated
+ * Class CreateAdminhtmlTemplatePhtmlFileStage
  *
- * Class CreatePhpClassFileStage
+ * Creates a VENDOR_NAME/MODULE_NAME/view/adminhtml/templates/TEMPLATE_NAME.phtml file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/view/adminhtml/templates/ folder already exists
  *
- * Creates a PHP class file.
- *
- * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreatePhpClassFileStage extends BaseStage
+class CreateAdminhtmlTemplatePhtmlFileStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
-    public $id = 'createPhpClassFileStage';
+    /**
+     * @var string
+     */
+    public $id = 'createAdminhtmlTemplatePhtmlFileStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -51,7 +53,7 @@ class CreatePhpClassFileStage extends BaseStage
      * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
-     * @param \ProcessEight\ModuleManager\Service\Folder     $folder
+     * @param \ProcessEight\ModuleManager\Service\Folder   $folder
      * @param \ProcessEight\ModuleManager\Service\Template $template
      */
     public function __construct(
@@ -64,21 +66,26 @@ class CreatePhpClassFileStage extends BaseStage
         $this->template         = $template;
     }
 
-//    /**
-//     * Called when this Pipeline is invoked by another Pipeline/Stage
-//     *
-//     * @param mixed[] $payload
-//     *
-//     * @return mixed[]
-//     */
-//    public function __invoke(array $payload) : array
-//    {
-//        if ($payload['is_valid'] === true) {
-//            $payload = $this->processStage($payload);
-//        }
-//
-//        return $payload;
-//    }
+    /**
+     * @param mixed[] $payload
+     *
+     * @return mixed[]
+     */
+    public function configureStage(array $payload) : array
+    {
+        // Ask the user for the TEMPLATE_NAME, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::TEMPLATE_NAME] = [
+            'name'                    => ConfigKey::TEMPLATE_NAME,
+            'shortcut'                => null,
+            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
+            'description'             => 'Template PHTML name (without.phtml)',
+            'question'                => '<question>Template PHTML name: [content]</question> ',
+            'question_default_answer' => 'content',
+        ];
+
+        // Pass payload onto next stage/pipeline
+        return $payload;
+    }
 
     /**
      * @param mixed[] $payload
@@ -88,10 +95,17 @@ class CreatePhpClassFileStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id);
-        $artefactFileName  = $payload['config'][$this->id]['values']['file-name'];
-        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName);
-        $templateVariables = $payload['config'][$this->id]['values']['template-variables'];
+        $subfolderPath     = 'view' . DIRECTORY_SEPARATOR . 'adminhtml' . DIRECTORY_SEPARATOR . 'templates';
+        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
+        $artefactFileName  = strtolower(
+            str_replace(
+                '{{TEMPLATE_NAME}}',
+                $payload['config'][$this->id]['values'][ConfigKey::TEMPLATE_NAME],
+                '{{TEMPLATE_NAME}}.phtml'
+            )
+        );
+        $templateFilePath  = $this->template->getTemplateFilePath('{{TEMPLATE_NAME}}.phtml.template', $subfolderPath);
+        $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
         try {
@@ -129,6 +143,7 @@ class CreatePhpClassFileStage extends BaseStage
 
             return $payload;
         }
+
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         // Pass payload onto next stage/pipeline
@@ -136,24 +151,27 @@ class CreatePhpClassFileStage extends BaseStage
     }
 
     /**
-     * @todo Verify this can be removed
+     * All template variables used by this stage
+     *
+     * @param string $stageId
+     * @param array  $payload
+     *
+     * @return array
      */
-//    /**
-//     * @param string $templateFilePath
-//     * @param array  $templateVariables
-//     *
-//     * @return string
-//     * @throws FileSystemException
-//     */
-//    private function getProcessedTemplate(string $templateFilePath, array $templateVariables) : string
-//    {
-//        // Read template
-//        $artefactFileTemplate = $this->filesystemDriver->fileGetContents($templateFilePath);
-//
-//        foreach ($templateVariables as $templateVariable => $value) {
-//            $artefactFileTemplate = str_replace($templateVariable, $value, $artefactFileTemplate);
-//        }
-//
-//        return $artefactFileTemplate;
-//    }
+    public function getTemplateVariables(string $stageId, array $payload) : array
+    {
+        return [
+            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                  => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a di.xml file
+             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
+             */
+            '{{TEMPLATE_NAME}}'         => $payload['config'][$stageId]['values'][ConfigKey::TEMPLATE_NAME],
+        ];
+    }
 }
