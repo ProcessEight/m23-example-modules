@@ -26,13 +26,8 @@ namespace ProcessEight\ModuleManager\Model\Pipeline;
  *
  * @package ProcessEight\ModuleManager\Model\Pipeline
  */
-class CreateCommandFolderPipeline
+class CreateCommandFolderPipeline extends BasePipeline
 {
-    /**
-     * @var \League\Pipeline\Pipeline
-     */
-    private $pipeline;
-
     /**
      * @var \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline
      */
@@ -55,25 +50,9 @@ class CreateCommandFolderPipeline
         \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline,
         \ProcessEight\ModuleManager\Model\Stage\CreateCommandFolderStage $createCommandFolderStage
     ) {
-        $this->pipeline                   = $pipeline;
+        parent::__construct($pipeline);
         $this->validateModuleNamePipeline = $validateModuleNamePipeline;
         $this->createCommandFolderStage   = $createCommandFolderStage;
-    }
-
-    /**
-     * Called when this Pipeline is invoked by another Pipeline/Stage
-     *
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
-     */
-    public function __invoke(array $payload) : array
-    {
-        if ($payload['is_valid'] === true) {
-            $payload = $this->processPipeline($payload);
-        }
-
-        return $payload;
     }
 
     /**

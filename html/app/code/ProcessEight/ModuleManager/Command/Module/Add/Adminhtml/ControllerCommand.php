@@ -57,7 +57,7 @@ class ControllerCommand extends BaseCommand
     protected function configure()
     {
         $this->setName("process-eight:module:add:adminhtml:controller");
-        $this->setDescription("Creates an etc/adminhtml/routes.xml file and Controller/Adminhtml/CONTROLLER_DIRECTORY_NAME/CONTROLLER_ACTION_NAME.php file.");
+        $this->setDescription("Creates all the files needed to add a new custom adminhtml controller");
 
         $this->pipelineConfig['mode'] = 'configure';
 
