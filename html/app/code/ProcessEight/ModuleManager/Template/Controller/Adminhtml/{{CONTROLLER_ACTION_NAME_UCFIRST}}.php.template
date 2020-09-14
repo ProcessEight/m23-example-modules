@@ -20,7 +20,9 @@ namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Controller\Adminhtml\{{CONTROLLER_DIRE
 /**
  * Serves /admin/{{FRONT_NAME}}/{{CONTROLLER_DIRECTORY_NAME}}/{{CONTROLLER_ACTION_NAME}}
  */
-class {{CONTROLLER_ACTION_NAME_UCFIRST}} extends \Magento\Backend\App\Action implements \Magento\Framework\App\Action\HttpGetActionInterface
+class {{CONTROLLER_ACTION_NAME_UCFIRST}}
+    extends \Magento\Backend\App\Action
+    implements \Magento\Framework\App\Action\HttpGetActionInterface
 {
     /**
      * @see app/code/{{VENDOR_NAME}}/{{MODULE_NAME}}/etc/acl.xml
@@ -51,10 +53,13 @@ class {{CONTROLLER_ACTION_NAME_UCFIRST}} extends \Magento\Backend\App\Action imp
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
+
         // Highlight the 'Process Eight Extensions' menu
-        //$resultPage->setActiveMenu('ProcessEight_Shared::extensions');
+        $resultPage->setActiveMenu('ProcessEight_Shared::extensions');
+
         // Set the title (on the page and in the browser title bar)
         $resultPage->getConfig()->getTitle()->prepend(__('{{VENDOR_NAME}} {{MODULE_NAME}}'));
+
         return $resultPage;
     }
 }

@@ -109,65 +109,10 @@ If they are taken from user input, then the class constant is used as the variab
 
 If a template variable needs to be processed in some way (e.g. To make it upper or lower case), then this is achieved using PHP string manipulation methods. The name of the method used is appended to the template variable name (see example above).
 
-## Convert a command
-
-@todo: Make all these changes, then generate patch file, which can be used on multiple files (possibly) or at least a template for applying these changes
-
-- Change the class to extend from BaseCommand
-- Remove `moduleDir` dependency
-- Inject `\Magento\Framework\App\Filesystem\DirectoryList`
-- Pass `$pipeline` and `$directoryList` as arguments to `parent::__construct`
-- Move any stages into a new pipeline
-- Add `parent::configure()` to first line of `configure`
-- Remove logic to get `\ProcessEight\ModuleManager\Model\ConfigKey::VENDOR_NAME` and `\ProcessEight\ModuleManager\Model\ConfigKey::MODULE_NAME` from `configure`
-- Add `parent::execute($input, $output)` as first line of `execute` method
-- Remove logic to set `\ProcessEight\ModuleManager\Model\ConfigKey::VENDOR_NAME` and `\ProcessEight\ModuleManager\Model\ConfigKey::MODULE_NAME` from `execute`
-- Remove logic to `// Validate inputs` and `// Generate assets`
-- Refactor bottom part of method thus:
-```bash
-
-@@ -149,31 +122,13 @@
-             );
-         }
-
--        // Validate inputs
--        $validationResult = $this->validateInputs([
--            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
--            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
--            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
--        ]);
--
--        if (!$validationResult['is_valid']) {
--            $output->writeln($validationResult['validation_message']);
-+        $result = $this->processPipeline($input);
-
--            return 1;
--        }
--
--        // Generate assets
--        $creationResult = $this->generateModule([
--            ConfigKey::VENDOR_NAME       => $input->getOption(ConfigKey::VENDOR_NAME),
--            ConfigKey::MODULE_NAME       => $input->getOption(ConfigKey::MODULE_NAME),
--            ConfigKey::LAYOUT_XML_HANDLE => $input->getOption(ConfigKey::LAYOUT_XML_HANDLE),
--        ]);
--
--        foreach ($creationResult['creation_message'] as $message) {
-+        foreach ($result['messages'] as $message) {
-             $output->writeln($message);
-         }
-
--        return $creationResult['is_valid'] ? 0 : 1;
-+        return $result['is_valid'] ? 0 : 1;
-     }
-
-     /**
-```
-- Remove methods `validateInputs` and `generateAssets`
-- Add methods `processPipeline` and `getTemplateVariables` and configure as appropriate
-- Replace deprecated `getProcessedFilename` with `str_replace`
-
 ## To do
 
+- [ ] Refactor transformation of template variables to allow automatic application of PHP string transformation methods, e.g `{{CONTROLLER_ACTION_NAME|UCFIRST}}` applies `ucfirst()` to the `{{CONTROLLER_ACTION_NAME}}` template variable
+- [ ] Refactor to move ConfigKey constants into the appropriate stages
 - [ ] Create interfaces and/or abstract classes from Pipeline and Stage classes 
 - [ ] Add some way to detect Magento version and generate code for that version
 - [ ] Group messages by class name for easier debugging
