@@ -110,7 +110,23 @@ interface ConfigKey
     const PLUGIN_AREA = 'plugin-area';
 
     /**
+     * Plugin directory path
+     */
+    const PLUGIN_DIRECTORY_PATH = 'plugin-directory-path';
+
+    /**
      * The name of the plugin class
      */
     const PLUGIN_CLASS_NAME = 'plugin-class-name';
+
+    /**
+     * The class containing the method we are intercepting / the 'subject' class
+     */
+    const INTERCEPTED_CLASS_NAMESPACE = 'intercepted-class-namespace';
+
+    /**
+     * The method we are intercepting
+     */
+    const INTERCEPTED_METHOD_NAME = 'intercepted-method-name';
+
 }

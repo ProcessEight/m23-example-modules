@@ -1,0 +1,42 @@
+<?php
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Plugin;
+
+class {{PLUGIN_CLASS_NAME_UCFIRST}}
+{
+    /**
+     * {{PLUGIN_CLASS_NAME_UCFIRST}} constructor.
+     *
+     */
+    public function __construct()
+    {
+        // Add dependencies here, or remove if none are necessary
+    }
+
+    /**
+     * @param {{INTERCEPTED_CLASS_NAMESPACE}} $subject
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) // Delete as appropriate
+     */
+    public function {{PLUGIN_TYPE}}{{INTERCEPTED_METHOD_NAME_UCFIRST}}({{INTERCEPTED_CLASS_NAMESPACE}} $subject, /* Intercepted method params go here */)
+    {
+        // Add your logic here
+
+        return $row; // Return param of intercepted method
+    }
+}
