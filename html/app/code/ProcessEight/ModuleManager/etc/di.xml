@@ -27,7 +27,7 @@
                 <item name="processeight_modulemanager_command_add_frontend_block" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\BlockCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\ControllerCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\TemplateCommand</item>
-<!--                <item name="processeight_modulemanager_command_add_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\LayoutCommand</item>-->
+                <item name="processeight_modulemanager_command_add_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\LayoutCommand</item>
 <!--                <item name="processeight_modulemanager_command_add_adminhtml_plugin" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\PluginCommand</item>-->
             </argument>
         </arguments>
