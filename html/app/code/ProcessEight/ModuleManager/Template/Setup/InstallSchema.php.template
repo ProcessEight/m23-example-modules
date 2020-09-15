@@ -1,0 +1,164 @@
+<?php
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Setup;
+
+use Magento\Framework\Setup\InstallSchemaInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\DB\Ddl\Table;
+
+/**
+ * Class InstallSchema
+ *
+ * Demonstrates how to add a new database table using DDL
+ *
+ * This class is only ever executed once, when the module is installed
+ * After that, the module name must be removed from the 'setup_module' table
+ * in order to execute it again
+ *
+ */
+class InstallSchema implements InstallSchemaInterface
+{
+    /**
+     * @param SchemaSetupInterface   $setup
+     * @param ModuleContextInterface $context
+     *
+     * @throws \Zend_Db_Exception
+     */
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
+        $installer = $setup;
+
+        // Beware leaving this in; The default implementation is to disable foreign key checks.
+        // That may not be what you want!
+        $installer->startSetup();
+
+        $tableName = $installer->getTable('{{VENDOR_NAME}}_{{MODULE_NAME}}_table_name');
+
+        if (!$installer->getConnection()->isTableExists($tableName)) {
+            $table = $installer->getConnection()
+                               ->newTable($tableName)
+//                                                  // Common options for column definitions:
+//            ->addColumn(
+//                'column_name',                    // Name
+//                Table::TYPE_INTEGER,              // Type. See \Magento\Framework\DB\Ddl\Table for more options
+//                10,                               // Length
+//                [                                 // Extra options:
+//                    'identity' => true,               // An a UNIQUE index to this column
+//                    'nullable' => false,              // Add NOT NULL to this column
+//                    'primary' => true,                // Add auto_increment_id and primary key index to this column
+//                    'unsigned' => true                // Only allow positive (i.e. Unsigned, not negative) numbers
+//                                                      // Only one of the following options can be used at a time:
+//                    'before' => 'another_column_name' // Add the column before 'another_column_name'. The default is to add columns at the end of the table
+//                    'after' => 'another_column_name'  // Add the column after 'another_column_name'. The default is to add columns at the end of the table
+//                ],
+//                'Example of a text column type'   // Comment
+//            )
+                               ->addColumn(
+                             '{{VENDOR_NAME}}_{{MODULE_NAME}}_table_name_id',
+                              Table::TYPE_INTEGER,
+                              null,
+                                   ['identity' => true, 'nullable' => false, 'primary' => true, 'unsigned' => true],
+                          'Example of a primary key column with auto increment'
+                                )
+                               ->addColumn(
+                                   'text_column_example',
+                                   Table::TYPE_TEXT,
+                                   10,
+                                   ['nullable' => true],
+                                   'Example of a TEXT column type'
+                               )
+                               ->addColumn(
+                                   'boolean_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                                   null,
+                                   [],
+                                   'Example of a BOOLEAN column type'
+                               )
+                               ->addColumn(
+                                   'smallint_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                                   null,
+                                   ['nullable' => false],
+                                   'Example of a SMALLINT column type, e.g. For Store ID'
+                               )
+                               ->addColumn(
+                                   'bigint_column_example',
+                                   Table::TYPE_BIGINT,
+                                   null,
+                                   ['nullable' => false],
+                                   'Example of a BIGINT column type'
+                               )
+                               ->addColumn(
+                                   'float_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_FLOAT,
+                                   null,
+                                   ['nullable' => false],
+                                   'Example of a FLOAT column type'
+                               )
+                               ->addColumn(
+                                   'decimal_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL,
+                                   '8,4',
+                                   [],
+                                   'Example of a DECIMAL column type'
+                               )
+                               ->addColumn(
+                                   'date_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
+                                   null,
+                                   ['nullable' => true],
+                                   'Example of a DATE column type'
+                               )
+                               ->addColumn(
+                                   'timestamp_column_example',
+                                   Table::TYPE_TIMESTAMP,
+                                   null,
+                                   [
+                                       'nullable' => false,
+                                       // Timestamps can be automatically updated on create, on update or both. Optional.
+                                       // See \Magento\Framework\DB\Ddl\Table for more values for the 'default' option
+                                       'default'  => Table::TIMESTAMP_INIT,
+                                   ],
+                                   'Example of a TIMESTAMP column type'
+                               )
+                               ->addColumn(
+                                   'datetime_column_example',
+                                   Table::TYPE_DATETIME,
+                                   null,
+                                   // Set the default value to the CURRENT_TIMESTAMP. Optional.
+                                   ['default' => new \Zend_Db_Expr('CURRENT_TIMESTAMP')]
+                               )
+                               ->addColumn(
+                                   'blob_column_example',
+                                   \Magento\Framework\DB\Ddl\Table::TYPE_BLOB,
+                                   '2M',
+                                   ['nullable' => false],
+                                   'Example of a BLOB column type, e.g. For session data'
+                               )
+                                // Optional example of how to define an index using DDL
+//                               ->addIndex(
+//                                    $setup->getIdxName($tableName, ['column_name_to_index_1', 'column_name_to_index_2', 'column_name_to_index_n']),
+//                                    ['column_name_to_index_1', 'column_name_to_index_2', 'column_name_to_index_n']
+//                                )
+                                // Optional example of how to define foreign keys using DDL
+//                               ->addForeignKey(
+//                                    $setup->getFkName(
+//                                        $primaryTableName,
+//                                        $primaryKeyColumnName,
+//                                        $foreignTableName,
+//                                        $foreignKeyColumnName
+//                                    ),
+//                                    $foreignKeyColumnName,
+//                                    $setup->getTable($foreignTableName),
+//                                    $foreignKeyColumnName,
+//                                    \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+//                                )
+                               ->setComment('Example of how to create a table using DDL');
+
+            $installer->getConnection()->createTable($table);
+        }
+
+        $installer->endSetup();
+    }
+}

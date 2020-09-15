@@ -21,17 +21,17 @@ use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Class CreateInstallDataPhpClassStage
+ * Class CreateInstallSchemaPhpClassStage
  *
  * Creates a Setup/InstallData.php file
  *
  */
-class CreateInstallDataPhpClassStage extends BaseStage
+class CreateInstallSchemaPhpClassStage extends BaseStage
 {
     /**
      * @var string
      */
-    public $id = 'createInstallDataPhpClassStage';
+    public $id = 'createInstallSchemaPhpClassStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -95,9 +95,9 @@ class CreateInstallDataPhpClassStage extends BaseStage
     {
         $subfolderPath     = 'Setup';
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
-        $artefactFileName  = 'InstallData.php';
+        $artefactFileName  = 'InstallSchema.php';
         $templateFilePath  = $this->template->getTemplateFilePath(
-            'InstallData.php.template',
+            'InstallSchema.php.template',
             $subfolderPath
         );
         $templateVariables = $this->getTemplateVariables($this->id, $payload);

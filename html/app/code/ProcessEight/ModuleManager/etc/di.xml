@@ -23,6 +23,7 @@
                 <item name="processeight_modulemanager_command_create_bin-magento-command" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\BinMagentoCommandCommand</item>
                 <item name="processeight_modulemanager_command_create_global_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\ObserverCommand</item>
                 <item name="processeight_modulemanager_command_create_install-data" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\InstallDataCommand</item>
+                <item name="processeight_modulemanager_command_create_install-schema" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\InstallSchemaCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_controller" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\ControllerCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\LayoutCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\TemplateCommand</item>

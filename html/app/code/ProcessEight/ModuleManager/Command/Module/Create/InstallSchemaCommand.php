@@ -22,31 +22,31 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class InstallDataCommand
+ * Class InstallSchemaCommand
  *
- * Creates an Setup/InstallData.php file
+ * Creates an Setup/InstallSchema.php file
  *
  */
-class InstallDataCommand extends BaseCommand
+class InstallSchemaCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallDataPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallSchemaPipeline
      */
-    private $createInstallDataPipeline;
+    private $createInstallSchemaPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                            $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                      $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallDataPipeline $createInstallDataPipeline
+     * @param \League\Pipeline\Pipeline                                              $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                        $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallSchemaPipeline $createInstallSchemaPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallDataPipeline $createInstallDataPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateInstallSchemaPipeline $createInstallSchemaPipeline
     ) {
-        $this->createInstallDataPipeline = $createInstallDataPipeline;
+        $this->createInstallSchemaPipeline = $createInstallSchemaPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -55,12 +55,12 @@ class InstallDataCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:create:install-data");
-        $this->setDescription("Creates a new InstallData PHP class.");
+        $this->setName("process-eight:module:create:install-schema");
+        $this->setDescription("Creates a new InstallSchema PHP class.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createInstallDataPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createInstallSchemaPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -81,7 +81,7 @@ class InstallDataCommand extends BaseCommand
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createInstallDataPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createInstallSchemaPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);
