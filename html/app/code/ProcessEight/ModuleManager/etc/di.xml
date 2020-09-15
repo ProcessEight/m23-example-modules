@@ -29,6 +29,7 @@
                 <item name="processeight_modulemanager_command_add_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\TemplateCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\LayoutCommand</item>
                 <item name="processeight_modulemanager_command_add_adminhtml_plugin" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\PluginCommand</item>
+                <item name="processeight_modulemanager_command_add_global_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\ObserverCommand</item>
             </argument>
         </arguments>
     </type>

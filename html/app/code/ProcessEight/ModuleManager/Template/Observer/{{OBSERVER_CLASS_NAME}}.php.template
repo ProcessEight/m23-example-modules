@@ -1,0 +1,95 @@
+<?php
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Observer;
+
+use Magento\Framework\Event\ObserverInterface;
+
+class {{OBSERVER_CLASS_NAME}} implements ObserverInterface
+{
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * {{OBSERVER_CLASS_NAME}} constructor.
+     *
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger
+    ) {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Observers best practice:
+     *
+     * Make your observer efficient
+     * Try to keep your observer small and efficient by avoiding complex computations, if possible.
+     * This is especially important when your observer is listening to an event that is frequently dispatched.
+     * Having complex computations in your observer can slow down application processes.
+     *
+     * Do not include business logic
+     * Your observer should not contain logic other than what is needed for it to run.
+     * Business logic should be encapsulated in other classes that your observer uses.
+     *
+     * Declare observer in the appropriate scope
+     * Make your observer as specific as it needs to be. Declare your observer in the appropriate area:
+     * adminhtml, crontab, frontend, global, graphql, webapi_rest, webapi_soap
+     *
+     * Avoid registering events in the 'global' area
+     * It is NOT RECOMMENDED to register everything in the global area, as the bootstrapping process will become much heavier.
+     *
+     * Avoid cyclical event loops
+     * Cyclical event loops occur when your observer calls the method of an object that dispatches an event
+     * that triggers a chain of events that ends up dispatching that same initial event that executes your observer
+     * in a recurring manner. Make sure your observer is not dispatching an event that it immediately listens to
+     * or will listen to in the chain of events that follows.
+     *
+     * Do not rely on invocation order
+     * Your observer should not make assumptions about the order in which it will be invoked nor should it rely
+     * on the execution of another observer. Observers listening to the same event may be invoked in any order
+     * when that event is dispatched.
+     *
+     * @link https://devdocs.magento.com/guides/v2.4/ext-best-practices/extension-coding/observers-bp.html
+     *
+     * From the Technical Guidelines:
+     *
+     * 14.1. All values (including objects) passed to an event MUST NOT be modified in the event observer.
+     * Instead, plugins SHOULD be used for modifying the input or output of a function.
+     *
+     * 14.2. Events used SHOULD be observed as specifically as possible. A global subscription to an event
+     * SHOULD NOT be used when the area impacted is just frontend.
+     *
+     * 14.3. Events SHOULD NOT change a state of observable objects.
+     *
+     * @link https://devdocs.magento.com/guides/v2.4/coding-standards/technical-guidelines.html#14-events
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @return $this
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        $this->logger->debug("Order #{$order->getIncrementId()} was saved");
+
+        return $this;
+    }
+}

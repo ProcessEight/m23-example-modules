@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!--
+     Note: Events defined in this file (etc/events.xml) are in the 'global' namespace and will therefore
+     be dispatched in every area, making them very resource-intensive. Avoid subscribing observers to events in the global area.
+     Always try and use the most specific area appropriate for the task at hand first:
+     adminhtml, crontab, frontend, graphql, webapi_rest, webapi_soap
+     -->
+    <event name="{{EVENT_NAME}}">
+        <!--
+        Note:
+            Unlike plugins, the order of execution cannot be defined and therefore should not be relied upon
+            Observers SHOULD NOT modify the inputs/outputs of a method. Plugins SHOULD be used for this instead.
+        Node:
+            observer: Subscribes an observer to an event
+        Attributes:
+            name: Required. Must be unique per event name
+            instance: Required. The observer class name.
+            shared: Determines the lifestyle of the class (Singleton or Transient). Set to true to force a new instance of the class every time the observer is executed
+            disabled: Optional. Set to 'true' to prevent this event observer from being executed
+         -->
+        <observer name="{{OBSERVER_CLASS_NAME_STRTOLOWER}}"
+                  instance="{{VENDOR_NAME}}\{{MODULE_NAME}}\Observer\{{OBSERVER_CLASS_NAME}}" />
+    </event>
+</config>

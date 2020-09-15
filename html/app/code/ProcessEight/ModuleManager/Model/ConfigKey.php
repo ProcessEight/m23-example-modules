@@ -129,4 +129,18 @@ interface ConfigKey
      */
     const INTERCEPTED_METHOD_NAME = 'intercepted-method-name';
 
+    /**
+     * Path to observer class
+     */
+    const OBSERVER_DIRECTORY_PATH = 'observer-directory-path';
+
+    /**
+     * Observer class name
+     */
+    const OBSERVER_CLASS_NAME = 'observer-class-name';
+
+    /**
+     * Event name to observe
+     */
+    const EVENT_NAME = 'event-name';
 }
