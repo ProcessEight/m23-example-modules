@@ -145,6 +145,7 @@ class CreateEventsXmlFileStage extends \ProcessEight\ModuleManager\Model\Stage\B
              *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
              */
             '{{EVENT_NAME}}'                     => ucfirst($payload['config'][$stageId]['values'][ConfigKey::EVENT_NAME]),
+            '{{EVENT_NAME_STRTOLOWER}}'          => strtolower($payload['config'][$stageId]['values'][ConfigKey::EVENT_NAME]),
             '{{OBSERVER_DIRECTORY_PATH}}'        => $payload['config'][$stageId]['values'][ConfigKey::OBSERVER_DIRECTORY_PATH],
             '{{OBSERVER_CLASS_NAME}}'            => $payload['config'][$stageId]['values'][ConfigKey::OBSERVER_CLASS_NAME],
             '{{OBSERVER_CLASS_NAME_STRTOLOWER}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::OBSERVER_CLASS_NAME]),

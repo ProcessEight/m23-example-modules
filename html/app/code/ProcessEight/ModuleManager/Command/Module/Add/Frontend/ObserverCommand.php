@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add;
+namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,29 +24,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ObserverCommand
  *
- * Creates an etc/events.xml file and Observer/OBSERVER_DIRECTORY_NAME/OBSERVER_CLASS_NAME.php file
+ * Creates an etc/frontend/events.xml file and Observer/OBSERVER_DIRECTORY_NAME/OBSERVER_CLASS_NAME.php file
  *
  */
 class ObserverCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline
      */
-    private $createGlobalObserverPipeline;
+    private $createFrontendObserverPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                               $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                         $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline $createGlobalObserverPipeline
+     * @param \League\Pipeline\Pipeline                                                          $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                                    $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline $createFrontendObserverPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline $createGlobalObserverPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline $createFrontendObserverPipeline
     ) {
-        $this->createGlobalObserverPipeline = $createGlobalObserverPipeline;
+        $this->createFrontendObserverPipeline = $createFrontendObserverPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -55,12 +55,12 @@ class ObserverCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:global:observer");
-        $this->setDescription("Adds a new observer PHP class and etc/events.xml file.");
+        $this->setName("process-eight:module:add:frontend:observer");
+        $this->setDescription("Adds a new observer PHP class and etc/frontend/events.xml file.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createGlobalObserverPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createFrontendObserverPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -81,7 +81,7 @@ class ObserverCommand extends BaseCommand
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createGlobalObserverPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createFrontendObserverPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

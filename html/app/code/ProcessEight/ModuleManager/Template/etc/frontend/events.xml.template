@@ -16,12 +16,6 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <!--
-     Note: Events defined in this file (etc/events.xml) are in the 'global' namespace and will therefore
-     be dispatched in every area, making them very resource-intensive. Avoid subscribing observers to events in the global area.
-     Always try and use the most specific area appropriate for the task at hand first:
-     adminhtml, crontab, frontend, graphql, webapi_rest, webapi_soap
-     -->
     <event name="{{EVENT_NAME_STRTOLOWER}}">
         <!--
         Note:

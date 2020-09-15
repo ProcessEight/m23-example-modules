@@ -111,6 +111,9 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 
 ## To do
 
+- [ ] Add logic which can dynamically add the namespace to the top of a PHP class when a custom directory path is specifiec
+- [ ] Refactor 'add' in command names to 'create'
+    - 'add' will be used when we are able to modify existing files
 - [ ] Determine which methods in `BaseCommand` can be safely removed
 - [ ] Refactor transformation of template variables to allow automatic application of PHP string transformation methods, e.g `{{CONTROLLER_ACTION_NAME|UCFIRST}}` applies `ucfirst()` to the `{{CONTROLLER_ACTION_NAME}}` template variable
 - [ ] Refactor to move ConfigKey constants into the appropriate stages

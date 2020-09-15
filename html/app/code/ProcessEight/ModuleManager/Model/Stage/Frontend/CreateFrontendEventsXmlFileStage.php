@@ -15,23 +15,24 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model\Stage;
+namespace ProcessEight\ModuleManager\Model\Stage\Frontend;
 
 use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
 
 /**
- * Class CreateObserverPhpClassFileStage
+ * Class CreateFrontendEventsXmlFileStage
  *
- * Creates a Observer/OBSERVER_CLASS_NAME.php file
+ * Creates a VENDOR_NAME/MODULE_NAME/etc/frontend/events.xml file
+ * Assumes that the VENDOR_NAME/MODULE_NAME/etc/frontend/ folder already exists
  *
  */
-class CreateObserverPhpClassFileStage extends BaseStage
+class CreateFrontendEventsXmlFileStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
     /**
      * @var string
      */
-    public $id = 'createObserverPhpClassFileStage';
+    public $id = 'createFrontendEventsXmlFileStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -49,7 +50,7 @@ class CreateObserverPhpClassFileStage extends BaseStage
     private $template;
 
     /**
-     * Constructor
+     * CreateModuleFolder constructor.
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
      * @param \ProcessEight\ModuleManager\Service\Folder   $folder
@@ -69,61 +70,14 @@ class CreateObserverPhpClassFileStage extends BaseStage
      * @param mixed[] $payload
      *
      * @return mixed[]
-     */
-    public function configureStage(array $payload) : array
-    {
-        // Ask the user for the command-name, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::EVENT_NAME] = [
-            'name'                    => ConfigKey::EVENT_NAME,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Event name, e.g. sales_model_service_quote_submit_success',
-            'question'                => '<question>Event name, e.g. sales_model_service_quote_submit_success []: </question> ',
-            'question_default_answer' => '',
-        ];
-        // Ask the user for the command-description, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::OBSERVER_CLASS_NAME] = [
-            'name'                    => ConfigKey::OBSERVER_CLASS_NAME,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Observer class name, e.g. CustomObserver',
-            'question'                => '<question>Observer class name, e.g. CustomObserver [Observer]: </question> ',
-            'question_default_answer' => 'Observer',
-        ];
-        // Ask the user for the command-class-name, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::OBSERVER_DIRECTORY_PATH] = [
-            'name'                    => ConfigKey::OBSERVER_DIRECTORY_PATH,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
-            'description'             => 'Observer directory path, e.g. VENDOR_NAME/MODULE_NAME/Observer/Path/To/Directory',
-            'question'                => '<question>Observer directory path, e.g. The \'Path/To/Directory\' in \'VENDOR_NAME/MODULE_NAME/Observer/Path/To/Directory\' []: </question> ',
-            'question_default_answer' => '',
-        ];
-
-        return $payload;
-    }
-
-    /**
-     * @param mixed[] $payload
-     *
-     * @return mixed[]
      * @throws FileSystemException
      */
     public function processStage(array $payload) : array
     {
-        $subfolderPath     = 'Observer' . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::OBSERVER_DIRECTORY_PATH];
+        $subfolderPath     = 'etc' . DIRECTORY_SEPARATOR . 'frontend';
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
-        $artefactFileName  = ucfirst(
-            str_replace(
-                '{{OBSERVER_CLASS_NAME}}',
-                $payload['config'][$this->id]['values'][ConfigKey::OBSERVER_CLASS_NAME],
-                '{{OBSERVER_CLASS_NAME}}.php'
-            )
-        );
-        $templateFilePath  = $this->template->getTemplateFilePath(
-            '{{OBSERVER_CLASS_NAME}}.php.template',
-            'Observer'
-        );
+        $artefactFileName  = 'events.xml';
+        $templateFilePath  = $this->template->getTemplateFilePath($artefactFileName . '.template', $subfolderPath);
         $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
@@ -162,7 +116,8 @@ class CreateObserverPhpClassFileStage extends BaseStage
 
             return $payload;
         }
-        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>" . $artefactFilePath . "</info>";
+
+        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;
@@ -184,6 +139,11 @@ class CreateObserverPhpClassFileStage extends BaseStage
             '{{VENDOR_NAME_LOWERCASE}}'          => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
             '{{MODULE_NAME_LOWERCASE}}'          => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
             '{{YEAR}}'                           => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a di.xml file
+             *       Updating the di.xml file to include command-specific template variables should be added to a new 'UpdateDiXmlFileStage'
+             */
             '{{EVENT_NAME}}'                     => ucfirst($payload['config'][$stageId]['values'][ConfigKey::EVENT_NAME]),
             '{{EVENT_NAME_STRTOLOWER}}'          => strtolower($payload['config'][$stageId]['values'][ConfigKey::EVENT_NAME]),
             '{{OBSERVER_DIRECTORY_PATH}}'        => $payload['config'][$stageId]['values'][ConfigKey::OBSERVER_DIRECTORY_PATH],
