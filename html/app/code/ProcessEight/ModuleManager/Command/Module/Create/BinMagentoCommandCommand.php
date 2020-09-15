@@ -15,38 +15,38 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
+namespace ProcessEight\ModuleManager\Command\Module\Create;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class LayoutCommand
+ * Class BinMagentoCommandCommand
  *
- * Creates a view/adminhtml/layout/LAYOUT_XML_HANDLE.xml file
+ * Creates new etc/di.xml and Command/COMMAND_CLASS_NAME.php files
  *
  */
-class LayoutCommand extends BaseCommand
+class BinMagentoCommandCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline
      */
-    private $createAdminhtmlLayoutXmlFilePipeline;
+    private $createBinMagentoCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                                                 $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                                           $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline $createAdminhtmlLayoutXmlFilePipeline
+     * @param \League\Pipeline\Pipeline                                                  $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                            $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline $createAdminhtmlLayoutXmlFilePipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
     ) {
-        $this->createAdminhtmlLayoutXmlFilePipeline = $createAdminhtmlLayoutXmlFilePipeline;
+        $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -55,12 +55,12 @@ class LayoutCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:adminhtml:layout");
-        $this->setDescription("Adds a new Layout XML file.");
+        $this->setName("process-eight:module:create:bin-magento-command");
+        $this->setDescription("Creates a new bin/magento command.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createAdminhtmlLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -73,13 +73,15 @@ class LayoutCommand extends BaseCommand
      *
      * @return int|null null or 0 if everything went fine, or an error code
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    protected function execute(
+        \Symfony\Component\Console\Input\InputInterface $input,
+        \Symfony\Component\Console\Output\OutputInterface $output
+    ) {
         parent::execute($input, $output);
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createAdminhtmlLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

@@ -15,38 +15,38 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ObserverCommand
+ * Class LayoutCommand
  *
- * Creates an etc/events.xml file and Observer/OBSERVER_DIRECTORY_NAME/OBSERVER_CLASS_NAME.php file
+ * Creates a view/frontend/layout/LAYOUT_XML_HANDLE.xml file
  *
  */
-class ObserverCommand extends BaseCommand
+class LayoutCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendLayoutXmlFilePipeline
      */
-    private $createGlobalObserverPipeline;
+    private $createFrontendLayoutXmlFilePipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                               $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                         $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline $createGlobalObserverPipeline
+     * @param \League\Pipeline\Pipeline                                                               $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                                         $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendLayoutXmlFilePipeline $createFrontendLayoutXmlFilePipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateGlobalObserverPipeline $createGlobalObserverPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendLayoutXmlFilePipeline $createFrontendLayoutXmlFilePipeline
     ) {
-        $this->createGlobalObserverPipeline = $createGlobalObserverPipeline;
+        $this->createFrontendLayoutXmlFilePipeline = $createFrontendLayoutXmlFilePipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -55,12 +55,12 @@ class ObserverCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:global:observer");
-        $this->setDescription("Adds a new observer PHP class and etc/events.xml file.");
+        $this->setName("process-eight:module:create:frontend:layout");
+        $this->setDescription("Adds a new Layout XML file.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createGlobalObserverPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createFrontendLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -73,15 +73,13 @@ class ObserverCommand extends BaseCommand
      *
      * @return int|null null or 0 if everything went fine, or an error code
      */
-    protected function execute(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         parent::execute($input, $output);
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createGlobalObserverPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createFrontendLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

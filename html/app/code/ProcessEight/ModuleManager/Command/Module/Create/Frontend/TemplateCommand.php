@@ -15,42 +15,38 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class BlockCommand
+ * Class TemplateCommand
  *
- * Creates a block class file
+ * Creates a view/frontend/templates/TEMPLATE_NAME.phtml file
  *
- * @todo    Add logic to create the block layout XML instruction and output to terminal
- * @todo    Add logic to programmatically add the block to the target layout XML file
- *
- * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class BlockCommand extends BaseCommand
+class TemplateCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline
      */
-    private $createFrontendBlockCommandPipeline;
+    private $createFrontendTemplateCommandPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                                              $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                                        $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline $createFrontendBlockCommandPipeline
+     * @param \League\Pipeline\Pipeline                                                                 $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                                           $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline $createFrontendTemplateCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline $createFrontendBlockCommandPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline $createFrontendTemplateCommandPipeline
     ) {
-        $this->createFrontendBlockCommandPipeline = $createFrontendBlockCommandPipeline;
+        $this->createFrontendTemplateCommandPipeline = $createFrontendTemplateCommandPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -59,12 +55,12 @@ class BlockCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:frontend:block");
-        $this->setDescription("Adds a new frontend PHP Block class.");
+        $this->setName("process-eight:module:create:frontend:template");
+        $this->setDescription("Adds a new template PHTML file to the frontend area.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createFrontendBlockCommandPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createFrontendTemplateCommandPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -80,10 +76,9 @@ class BlockCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createFrontendBlockCommandPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createFrontendTemplateCommandPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

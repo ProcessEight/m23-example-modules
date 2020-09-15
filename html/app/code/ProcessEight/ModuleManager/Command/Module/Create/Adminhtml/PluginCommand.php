@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Adminhtml;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,7 +55,7 @@ class PluginCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:adminhtml:plugin");
+        $this->setName("process-eight:module:create:adminhtml:plugin");
         $this->setDescription("Creates an etc/adminhtml/di.xml file and Plugin/Adminhtml/PLUGIN_CLASS_NAME.php file");
 
         $this->pipelineConfig['mode'] = 'configure';

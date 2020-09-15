@@ -15,39 +15,38 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Adminhtml;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class TemplateCommand
+ * Class LayoutCommand
  *
- * Creates a view/frontend/templates/TEMPLATE_NAME.phtml file
+ * Creates a view/adminhtml/layout/LAYOUT_XML_HANDLE.xml file
  *
- * @package ProcessEight\ModuleManager\Command\Module\Add\Frontend
  */
-class TemplateCommand extends BaseCommand
+class LayoutCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline
      */
-    private $createFrontendTemplateCommandPipeline;
+    private $createAdminhtmlLayoutXmlFilePipeline;
 
     /**
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                                                 $pipeline
      * @param \Magento\Framework\App\Filesystem\DirectoryList                                           $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline $createFrontendTemplateCommandPipeline
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline $createAdminhtmlLayoutXmlFilePipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendTemplateCommandPipeline $createFrontendTemplateCommandPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlLayoutXmlFilePipeline $createAdminhtmlLayoutXmlFilePipeline
     ) {
-        $this->createFrontendTemplateCommandPipeline = $createFrontendTemplateCommandPipeline;
+        $this->createAdminhtmlLayoutXmlFilePipeline = $createAdminhtmlLayoutXmlFilePipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -56,12 +55,12 @@ class TemplateCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:frontend:template");
-        $this->setDescription("Adds a new template PHTML file to the frontend area.");
+        $this->setName("process-eight:module:create:adminhtml:layout");
+        $this->setDescription("Adds a new Layout XML file.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createFrontendTemplateCommandPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createAdminhtmlLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -77,9 +76,10 @@ class TemplateCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createFrontendTemplateCommandPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createAdminhtmlLayoutXmlFilePipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

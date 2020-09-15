@@ -15,38 +15,38 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class BinMagentoCommandCommand
+ * Class ObserverCommand
  *
- * Creates new etc/di.xml and Command/COMMAND_CLASS_NAME.php files
+ * Creates an etc/frontend/events.xml file and Observer/OBSERVER_DIRECTORY_NAME/OBSERVER_CLASS_NAME.php file
  *
  */
-class BinMagentoCommandCommand extends BaseCommand
+class ObserverCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline
      */
-    private $createBinMagentoCommandPipeline;
+    private $createFrontendObserverPipeline;
 
     /**
      * Constructor.
      *
-     * @param \League\Pipeline\Pipeline                                                  $pipeline
-     * @param \Magento\Framework\App\Filesystem\DirectoryList                            $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
+     * @param \League\Pipeline\Pipeline                                                          $pipeline
+     * @param \Magento\Framework\App\Filesystem\DirectoryList                                    $directoryList
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline $createFrontendObserverPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\CreateBinMagentoCommandPipeline $createBinMagentoCommandPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendObserverPipeline $createFrontendObserverPipeline
     ) {
-        $this->createBinMagentoCommandPipeline = $createBinMagentoCommandPipeline;
+        $this->createFrontendObserverPipeline = $createFrontendObserverPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -55,12 +55,12 @@ class BinMagentoCommandCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:bin-magento-command");
-        $this->setDescription("Creates a new bin/magento command.");
+        $this->setName("process-eight:module:create:frontend:observer");
+        $this->setDescription("Adds a new observer PHP class and etc/frontend/events.xml file.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createFrontendObserverPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
     }
@@ -81,7 +81,7 @@ class BinMagentoCommandCommand extends BaseCommand
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createBinMagentoCommandPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createFrontendObserverPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);

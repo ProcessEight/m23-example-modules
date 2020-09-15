@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Adminhtml;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Creates a view/adminhtml/templates/TEMPLATE_NAME.phtml file
  *
- * @package ProcessEight\ModuleManager\Command\Module\Add\Adminhtml
  */
 class TemplateCommand extends BaseCommand
 {
@@ -56,7 +55,7 @@ class TemplateCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:adminhtml:template");
+        $this->setName("process-eight:module:create:adminhtml:template");
         $this->setDescription("Adds a new template PHTML file to the adminhtml area.");
 
         $this->pipelineConfig['mode'] = 'configure';

@@ -20,18 +20,18 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="processeight_modulemanager_command_create" xsi:type="object">ProcessEight\ModuleManager\Command\Module\CreateCommand</item>
-                <item name="processeight_modulemanager_command_add_bin_magento_command" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\BinMagentoCommandCommand</item>
-                <item name="processeight_modulemanager_command_add_frontend_controller" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\ControllerCommand</item>
-                <item name="processeight_modulemanager_command_add_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\LayoutCommand</item>
-                <item name="processeight_modulemanager_command_add_frontend_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\TemplateCommand</item>
-                <item name="processeight_modulemanager_command_add_frontend_block" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\BlockCommand</item>
-                <item name="processeight_modulemanager_command_add_frontend_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Frontend\ObserverCommand</item>
-                <item name="processeight_modulemanager_command_add_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\ControllerCommand</item>
-                <item name="processeight_modulemanager_command_add_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\TemplateCommand</item>
-                <item name="processeight_modulemanager_command_add_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\LayoutCommand</item>
-                <item name="processeight_modulemanager_command_add_adminhtml_plugin" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\PluginCommand</item>
-                <item name="processeight_modulemanager_command_add_adminhtml_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\Adminhtml\ObserverCommand</item>
-                <item name="processeight_modulemanager_command_add_global_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Add\ObserverCommand</item>
+                <item name="processeight_modulemanager_command_create_bin_magento_command" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\BinMagentoCommandCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_controller" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\ControllerCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\LayoutCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\TemplateCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_block" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\BlockCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\ObserverCommand</item>
+                <item name="processeight_modulemanager_command_create_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\ControllerCommand</item>
+                <item name="processeight_modulemanager_command_create_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\TemplateCommand</item>
+                <item name="processeight_modulemanager_command_create_adminhtml_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\LayoutCommand</item>
+                <item name="processeight_modulemanager_command_create_adminhtml_plugin" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\PluginCommand</item>
+                <item name="processeight_modulemanager_command_create_adminhtml_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\ObserverCommand</item>
+                <item name="processeight_modulemanager_command_create_global_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\ObserverCommand</item>
             </argument>
         </arguments>
     </type>

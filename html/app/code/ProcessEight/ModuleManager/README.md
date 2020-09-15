@@ -96,7 +96,7 @@ Template variable names are intended to be descriptive.
 
 If they are taken from user input, then the class constant is used as the variable name, e.g:
 ```php
-// \ProcessEight\ModuleManager\Command\Module\Add\BinMagentoCommandCommand::getTemplateVariables
+// \ProcessEight\ModuleManager\Command\Module\Create\BinMagentoCommandCommand::getTemplateVariables
 
         $templateVariables = array_merge($templateVariables, [
             '{{COMMAND_NAME}}'               => $input->getOption(ConfigKey::COMMAND_NAME),

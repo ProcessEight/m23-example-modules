@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Frontend;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,7 +55,7 @@ class ControllerCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:frontend:controller");
+        $this->setName("process-eight:module:create:frontend:controller");
         $this->setDescription("Adds a new controller PHP class and routes.xml file.");
 
         $this->pipelineConfig['mode'] = 'configure';

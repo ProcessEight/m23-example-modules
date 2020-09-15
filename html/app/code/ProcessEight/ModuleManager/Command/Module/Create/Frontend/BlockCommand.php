@@ -15,39 +15,41 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Command\Module\Add\Adminhtml;
+namespace ProcessEight\ModuleManager\Command\Module\Create\Frontend;
 
 use ProcessEight\ModuleManager\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ControllerCommand
+ * Class BlockCommand
  *
- * Creates an etc/adminhtml/routes.xml file and Controller/Adminhtml/CONTROLLER_DIRECTORY_NAME/CONTROLLER_ACTION_NAME.php file
+ * Creates a block class file
  *
- * @package ProcessEight\ModuleManager\Command\Module\Add\Adminhtml
+ * @todo    Add logic to create the block layout XML instruction and output to terminal
+ * @todo    Add logic to programmatically add the block to the target layout XML file
+ *
  */
-class ControllerCommand extends BaseCommand
+class BlockCommand extends BaseCommand
 {
     /**
-     * @var \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlControllerPipeline
+     * @var \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline
      */
-    private $createAdminhtmlControllerPipeline;
+    private $createFrontendBlockCommandPipeline;
 
     /**
      * Constructor.
      *
      * @param \League\Pipeline\Pipeline                                                              $pipeline
      * @param \Magento\Framework\App\Filesystem\DirectoryList                                        $directoryList
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlControllerPipeline $createAdminhtmlControllerPipeline
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline $createFrontendBlockCommandPipeline
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \ProcessEight\ModuleManager\Model\Pipeline\Adminhtml\CreateAdminhtmlControllerPipeline $createAdminhtmlControllerPipeline
+        \ProcessEight\ModuleManager\Model\Pipeline\Frontend\CreateFrontendBlockCommandPipeline $createFrontendBlockCommandPipeline
     ) {
-        $this->createAdminhtmlControllerPipeline = $createAdminhtmlControllerPipeline;
+        $this->createFrontendBlockCommandPipeline = $createFrontendBlockCommandPipeline;
         parent::__construct($pipeline, $directoryList);
     }
 
@@ -56,16 +58,14 @@ class ControllerCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setName("process-eight:module:add:adminhtml:controller");
-        $this->setDescription("Creates all the files needed to add a new custom adminhtml controller");
+        $this->setName("process-eight:module:create:frontend:block");
+        $this->setDescription("Adds a new frontend PHP Block class.");
 
         $this->pipelineConfig['mode'] = 'configure';
 
-        $this->pipelineConfig = $this->createAdminhtmlControllerPipeline->processPipeline($this->pipelineConfig);
+        $this->pipelineConfig = $this->createFrontendBlockCommandPipeline->processPipeline($this->pipelineConfig);
 
         parent::configure();
-
-        return null;
     }
 
     /**
@@ -82,7 +82,7 @@ class ControllerCommand extends BaseCommand
 
         $this->pipelineConfig['mode'] = 'process';
 
-        $result = $this->createAdminhtmlControllerPipeline->processPipeline($this->pipelineConfig);
+        $result = $this->createFrontendBlockCommandPipeline->processPipeline($this->pipelineConfig);
 
         foreach ($result['messages'] as $message) {
             $output->writeln($message);
