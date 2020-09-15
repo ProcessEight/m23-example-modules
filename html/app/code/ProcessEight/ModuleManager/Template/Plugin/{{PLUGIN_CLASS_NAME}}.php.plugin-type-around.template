@@ -1,0 +1,80 @@
+<?php /** @noinspection PhpUndefinedClassInspection */
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Plugin\App\Action;
+
+class {{PLUGIN_CLASS_NAME_UCFIRST}}
+{
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * {{PLUGIN_CLASS_NAME_UCFIRST}} constructor.
+     *
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger
+    ) {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Magento runs the code in around methods before and after the intercepted methods.
+     * Using these methods allows you to effectively override an intercepted method.
+     * Around methods must have the same name as the intercepted method with ‘around’ as the prefix.
+     *
+     * Avoid using around method plugins when they are not required because they increase stack traces and affect performance.
+     * The only use case for around method plugins is when the execution of all further plugins and original methods need termination.
+     * Use after method plugins if you require arguments for replacing or altering method results.
+     *
+     * Before the list of the original methods' arguments, around methods receive a callable that will allow a call to the next method in the chain.
+     * When your code executes the callable, Magento calls the next plugin or the intercepted method.
+     *
+     * If the around method does not call the callable, it will prevent the execution of all the plugins next in the chain and the original method call.
+     *
+     * When you wrap a method which accepts arguments, your plugin must also accept those arguments and you must forward them when you invoke the `proceed` callable.
+     * You must be careful to match the default parameters and type hints of the original signature of the method.
+     *
+     * @see https://devdocs.magento.com/guides/v2.3/extension-dev-guide/plugins.html#around-methods
+     *
+     * @param {{INTERCEPTED_CLASS_NAMESPACE}} $subject
+     * @param callable                        $proceed
+     * @param array                           $arguments
+     *
+     * @return
+     * @see {{INTERCEPTED_CLASS_NAMESPACE}}::{{INTERCEPTED_METHOD_NAME_UCFIRST}}
+     */
+    public function {{PLUGIN_TYPE}}{{INTERCEPTED_METHOD_NAME_UCFIRST}}(
+        {{INTERCEPTED_CLASS_NAMESPACE}} $subject,
+        callable $proceed,
+        ...$arguments
+    ) {
+        $this->logger->debug(__METHOD__ . ': Logging from the {{PLUGIN_TYPE}}{{INTERCEPTED_METHOD_NAME_UCFIRST}} plugin');
+        $this->logger->debug(__METHOD__ . ': Before calling $proceed()');
+
+        // '...$arguments' is a shorthand for including all the parameters passed to the intercepted method
+        // The technical name for it is 'variadic argument unpacking'
+        $returnValue = $proceed(...$arguments);
+
+        $this->logger->debug(__METHOD__ . ': After calling $proceed()');
+
+        return $returnValue;
+    }
+}

@@ -38,17 +38,18 @@ class {{PLUGIN_CLASS_NAME_UCFIRST}}
     /**
      * Example of using a plugin to log the intercepted method parameters
      *
-     * @param {{INTERCEPTED_CLASS_NAMESPACE}} $subject
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) // Delete as appropriate
+     * @param {{INTERCEPTED_CLASS_NAMESPACE}}    $subject The targeted class
+     * @param                                    $result  Result of the targeted method
+     * @param \Magento\Framework\DataObject      $request Parameter(s) of the targeted method
      */
     public function {{PLUGIN_TYPE}}{{INTERCEPTED_METHOD_NAME_UCFIRST}}(
         {{INTERCEPTED_CLASS_NAMESPACE}} $subject,   // The intercepted class
-         /* Intercepted method params go here */    // Parameters of the intercepted method
-    ) {
+        $result,                                    // Result of the intercepted method
+        \Magento\Framework\DataObject $request      // Parameter(s) of the intercepted method
+    )
+    {
         $this->logger->debug(__METHOD__ . ': Logging from the {{PLUGIN_TYPE}}{{INTERCEPTED_METHOD_NAME_UCFIRST}} plugin');
 
-        // If the method does not change the argument for the intercepted method, it should return null.
-        return null;
+        return $result;
     }
 }

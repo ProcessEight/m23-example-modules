@@ -120,19 +120,31 @@ class CreatePluginPhpClassFileStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $subfolderPath     = 'Plugin' . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::PLUGIN_DIRECTORY_PATH];
-        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
-        $artefactFileName  = ucfirst(
+        $subfolderPath    = 'Plugin' . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::PLUGIN_DIRECTORY_PATH];
+        $artefactFilePath = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
+        $artefactFileName = ucfirst(
             str_replace(
                 '{{PLUGIN_CLASS_NAME}}',
                 $payload['config'][$this->id]['values'][ConfigKey::PLUGIN_CLASS_NAME],
                 '{{PLUGIN_CLASS_NAME}}.php'
             )
         );
-        $templateFilePath  = $this->template->getTemplateFilePath(
-            '{{PLUGIN_CLASS_NAME}}.php.plugin-type-before.template',
-            $subfolderPath
-        );
+
+        /**
+         * @todo Refactor to allow multiple types of plugin to be added to one class
+         */
+        // 'before' is our default
+        $templateFileName = '{{PLUGIN_CLASS_NAME}}.php.plugin-type-before.template';
+        switch ($payload['config'][$this->id]['values'][ConfigKey::PLUGIN_TYPE]) {
+            case 'after':
+                $templateFileName = '{{PLUGIN_CLASS_NAME}}.php.plugin-type-after.template';
+                break;
+            case 'around':
+                $templateFileName = '{{PLUGIN_CLASS_NAME}}.php.plugin-type-around.template';
+                break;
+        }
+
+        $templateFilePath  = $this->template->getTemplateFilePath($templateFileName, $subfolderPath);
         $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
