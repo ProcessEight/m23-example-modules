@@ -143,4 +143,9 @@ interface ConfigKey
      * Event name to observe
      */
     const EVENT_NAME = 'event-name';
+
+    /**
+     * Value to add to the module.xml setup_version attribute
+     */
+    const SETUP_VERSION = 'setup-version';
 }

@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Setup;
+
+use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Framework\Setup\InstallDataInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Store\Model\Store;
+
+class InstallData implements InstallDataInterface
+{
+    public const CMS_STATIC_BLOCK_IDENTIFIER = '{{VENDOR_NAME}}-{{MODULE_NAME}}-block';
+    public const CMS_STATIC_BLOCK_TITLE = '{{VENDOR_NAME}} {{MODULE_NAME}} Block';
+
+    /**
+     * @var \Magento\Cms\Api\Data\BlockInterfaceFactory
+     */
+    private $blockFactory;
+
+    /**
+     * @var \Magento\Cms\Model\BlockRepository
+     */
+    private $blockRepository;
+
+    /**
+     * CreateStaticBlock constructor.
+     *
+     * @param \Magento\Cms\Api\Data\BlockInterfaceFactory $blockFactory
+     * @param \Magento\Cms\Model\BlockRepository          $blockRepository
+     */
+    public function __construct(
+        \Magento\Cms\Api\Data\BlockInterfaceFactory $blockFactory,
+        \Magento\Cms\Model\BlockRepository $blockRepository
+    ) {
+        $this->blockFactory    = $blockFactory;
+        $this->blockRepository = $blockRepository;
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface   $context
+     *
+     * @throws \Magento\Framework\Exception\CouldNotSaveException
+     */
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    {
+        // Example of how to programmatically create a CMS static block
+
+        $cmsBlock = $this->blockFactory->create();
+        $cmsBlock->load(self::CMS_STATIC_BLOCK_IDENTIFIER, 'identifier');
+        if (!$cmsBlock->getId()) {
+            $cmsBlockData = [
+                'title'      => self::CMS_STATIC_BLOCK_TITLE,
+                'identifier' => self::CMS_STATIC_BLOCK_IDENTIFIER,
+                'is_active'  => 1,
+                'stores'     => [Store::DEFAULT_STORE_ID],
+                'content'    => $this->getCmsStaticBlockContent(),
+            ];
+
+            $cmsBlock = $this->blockFactory->create(['data' => $cmsBlockData]);
+            $this->blockRepository->save($cmsBlock);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCmsStaticBlockContent() : string
+    {
+        $content = <<<EOD
+<h2>Test block</h2>
+<p>Well done</p>
+EOD;
+
+        return $content;
+    }
+}
