@@ -58,14 +58,17 @@ class AddSetupVersionToModuleXmlStage extends BaseStage
      * @var \ProcessEight\ModuleManager\Service\Template
      */
     private $template;
+
     /**
      * @var \Magento\Framework\Filesystem\File\WriteFactory
      */
     private $readWriteFactory;
+
     /**
      * @var \Magento\Framework\DomDocument\DomDocumentFactory
      */
     private $domDocumentFactory;
+
     /**
      * @var \ProcessEight\ModuleManager\Service\XmlFileService
      */
@@ -93,14 +96,8 @@ class AddSetupVersionToModuleXmlStage extends BaseStage
         \Magento\Framework\DomDocument\DomDocumentFactory $domDocumentFactory,
         \ProcessEight\ModuleManager\Service\XmlFileService $xmlFileService
     ) {
-        $this->directoryList      = $directoryList;
-        $this->filesystemDriver   = $filesystemDriver;
-        $this->moduleDir          = $moduleDir;
-        $this->folder             = $folder;
-        $this->template           = $template;
-        $this->readWriteFactory   = $writeFactory;
-        $this->domDocumentFactory = $domDocumentFactory;
-        $this->xmlFileService     = $xmlFileService;
+        $this->folder         = $folder;
+        $this->xmlFileService = $xmlFileService;
     }
 
     /**

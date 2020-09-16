@@ -72,15 +72,19 @@ class XmlFileService
     }
 
     /**
-     * @param $dom
-     * @param $xpathExpression
+     * @param \DOMDocument  $domDocument
+     * @param string        $xpathExpression
+     * @param \DOMNode|null $contextNode
      *
      * @return \DOMNode|null
      */
-    public function getNodeByXpath($dom, $xpathExpression) : ?\DOMNode
-    {
-        $xpath    = new \DOMXPath($dom);
-        $nodeList = $xpath->query($xpathExpression);
+    public function getNodeByXpath(
+        \DOMDocument $domDocument,
+        string $xpathExpression,
+        \DOMNode $contextNode = null
+    ) : ?\DOMNode {
+        $xpath    = new \DOMXPath($domDocument);
+        $nodeList = $xpath->query($xpathExpression, $contextNode);
 
         return $nodeList->item(0);
     }

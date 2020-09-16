@@ -148,4 +148,29 @@ interface ConfigKey
      * Value to add to the module.xml setup_version attribute
      */
     const SETUP_VERSION = 'setup-version';
+
+    /**
+     * ViewModel/ subdirectory path
+     */
+    const VIEW_MODEL_SUBDIRECTORY_PATH = 'view-model-subdirectory-path';
+
+    /**
+     * View Model class name
+     */
+    const VIEW_MODEL_CLASS_NAME = 'view-model-class-name';
+
+    /**
+     * Class name of Block we're adding View Model to
+     */
+    const VIEW_MODEL_BLOCK_CLASS_NAME = 'view-model-block-class-name';
+
+    /**
+     * Name used to access the View Model in the Block/Template
+     */
+    const LAYOUT_XML_VIEW_MODEL_NAME = 'layout-xml-view-model-name';
+
+    /**
+     * Layout XML name of Block we're adding View Model to
+     */
+    const LAYOUT_XML_BLOCK_NAME = 'layout-xml-block-name';
 }

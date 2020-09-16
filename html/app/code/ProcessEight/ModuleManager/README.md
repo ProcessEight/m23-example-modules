@@ -111,6 +111,11 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 
 ## To do
 
+- [ ] Refactor to allow Command options, defined in one stage, to be replaced by an identical Command option, defined in another stage.
+    - This would allow both the `CreateFrontendLayoutXmlFileStage` and `AddViewModelToFrontendLayoutXmlStage` to be added to the same pipeline and to ask for the `ConfigKey::LAYOUT_XML_HANDLE`, without causing the error of asking for the same option twice
+- [ ] Refactor to remove 'File' from all stage and pipeline names
+- [ ] Refactor all 'Create' stages and pipelines and move any command-specific logic into new 'Add/Update' stages and pipelines
+    - [ ] Do for XML files first, using \ProcessEight\ModuleManager\Model\Stage\AddSetupVersionToModuleXmlStage as an example
 - [ ] Add logic which can dynamically add the namespace to the top of a PHP class when a custom directory path is specifiec
 - [x] Refactor 'add' in command names to 'create'
     - 'add' will be used when we are able to modify existing files

@@ -28,6 +28,7 @@
                 <item name="processeight_modulemanager_command_create_frontend_layout" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\LayoutCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\TemplateCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_block" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\BlockCommand</item>
+                <item name="processeight_modulemanager_command_create_frontend_view-model" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\ViewModelCommand</item>
                 <item name="processeight_modulemanager_command_create_frontend_observer" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Frontend\ObserverCommand</item>
                 <item name="processeight_modulemanager_command_create_adminhtml_controller" xsi:type="object">\ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\ControllerCommand</item>
                 <item name="processeight_modulemanager_command_create_adminhtml_template" xsi:type="object">ProcessEight\ModuleManager\Command\Module\Create\Adminhtml\TemplateCommand</item>

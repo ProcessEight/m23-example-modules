@@ -15,22 +15,24 @@
 
 declare(strict_types=1);
 
-namespace ProcessEight\ModuleManager\Model\Stage\Frontend;
+namespace ProcessEight\ModuleManager\Model\Stage;
 
 use Magento\Framework\Exception\FileSystemException;
 use ProcessEight\ModuleManager\Model\ConfigKey;
-use ProcessEight\ModuleManager\Model\Stage\BaseStage;
 
 /**
- * Creates a LAYOUT_XML_HANDLE.xml file
- * Assumes that the VENDOR_NAME/MODULE_NAME/view/frontend/layout/ folder already exists
+ * Class CreateViewModelPhpClassStage
+ *
+ * Creates a PHP class file.
+ *
+ * @package ProcessEight\ModuleManager\Model\Stage
  */
-class CreateFrontendLayoutXmlFileStage extends BaseStage
+class CreateViewModelPhpClassStage extends \ProcessEight\ModuleManager\Model\Stage\BaseStage
 {
     /**
      * @var string
      */
-    public $id = 'createFrontendLayoutXmlFileStage';
+    public $id = 'createViewModelPhpClassFileStage';
 
     /**
      * @var \Magento\Framework\Filesystem\Driver\File
@@ -48,7 +50,7 @@ class CreateFrontendLayoutXmlFileStage extends BaseStage
     private $template;
 
     /**
-     * CreateModuleFolder constructor.
+     * Constructor
      *
      * @param \Magento\Framework\Filesystem\Driver\File    $filesystemDriver
      * @param \ProcessEight\ModuleManager\Service\Folder   $folder
@@ -71,14 +73,14 @@ class CreateFrontendLayoutXmlFileStage extends BaseStage
      */
     public function configureStage(array $payload) : array
     {
-        // Ask the user for the LAYOUT_XML_HANDLE, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::LAYOUT_XML_HANDLE] = [
-            'name'                    => ConfigKey::LAYOUT_XML_HANDLE,
+        // Ask the user for the VIEW_MODEL_CLASS_NAME, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::VIEW_MODEL_CLASS_NAME] = [
+            'name'                    => ConfigKey::VIEW_MODEL_CLASS_NAME,
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Layout XML Handle',
-            'question'                => '<question>Layout XML handle (e.g. routerid_controllerfoldername_controllerclassname) (without .xml suffix): [default]</question> ',
-            'question_default_answer' => 'default',
+            'description'             => 'View Model class name, e.g. CustomClassName',
+            'question'                => '<question>View Model class name, e.g. CustomClassName [Custom]:</question> ',
+            'question_default_answer' => 'Custom',
         ];
 
         return $payload;
@@ -92,16 +94,23 @@ class CreateFrontendLayoutXmlFileStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $subfolderPath     = 'view' . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'layout';
-        $artefactFilePath  = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
-        $artefactFileName  = strtolower(
+        $subfolder         = 'ViewModel' . DIRECTORY_SEPARATOR . ucfirst($payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH]);
+        $artefactFilePath  = $this->folder->getAbsolutePathToFolder(
+            $payload,
+            $this->id,
+            $subfolder
+        );
+        $artefactFileName  = ucfirst(
             str_replace(
-                '{{LAYOUT_XML_HANDLE}}',
-                $payload['config'][$this->id]['values'][ConfigKey::LAYOUT_XML_HANDLE],
-                '{{LAYOUT_XML_HANDLE}}.xml'
+                '{{VIEW_MODEL_CLASS_NAME}}',
+                $payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME],
+                '{{VIEW_MODEL_CLASS_NAME}}.php'
             )
         );
-        $templateFilePath  = $this->template->getTemplateFilePath('{{LAYOUT_XML_HANDLE}}.xml.template', $subfolderPath);
+        $templateFilePath  = $this->template->getTemplateFilePath(
+            '{{VIEW_MODEL_CLASS_NAME}}.php.template',
+            'ViewModel'
+        );
         $templateVariables = $this->getTemplateVariables($this->id, $payload);
 
         // Check if file exists
@@ -140,7 +149,6 @@ class CreateFrontendLayoutXmlFileStage extends BaseStage
 
             return $payload;
         }
-
         $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>{$artefactFilePath}</info>";
 
         // Pass payload onto next stage/pipeline
@@ -158,11 +166,19 @@ class CreateFrontendLayoutXmlFileStage extends BaseStage
     public function getTemplateVariables(string $stageId, array $payload) : array
     {
         return [
-            '{{VENDOR_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
-            '{{MODULE_NAME}}'           => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
-            '{{VENDOR_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
-            '{{MODULE_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
-            '{{YEAR}}'                  => date('Y'),
+            '{{VENDOR_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME],
+            '{{MODULE_NAME}}'                   => $payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME],
+            '{{VENDOR_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::VENDOR_NAME]),
+            '{{MODULE_NAME_LOWERCASE}}'         => strtolower($payload['config'][$stageId]['values'][ConfigKey::MODULE_NAME]),
+            '{{YEAR}}'                          => date('Y'),
+            /**
+             * @todo These kind of Command-specific template variables should be moved out of here
+             *       This stage is for creating a php file
+             *       Updating the php file to include command-specific template variables should be added to a new 'UpdateWhateverPhpFileStage'
+             */
+            '{{VIEW_MODEL_CLASS_NAME}}'         => $payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME],
+            '{{VIEW_MODEL_CLASS_NAME_UCFIRST}}' => ucfirst($payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME]),
+            '{{VIEW_MODEL_SUBDIRECTORY_PATH}}'  => $payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH],
         ];
     }
 }
