@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEightAdminhtmlExamples
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEightAdminhtmlExamples for more information.
+ *
+ * @copyright   Copyright (c) 2020 ProcessEightAdminhtmlExamples
+ * @author      ProcessEightAdminhtmlExamples
+ *
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="data">
+            <block class="ProcessEightAdminhtmlExamples\AddFieldToCreateOrderPage\Block\Adminhtml\Order\Create\Form\Custom"
+                   template="ProcessEightAdminhtmlExamples_AddFieldToCreateOrderPage::order/create/form/custom.phtml"
+                   name="additional_area"
+            />
+        </referenceBlock>
+    </body>
+</page>

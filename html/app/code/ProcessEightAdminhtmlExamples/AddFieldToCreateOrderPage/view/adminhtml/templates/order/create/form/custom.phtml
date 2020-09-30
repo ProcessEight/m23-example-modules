@@ -1,0 +1,73 @@
+<?php
+/**
+ * ProcessEightAdminhtmlExamples
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEightAdminhtmlExamples for more information.
+ *
+ * @copyright   Copyright (c) 2020 ProcessEightAdminhtmlExamples
+ * @author      ProcessEightAdminhtmlExamples
+ *
+ */
+?>
+<?php
+/** @var \ProcessEightAdminhtmlExamples\AddFieldToCreateOrderPage\Block\Adminhtml\Order\Create\Form\Custom $block */
+?>
+<div class="admin__page-section-title <?= /* @escapeNotVerified */ $block->getHeaderCssClass() ?>">
+    <span class="title"><?= /* @escapeNotVerified */ $block->getHeaderText() ?></span>
+    <div class="actions"></div>
+</div>
+<div id="order-type-fields"
+     class="admin__page-section-content">
+    <fieldset class="fieldset admin__fieldset "
+              id="order-type">
+        <div class="messages"></div>
+        <div class="admin__field field field-order-type-dropdown required _required"
+             data-ui-id="order-type-fieldset-element-form-field-order-type-dropdown"
+             style="float: left">
+            <label class="label admin__field-label"
+                   for="order-type-dropdown"
+                   data-ui-id="order-type-fieldset-element-select-order-order-type-order-type-dropdown-label">
+                <span><?= __('Order Type') ?></span>
+            </label>
+            <div class="admin__field-control control">
+                <select id="order-type-dropdown"
+                        name="order[order-type][order-type-dropdown]"
+                        class="required-entry required-entry _required select admin__control-select"
+                        data-ui-id="order-type-fieldset-element-select-order-order-type-order-type-dropdown">
+                    <?php foreach ($block->getOrderTypes() as $orderType) : ?>
+                        <!-- @todo Add logic to mark one of these options as selected="selected" -->
+                        <option value="<?= $orderType['value'] ?>"><?= $orderType['label'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="admin__field field field-reference-order-input required _required"
+             data-ui-id="order-type-fieldset-element-text-order-order-type-reference-order-input"
+             style="display: inline-block; margin: 0; overflow: hidden; width: 50%;">
+            <label class="label admin__field-label"
+                   for="reference-order-input"
+                   data-ui-id="order-type-fieldset-element-text-order-order-type-reference-order-input-label">
+                <span><?= __('Reference Order Number') ?></span>
+            </label>
+            <div class="admin__field-control control">
+                <!-- @todo Persist form field here -->
+                <input id="reference-order-input"
+                       name="order[order-type][reference-order-input]"
+                       class="validate-not-negative-number required-number-if-specified admin__control-text input-text admin__control-text required-entry _required"
+                       data-ui-id="order-type-fieldset-element-text-order-order-type-reference-order-input"
+                       value="10001234"
+                       type="text">
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<script>
+    require(["prototype", "Magento_Sales/order/create/form"], function () {
+        order.orderTypeFieldsBind($('order-type-fields'));
+    });
+</script>
