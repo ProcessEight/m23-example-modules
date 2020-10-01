@@ -111,6 +111,8 @@ If a template variable needs to be processed in some way (e.g. To make it upper 
 
 ## To do
 
+- [ ] `process-eight:module:create:frontend:view-model` command asks for `LAYOUT_XML_NAME` twice. Fix it.
+- [ ] `process-eight:module:create:frontend:view-model` command inserts `LAYOUT_XML_BLOCK_NAME` as the value of the Fix it.
 - [ ] Refactor to allow Command options, defined in one stage, to be replaced by an identical Command option, defined in another stage.
     - This would allow both the `CreateFrontendLayoutXmlFileStage` and `AddViewModelToFrontendLayoutXmlStage` to be added to the same pipeline and to ask for the `ConfigKey::LAYOUT_XML_HANDLE`, without causing the error of asking for the same option twice
 - [ ] Refactor to remove 'File' from all stage and pipeline names

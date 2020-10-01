@@ -1,0 +1,51 @@
+<?php
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+/**
+ * Delete as appropriate
+ */
+// If you entered a subdirectory, use this namespace
+// namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Block\Adminhtml\{{BLOCK_DIRECTORY_NAME}};
+// If you did not, uncomment this one instead
+// namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Block\Adminhtml;
+
+/**
+ * Class {{BLOCK_CLASS_NAME}}
+ *
+ * Example of a block class which renders a template
+ *
+ * Add the following to the desired Layout XML handle to render the blocks' template:
+ *
+ * <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ *       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+ *     <body>
+ *         <referenceBlock name="main">
+ *             <block class="{{VENDOR_NAME}}\{{MODULE_NAME}}\Block\{{BLOCK_CLASS_NAME_UCFIRST}}"
+ *                    name="{{VENDOR_NAME_STRTOLOWER}}_{{MODULE_NAME_STRTOLOWER}}.block.{{BLOCK_CLASS_NAME_STRTOLOWER}}"
+ *                    template="{{VENDOR_NAME}}_{{MODULE_NAME}}::content.phtml">
+ * <!--                <arguments>-->
+ * <!--                    <argument name="view_model" xsi:type="object"></argument>-->
+ * <!--                </arguments>-->
+ *             </block>
+ *         </referenceBlock>
+ *     </body>
+ * </page>
+ *
+ */
+class {{BLOCK_CLASS_NAME}} extends \Magento\Framework\View\Element\Template
+{
+}

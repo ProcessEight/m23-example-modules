@@ -1,0 +1,171 @@
+<?php
+/**
+ * {{VENDOR_NAME}}
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact {{VENDOR_NAME}} for more information.
+ *
+ * @copyright   Copyright (c) {{YEAR}} {{VENDOR_NAME}}
+ * @author      {{VENDOR_NAME}}
+ *
+ */
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Model;
+
+use \Magento\Framework\DataObject\IdentityInterface;
+use \Magento\Framework\Model\AbstractModel;
+use \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface;
+
+/**
+ * {{ENTITY_NAME}} Model
+ *
+ * @method \{{VENDOR_NAME}}\{{MODULE_NAME}}\Model\ResourceModel\{{ENTITY_NAME}} getResource()
+ * @method \{{VENDOR_NAME}}\{{MODULE_NAME}}\Model\ResourceModel\{{ENTITY_NAME}}\Collection getCollection()
+ */
+class {{ENTITY_NAME}} extends AbstractModel implements {{ENTITY_NAME}}Interface, IdentityInterface
+{
+    const CACHE_TAG = '{{VENDOR_NAME_LOWERCASE}}_{{MODULE_NAME_LOWERCASE}}_{{ENTITY_NAME_LOWERCASE}}';
+
+    /**#@-*/
+    protected $_cacheTag = self::CACHE_TAG;
+
+    /**
+     * Event name prefix
+     *
+     * @var string
+     */
+    protected $_eventPrefix = '{{VENDOR_NAME_LOWERCASE}}_{{MODULE_NAME_LOWERCASE}}_{{ENTITY_NAME_LOWERCASE}}';
+
+    /**
+     * Constructor
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        $this->_init(\{{VENDOR_NAME}}\{{MODULE_NAME}}\Model\ResourceModel\{{ENTITY_NAME}}::class);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getIdentities()
+    {
+        return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * Returns the order ID.
+     *
+     * @return int Order ID.
+     */
+    public function getOrderId() : int
+    {
+        return $this->_getData(self::KEY_ORDER_ID);
+    }
+
+    /**
+     * Sets the order ID.
+     *
+     * @param int $orderId
+     *
+     * @return $this
+     */
+    public function setOrderId(int $orderId)
+    {
+        return $this->setData(self::KEY_ORDER_ID, $orderId);
+    }
+
+    /**
+     * Returns the order type ID.
+     *
+     * @return int Order type ID
+     */
+    public function getOrderTypeId() : int
+    {
+        return $this->_getData(self::KEY_ORDER_TYPE_ID);
+    }
+
+    /**
+     * Sets the order type ID.
+     *
+     * @param int $orderTypeId
+     *
+     * @return $this
+     */
+    public function setOrderTypeId(int $orderTypeId)
+    {
+        return $this->setData(self::KEY_ORDER_TYPE_ID, $orderTypeId);
+    }
+
+    /**
+     * Returns the reference order increment ID.
+     *
+     * @return string Reference order increment ID.
+     */
+    public function getReferenceOrderIncrementId() : string
+    {
+        return $this->_getData(self::KEY_REFERENCE_ORDER_INCREMENT_ID);
+    }
+
+    /**
+     * Sets the reference order increment ID.
+     *
+     * @param string $referenceOrderIncrementId
+     *
+     * @return $this
+     */
+    public function setReferenceOrderIncrementId(string $referenceOrderIncrementId)
+    {
+        return $this->setData(self::KEY_REFERENCE_ORDER_INCREMENT_ID, $referenceOrderIncrementId);
+    }
+
+    /**
+     * Returns the cart creation date and time.
+     *
+     * @return string|null Cart creation date and time. Otherwise, null.
+     */
+    public function getCreatedAt() : ?string
+    {
+        return $this->_getData(self::KEY_CREATED_AT);
+    }
+
+    /**
+     * Sets the cart creation date and time.
+     *
+     * @param string $createdAt
+     *
+     * @return $this
+     */
+    public function setCreatedAt(string $createdAt)
+    {
+        return $this->setData(self::KEY_CREATED_AT, $createdAt);
+    }
+
+    /**
+     * Returns the cart last update date and time.
+     *
+     * @return string|null Cart last update date and time. Otherwise, null.
+     */
+    public function getUpdatedAt() : ?string
+    {
+        return $this->_getData(self::KEY_UPDATED_AT);
+    }
+
+    /**
+     * Sets the cart last update date and time.
+     *
+     * @param string $updatedAt
+     *
+     * @return $this
+     */
+    public function setUpdatedAt(string $updatedAt)
+    {
+        return $this->setData(self::KEY_UPDATED_AT, $updatedAt);
+    }
+}

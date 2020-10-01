@@ -48,6 +48,7 @@ class InstallSchema implements InstallSchemaInterface
 //                    'nullable' => false,              // Add NOT NULL to this column
 //                    'primary' => true,                // Add auto_increment_id and primary key index to this column
 //                    'unsigned' => true                // Only allow positive (i.e. Unsigned, not negative) numbers
+//                    'default' => mixed                // Specify a default value for the column
 //                                                      // Only one of the following options can be used at a time:
 //                    'before' => 'another_column_name' // Add the column before 'another_column_name'. The default is to add columns at the end of the table
 //                    'after' => 'another_column_name'  // Add the column after 'another_column_name'. The default is to add columns at the end of the table
@@ -118,7 +119,7 @@ class InstallSchema implements InstallSchemaInterface
                                        'nullable' => false,
                                        // Timestamps can be automatically updated on create, on update or both. Optional.
                                        // See \Magento\Framework\DB\Ddl\Table for more values for the 'default' option
-                                       'default'  => Table::TIMESTAMP_INIT,
+                                       'default'  => Table::TIMESTAMP_INIT_UPDATE,
                                    ],
                                    'Example of a TIMESTAMP column type'
                                )

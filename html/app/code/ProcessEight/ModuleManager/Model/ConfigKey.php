@@ -173,4 +173,19 @@ interface ConfigKey
      * Layout XML name of Block we're adding View Model to
      */
     const LAYOUT_XML_BLOCK_NAME = 'layout-xml-block-name';
+
+    /**
+     * Model triad entity name
+     */
+    const ENTITY_NAME = 'entity-name';
+
+    /**
+     * Model triad entity primary key name
+     */
+    const TABLE_PRIMARY_KEY = 'table-primary-key';
+
+    /**
+     * Model triad entity table name
+     */
+    const TABLE_NAME = 'table-name';
 }
