@@ -107,7 +107,7 @@ If they are taken from user input, then the class constant is used as the variab
         ]);
 ```
 
-If a template variable needs to be processed in some way (e.g. To make it upper or lower case), then this is achieved using PHP string manipulation methods. The name of the method used is appended to the template variable name (see example above).
+If a template variable needs to be processed in some way (e.g. To make it upper or lower case), then this is achieved using PHP string manipulation methods. The name of the method used is appended to the template variable name to indicate what method has been applied to it (see example above).
 
 ## To do
 

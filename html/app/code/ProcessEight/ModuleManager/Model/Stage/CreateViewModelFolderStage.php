@@ -82,15 +82,15 @@ class CreateViewModelFolderStage extends BaseStage
 //            'question'                => '<question>Plugin type (before/after/around) [before]: </question> ',
 //            'question_default_answer' => 'before',
 //        ];
-        // Ask the user for the VIEW_MODEL_SUBDIRECTORY_PATH, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH] = [
-            'name'                    => ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
-            'description'             => 'ViewModel subdirectory path, e.g. VENDOR_NAME/MODULE_NAME/ViewModel/Custom/Directory/Path/',
-            'question'                => '<question>ViewModel subdirectory path, e.g. VENDOR_NAME/MODULE_NAME/ViewModel/Custom/Directory/Path/ []: </question> ',
-            'question_default_answer' => '',
-        ];
+//        // Ask the user for the VIEW_MODEL_SUBDIRECTORY_PATH, if it was not passed in as an option
+//        $payload['config'][$this->id]['options'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH] = [
+//            'name'                    => ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH,
+//            'shortcut'                => null,
+//            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL,
+//            'description'             => 'ViewModel subdirectory path, e.g. VENDOR_NAME/MODULE_NAME/ViewModel/Custom/Directory/Path/',
+//            'question'                => '<question>ViewModel subdirectory path, e.g. VENDOR_NAME/MODULE_NAME/ViewModel/Custom/Directory/Path/ []: </question> ',
+//            'question_default_answer' => '',
+//        ];
 //        // Ask the user for the PLUGIN_CLASS_NAME, if it was not passed in as an option
 //        $payload['config'][$this->id]['options'][ConfigKey::PLUGIN_CLASS_NAME] = [
 //            'name'                    => ConfigKey::PLUGIN_CLASS_NAME,
@@ -112,7 +112,7 @@ class CreateViewModelFolderStage extends BaseStage
      */
     public function processStage(array $payload) : array
     {
-        $subfolderPath        = 'ViewModel' . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH];
+        $subfolderPath        = 'ViewModel'; // . DIRECTORY_SEPARATOR . $payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH];
         $absolutePathToFolder = $this->folder->getAbsolutePathToFolder($payload, $this->id, $subfolderPath);
 
         // Check if folder exists

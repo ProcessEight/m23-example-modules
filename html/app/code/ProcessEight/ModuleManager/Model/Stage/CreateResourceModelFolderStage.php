@@ -87,7 +87,7 @@ class CreateResourceModelFolderStage extends BaseStage
             return $payload;
         }
 
-        $payload['messages'][] = "Created {$subfolderPath} folder at <info>{$absolutePathToFolder}</info>";
+        $payload['messages'][] = "Created folder at <info>" . $absolutePathToFolder . "</info>";
 
         // Pass payload onto next Stage/Pipeline
         return $payload;

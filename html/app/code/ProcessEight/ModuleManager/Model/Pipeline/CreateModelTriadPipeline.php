@@ -135,8 +135,7 @@ class CreateModelTriadPipeline extends BasePipeline
             ->pipe($this->createCollectionPhpClassStage)
             ->pipe($this->createApiFolderStage)
             ->pipe($this->createApiDataFolderStage)
-            ->pipe($this->createModelPhpInterfaceStage)
-        ;
+            ->pipe($this->createModelPhpInterfaceStage);
 
         // Pass payload onto next Stage/Pipeline
         return $pipeline->process($payload);

@@ -144,7 +144,7 @@ class CreateModelPhpClassStage extends BaseStage
 
             return $payload;
         }
-        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>" . $artefactFilePath . "</info>";
+        $payload['messages'][] = "Created file at <info>" . $artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName . "</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;
@@ -168,7 +168,6 @@ class CreateModelPhpClassStage extends BaseStage
             '{{YEAR}}'                  => date('Y'),
             '{{ENTITY_NAME}}'           => ucfirst($payload['config'][$stageId]['values'][ConfigKey::ENTITY_NAME]),
             '{{ENTITY_NAME_LOWERCASE}}' => strtolower($payload['config'][$stageId]['values'][ConfigKey::ENTITY_NAME]),
-            '{{TABLE_PRIMARY_KEY}}'     => strtolower($payload['config'][$stageId]['values'][ConfigKey::TABLE_PRIMARY_KEY]),
         ];
     }
 }

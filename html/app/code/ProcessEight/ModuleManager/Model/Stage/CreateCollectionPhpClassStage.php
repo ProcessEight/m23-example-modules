@@ -72,6 +72,15 @@ class CreateCollectionPhpClassStage extends BaseStage
      */
     public function configureStage(array $payload) : array
     {
+        // Ask the user for the ENTITY_NAME, if it was not passed in as an option
+        $payload['config'][$this->id]['options'][ConfigKey::ENTITY_NAME] = [
+            'name'                    => ConfigKey::ENTITY_NAME,
+            'shortcut'                => null,
+            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
+            'description'             => 'Model entity name, e.g. Order, Customer, Boondoggle',
+            'question'                => '<question>Model entity name, e.g. order, customer, widget [Boondoggle]: </question> ',
+            'question_default_answer' => 'Boondoggle',
+        ];
         // Ask the user for the TABLE_PRIMARY_KEY, if it was not passed in as an option
         $payload['config'][$this->id]['options'][ConfigKey::TABLE_PRIMARY_KEY] = [
             'name'                    => ConfigKey::TABLE_PRIMARY_KEY,
@@ -98,7 +107,7 @@ class CreateCollectionPhpClassStage extends BaseStage
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder(
             $payload,
             $this->id,
-            $subfolderPath . DIRECTORY_SEPARATOR . ucfirst($payload['config'][$this->id]['values'][ConfigKey::ENTITY_NAME])
+            $subfolderPath . ucfirst($payload['config'][$this->id]['values'][ConfigKey::ENTITY_NAME])
         );
         $artefactFileName  = 'Collection.php';
         $templateFilePath  = $this->template->getTemplateFilePath(
@@ -143,7 +152,7 @@ class CreateCollectionPhpClassStage extends BaseStage
 
             return $payload;
         }
-        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>" . $artefactFilePath . "</info>";
+        $payload['messages'][] = "Created file at <info>" . $artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName . "</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;

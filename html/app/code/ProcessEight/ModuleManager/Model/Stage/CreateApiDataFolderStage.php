@@ -90,7 +90,7 @@ class CreateApiDataFolderStage extends \ProcessEight\ModuleManager\Model\Stage\B
             return $payload;
         }
 
-        $payload['messages'][] = "Created Api" . DIRECTORY_SEPARATOR . "Data folder at <info>{$absolutePathToFolder}</info>";
+        $payload['messages'][] = "Created folder at <info>" . $absolutePathToFolder . "</info>";
 
         // Pass payload onto next Stage/Pipeline
         return $payload;

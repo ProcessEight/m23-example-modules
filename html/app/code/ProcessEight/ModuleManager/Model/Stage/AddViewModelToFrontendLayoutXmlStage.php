@@ -72,14 +72,14 @@ class AddViewModelToFrontendLayoutXmlStage extends BaseStage
             'question_default_answer' => 'default',
         ];
         // Ask the user for the VIEW_MODEL_BLOCK_CLASS_NAME, if it was not passed in as an option
-        $payload['config'][$this->id]['options'][ConfigKey::VIEW_MODEL_BLOCK_CLASS_NAME] = [
-            'name'                    => ConfigKey::VIEW_MODEL_BLOCK_CLASS_NAME,
-            'shortcut'                => null,
-            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
-            'description'             => 'Class name of Block we\'re adding View Model to',
-            'question'                => '<question>Class name of Block we\'re adding View Model to (e.g. VENDOR_NAME\MODULE_NAME\Block\Custom): []</question> ',
-            'question_default_answer' => '',
-        ];
+//        $payload['config'][$this->id]['options'][ConfigKey::VIEW_MODEL_BLOCK_CLASS_NAME] = [
+//            'name'                    => ConfigKey::VIEW_MODEL_BLOCK_CLASS_NAME,
+//            'shortcut'                => null,
+//            'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
+//            'description'             => 'Class name of Block we\'re adding View Model to',
+//            'question'                => '<question>Class name of Block we\'re adding View Model to (e.g. VENDOR_NAME\MODULE_NAME\Block\Custom): []</question> ',
+//            'question_default_answer' => '',
+//        ];
         // Ask the user for the LAYOUT_XML_BLOCK_NAME, if it was not passed in as an option
         $payload['config'][$this->id]['options'][ConfigKey::LAYOUT_XML_BLOCK_NAME] = [
             'name'                    => ConfigKey::LAYOUT_XML_BLOCK_NAME,
@@ -95,8 +95,8 @@ class AddViewModelToFrontendLayoutXmlStage extends BaseStage
             'shortcut'                => null,
             'mode'                    => \Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED,
             'description'             => 'View Model argument name in Layout XML',
-            'question'                => '<question>Layout XML name of Block we\'re adding View Model to (e.g. category.products.list): []</question> ',
-            'question_default_answer' => '',
+            'question'                => '<question>View Model argument name in Layout XML (e.g. custom_view_model): [view_model]</question> ',
+            'question_default_answer' => 'view_model',
         ];
 
         return $payload;
@@ -137,7 +137,7 @@ class AddViewModelToFrontendLayoutXmlStage extends BaseStage
                 $payload['config'][$this->id]['values'][ConfigKey::LAYOUT_XML_VIEW_MODEL_NAME]
             );
             $argumentNode->setAttribute('xsi:type', 'object');
-            $argumentNode->appendChild(new \DOMText($payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_BLOCK_CLASS_NAME]));
+            $argumentNode->appendChild(new \DOMText($this->getViewModelClassName($payload)));
             // Append argument node to arguments node
             $argumentsNode->appendChild($argumentNode);
         } else {
@@ -154,5 +154,21 @@ class AddViewModelToFrontendLayoutXmlStage extends BaseStage
 
         // Pass payload onto next stage/pipeline
         return $payload;
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return string
+     */
+    private function getViewModelClassName(array $payload) : string
+    {
+        return implode('\\', [
+            $payload['config'][$this->id]['values'][ConfigKey::VENDOR_NAME],
+            $payload['config'][$this->id]['values'][ConfigKey::MODULE_NAME],
+            'ViewModel',
+//            strlen($payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH]) > 0 ? str_replace(DIRECTORY_SEPARATOR, '\\', $payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH]) : '',
+            $payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME],
+        ]);
     }
 }

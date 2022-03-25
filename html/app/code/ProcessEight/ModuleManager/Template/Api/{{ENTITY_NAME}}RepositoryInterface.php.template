@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Api;
+
+/**
+ * {{ENTITY_NAME}} CRUD interface.
+ *
+ */
+interface {{ENTITY_NAME}}RepositoryInterface
+{
+    /**
+     * Save {{ENTITY_NAME_STRTOLOWER}}.
+     *
+     * @param \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface ${{ENTITY_NAME_STRTOLOWER}}
+     *
+     * @return \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function save(Data\{{ENTITY_NAME}}Interface ${{ENTITY_NAME_STRTOLOWER}});
+
+    /**
+     * Retrieve {{ENTITY_NAME_STRTOLOWER}}.
+     *
+     * @param int ${{ENTITY_NAME_STRTOLOWER}}Id
+     *
+     * @return \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getById(int ${{ENTITY_NAME_STRTOLOWER}}Id);
+
+    /**
+     * Retrieve {{ENTITY_NAME}}s matching the specified criteria.
+     *
+     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     *
+     * @return \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}SearchResultsInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+
+    /**
+     * Delete {{ENTITY_NAME}}.
+     *
+     * @param \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface ${{ENTITY_NAME_STRTOLOWER}}
+     *
+     * @return bool true on success
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function delete(Data\{{ENTITY_NAME}}Interface ${{ENTITY_NAME_STRTOLOWER}});
+
+    /**
+     * Delete {{ENTITY_NAME}} by ID.
+     *
+     * @param int ${{ENTITY_NAME_STRTOLOWER}}Id
+     *
+     * @return bool true on success
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function deleteById(int ${{ENTITY_NAME_STRTOLOWER}}Id);
+}

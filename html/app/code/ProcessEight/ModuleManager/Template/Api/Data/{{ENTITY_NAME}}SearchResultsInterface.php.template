@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data;
+
+/**
+ * Interface for {{ENTITY_NAME}} search results
+ *
+ */
+interface {{ENTITY_NAME}}SearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
+{
+    /**
+     * Get list of {{ENTITY_NAME}}
+     *
+     * @return \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface[]
+     */
+    public function getItems();
+
+    /**
+     * Set list of {{ENTITY_NAME}}
+     *
+     * @param \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}Interface[] $items
+     *
+     * @return \{{VENDOR_NAME}}\{{MODULE_NAME}}\Api\Data\{{ENTITY_NAME}}SearchResultsInterface
+     */
+    public function setItems(array $items);
+}

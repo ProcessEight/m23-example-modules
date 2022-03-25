@@ -151,7 +151,7 @@ class CreateModelPhpInterfaceStage extends BaseStage
 
             return $payload;
         }
-        $payload['messages'][] = "Created <info>" . $artefactFileName . "</info> file at <info>" . $artefactFilePath . "</info>";
+        $payload['messages'][] = "Created file at <info>" . $artefactFilePath . DIRECTORY_SEPARATOR . $artefactFileName . "</info>";
 
         // Pass payload onto next stage/pipeline
         return $payload;

@@ -38,23 +38,23 @@ class CreateAdminhtmlTemplateFolderPipeline extends BasePipeline
     /**
      * @var \ProcessEight\ModuleManager\Model\Stage\Adminhtml\CreateAdminhtmlTemplateFolderStage
      */
-    private $createAdminhtmlTemplateStage;
+    private $createAdminhtmlTemplateFolderStage;
 
     /**
      * CreateFolderPipeline constructor.
      *
-     * @param \League\Pipeline\Pipeline                                                          $pipeline
-     * @param \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline              $validateModuleNamePipeline
-     * @param \ProcessEight\ModuleManager\Model\Stage\Adminhtml\CreateAdminhtmlTemplateFolderStage $createAdminhtmlTemplateStage
+     * @param \League\Pipeline\Pipeline                                                            $pipeline
+     * @param \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline                $validateModuleNamePipeline
+     * @param \ProcessEight\ModuleManager\Model\Stage\Adminhtml\CreateAdminhtmlTemplateFolderStage $createAdminhtmlTemplateFolderStage
      */
     public function __construct(
         \League\Pipeline\Pipeline $pipeline,
         \ProcessEight\ModuleManager\Model\Pipeline\ValidateModuleNamePipeline $validateModuleNamePipeline,
-        \ProcessEight\ModuleManager\Model\Stage\Adminhtml\CreateAdminhtmlTemplateFolderStage $createAdminhtmlTemplateStage
+        \ProcessEight\ModuleManager\Model\Stage\Adminhtml\CreateAdminhtmlTemplateFolderStage $createAdminhtmlTemplateFolderStage
     ) {
         parent::__construct($pipeline);
-        $this->validateModuleNamePipeline  = $validateModuleNamePipeline;
-        $this->createAdminhtmlTemplateStage = $createAdminhtmlTemplateStage;
+        $this->validateModuleNamePipeline         = $validateModuleNamePipeline;
+        $this->createAdminhtmlTemplateFolderStage = $createAdminhtmlTemplateFolderStage;
     }
 
     /**
@@ -68,7 +68,7 @@ class CreateAdminhtmlTemplateFolderPipeline extends BasePipeline
     {
         $pipeline = $this->pipeline
             ->pipe($this->validateModuleNamePipeline)
-            ->pipe($this->createAdminhtmlTemplateStage);
+            ->pipe($this->createAdminhtmlTemplateFolderStage);
 
         // Pass payload onto next stage/pipeline
         return $pipeline->process($payload);

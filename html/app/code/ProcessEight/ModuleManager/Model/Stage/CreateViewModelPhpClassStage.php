@@ -94,7 +94,7 @@ class CreateViewModelPhpClassStage extends \ProcessEight\ModuleManager\Model\Sta
      */
     public function processStage(array $payload) : array
     {
-        $subfolder         = 'ViewModel' . DIRECTORY_SEPARATOR . ucfirst($payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH]);
+        $subfolder         = 'ViewModel'; // . DIRECTORY_SEPARATOR . ucfirst($payload['config'][$this->id]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH]);
         $artefactFilePath  = $this->folder->getAbsolutePathToFolder(
             $payload,
             $this->id,
@@ -178,7 +178,7 @@ class CreateViewModelPhpClassStage extends \ProcessEight\ModuleManager\Model\Sta
              */
             '{{VIEW_MODEL_CLASS_NAME}}'         => $payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME],
             '{{VIEW_MODEL_CLASS_NAME_UCFIRST}}' => ucfirst($payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_CLASS_NAME]),
-            '{{VIEW_MODEL_SUBDIRECTORY_PATH}}'  => $payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH],
+//            '{{VIEW_MODEL_SUBDIRECTORY_PATH}}'  => $payload['config'][$stageId]['values'][ConfigKey::VIEW_MODEL_SUBDIRECTORY_PATH],
         ];
     }
 }
