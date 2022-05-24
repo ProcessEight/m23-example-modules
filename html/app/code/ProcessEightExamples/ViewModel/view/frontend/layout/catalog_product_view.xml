@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Let's add a template to the bottom of the page, where we'll output something using the View Model -->
+        <referenceContainer name="header.container">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="processeightexamples.viewmodel.example"
+                   template="ProcessEightExamples_ViewModel::example.phtml"
+                   after="-">
+                <arguments>
+                    <!-- We pass in the View Model as an argument to the Block class -->
+                    <!-- Note the xsi:type must be 'object' because Magento will instantiate the class for us -->
+                    <argument name="px8_examples_view_model"
+                              xsi:type="object">ProcessEightExamples\ViewModel\ViewModel\StoreConfig</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

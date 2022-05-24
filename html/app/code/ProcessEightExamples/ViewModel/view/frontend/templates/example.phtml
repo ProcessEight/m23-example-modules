@@ -1,0 +1,26 @@
+<?php
+/**
+ * ProcessEight
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact ProcessEight for more information.
+ *
+ * @package     m23-example-modules
+ * @copyright   Copyright (c) 2019 ProcessEight
+ * @author      ProcessEight
+ *
+ */
+/** @var $block \Magento\Framework\View\Element\Template; */
+
+/** @var \ProcessEightExamples\ViewModel\ViewModel\StoreConfig $storeConfigViewModel */
+$storeConfigViewModel = $block->getData('px8_examples_view_model');
+
+?>
+<?php if ($storeConfigViewModel->shouldRedirectToCart()) : ?>
+    <p><?= __('You will be redirected to the cart when clicking the \'Add to basket\' button') ?></p>
+<?php else: ?>
+    <p><?= __('You will stay on this page after clicking the \'Add to basket\' button') ?></p>
+<?php endif; ?>
